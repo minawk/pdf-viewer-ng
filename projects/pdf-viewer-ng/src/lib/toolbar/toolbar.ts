@@ -4,6 +4,7 @@ import { PdfInteractionTool, PdfViewerTool } from '../core/types';
 import { ViewerStore } from '../core/viewer-store';
 import { FileActions } from '../features/file-actions';
 import { PrintService } from '../features/print';
+import { AnnotationStore } from '../annotations/annotation-store';
 import { SearchStore } from '../search/search-store';
 import { Icon } from '../icon/icon';
 import { PdfvIconName } from '../icon/icons';
@@ -32,6 +33,7 @@ export class Toolbar {
   protected readonly search = inject(SearchStore);
   protected readonly files = inject(FileActions);
   protected readonly printer = inject(PrintService);
+  private readonly annotations = inject(AnnotationStore);
   protected readonly messages = inject(PDF_VIEWER_MESSAGES);
 
   protected readonly interactionTools: readonly ToolToggle[] = [
@@ -52,7 +54,19 @@ export class Toolbar {
     }
   }
 
-  protected toggleAnnotationTool(tool: PdfInteractionTool): void {
-    this.store.setTool(this.store.tool() === tool ? 'select' : tool);
+  /**
+   * Highlight: highlights the current text selection if there is one (the keyboard way),
+   * else toggles the highlight tool. Text: toggles the text tool; activated from the keyboard,
+   * it also adds a note in view right away, since there is no pointer to place it.
+   */
+  protected toggleAnnotationTool(tool: PdfInteractionTool, event: MouseEvent): void {
+    if (tool === 'highlight' && this.annotations.highlightSelection()) {
+      return;
+    }
+    const active = this.store.tool() === tool;
+    this.store.setTool(active ? 'select' : tool);
+    if (tool === 'text' && !active && event.detail === 0) {
+      this.annotations.addTextNoteInView();
+    }
   }
 }

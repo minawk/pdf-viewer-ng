@@ -1,5 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import {
+  PdfAnnotation,
   PdfDownloadEvent,
   PdfLoadedEvent,
   PdfLoadErrorEvent,
@@ -54,6 +55,8 @@ export class App {
     return typeof zoom === 'number' ? `${Math.round(zoom * 100)}%` : (zoom ?? '');
   });
   protected readonly lastEvent = signal('');
+  /** Two-way bound: an application would store them, e.g. per document on its server. */
+  protected readonly annotations = signal<readonly PdfAnnotation[] | undefined>(undefined);
 
   protected onThemeChange(event: Event): void {
     this.theme.set((event.target as HTMLSelectElement).value);

@@ -5,6 +5,16 @@
 export { PdfViewer, type PdfLoadedEvent, type PdfLoadErrorEvent } from './lib/viewer/pdf-viewer';
 export { type PdfLoadErrorKind } from './lib/core/errors';
 export { type PdfDownloadEvent } from './lib/features/file-actions';
+export {
+  HIGHLIGHT_COLORS,
+  TEXT_COLORS,
+  type AnnotationColor,
+  type AnnotationColorName,
+  type PdfAnnotation,
+  type PdfHighlightAnnotation,
+  type PdfRect,
+  type PdfTextAnnotation,
+} from './lib/annotations/model';
 
 export {
   DEFAULT_PDF_VIEWER_CONFIG,

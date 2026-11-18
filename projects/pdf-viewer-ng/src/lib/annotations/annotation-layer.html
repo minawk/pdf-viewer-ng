@@ -1,0 +1,117 @@
+<span class="hint" [id]="highlightHintId">{{ messages.highlightHint }}</span>
+<span class="hint" [id]="textHintId">{{ messages.textNoteHint }}</span>
+
+@for (item of items(); track item.annotation.id) {
+  @let annotation = item.annotation;
+  @let selected = annotations.selectedId() === annotation.id;
+  @switch (annotation.type) {
+    @case ('highlight') {
+      <button
+        type="button"
+        class="highlight"
+        [class.selected]="selected"
+        [attr.data-annotation-id]="annotation.id"
+        [attr.aria-label]="messages.highlightLabel(annotation.text)"
+        [attr.aria-describedby]="highlightHintId"
+        [style.left.%]="item.box.left"
+        [style.top.%]="item.box.top"
+        [style.width.%]="item.box.right - item.box.left"
+        [style.height.%]="item.box.bottom - item.box.top"
+        (focus)="select(annotation.id)"
+        (keydown)="onKeydown(item, $event)"
+      >
+        @for (line of item.lines; track $index) {
+          <span
+            class="line"
+            [style.background-color]="annotation.color"
+            [style.left.%]="line.left"
+            [style.top.%]="line.top"
+            [style.width.%]="line.right - line.left"
+            [style.height.%]="line.bottom - line.top"
+          ></span>
+        }
+      </button>
+    }
+    @case ('text') {
+      @if (annotations.editingId() === annotation.id) {
+        <div
+          class="note editing"
+          contenteditable="plaintext-only"
+          role="textbox"
+          aria-multiline="true"
+          spellcheck="true"
+          [attr.data-annotation-id]="annotation.id"
+          [attr.aria-label]="messages.textNoteEditor"
+          [style.left.%]="item.box.left"
+          [style.top.%]="item.box.top"
+          [style.color]="annotation.color"
+          [style.font-size]="fontSize(annotation)"
+          (blur)="commit(item, $event)"
+          (keydown)="onEditKeydown(annotation, $event)"
+          (pointerdown)="$event.stopPropagation()"
+        >{{ annotation.text }}</div>
+      } @else {
+        <div
+          class="note"
+          role="button"
+          tabindex="0"
+          [class.selected]="selected"
+          [attr.data-annotation-id]="annotation.id"
+          [attr.aria-label]="messages.textNoteLabel(annotation.text)"
+          [attr.aria-describedby]="textHintId"
+          [style.left.%]="item.box.left"
+          [style.top.%]="item.box.top"
+          [style.width.%]="item.box.right - item.box.left"
+          [style.height.%]="item.box.bottom - item.box.top"
+          [style.color]="annotation.color"
+          [style.font-size]="fontSize(annotation)"
+          (focus)="select(annotation.id)"
+          (keydown)="onKeydown(item, $event)"
+          (dblclick)="edit(annotation.id)"
+          (pointerdown)="onNotePointerDown(item, $event)"
+        >{{ annotation.text }}</div>
+      }
+    }
+  }
+
+  @if (selected && annotations.editingId() !== annotation.id) {
+    <div
+      class="annotation-toolbar"
+      pdfvRovingToolbar
+      [class.above]="toolbarAbove(item)"
+      [attr.aria-label]="messages.annotationToolbar"
+      [style.left.%]="item.box.left"
+      [style.top.%]="toolbarAbove(item) ? item.box.top : item.box.bottom"
+      (keydown.escape)="backToAnnotation(annotation.id, $event)"
+    >
+      <div class="colors" role="group" [attr.aria-label]="messages.annotationColor">
+        @for (color of colorsFor(annotation); track color.value) {
+          <button
+            type="button"
+            class="swatch"
+            pdfvToolbarItem
+            [attr.aria-label]="messages.colorNames[color.name]"
+            [attr.aria-pressed]="color.value === annotation.color"
+            (click)="setColor(annotation, color.value)"
+          >
+            <span class="swatch-color" [style.background-color]="color.value"></span>
+          </button>
+        }
+      </div>
+      @if (annotation.type === 'text') {
+        <button type="button" class="button" pdfvToolbarItem [attr.aria-label]="messages.editTextNote" (click)="edit(annotation.id)">
+          <pdfv-icon name="edit" />
+        </button>
+        <button type="button" class="button" pdfvToolbarItem [attr.aria-label]="messages.decreaseFontSize" (click)="changeFontSize(annotation, -2)">
+          <pdfv-icon name="remove" />
+        </button>
+        <button type="button" class="button" pdfvToolbarItem [attr.aria-label]="messages.increaseFontSize" (click)="changeFontSize(annotation, 2)">
+          <pdfv-icon name="add" />
+        </button>
+      }
+      <button type="button" class="button" pdfvToolbarItem [attr.aria-label]="messages.deleteAnnotation" (click)="delete(annotation.id)">
+        <pdfv-icon name="delete" />
+      </button>
+    </div>
+  }
+}

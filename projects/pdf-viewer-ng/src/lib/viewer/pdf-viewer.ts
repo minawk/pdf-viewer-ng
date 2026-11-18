@@ -19,6 +19,8 @@ import { PdfLoadErrorKind } from '../core/errors';
 import { PDF_VIEWER_MESSAGES } from '../core/messages';
 import { PdfPageMode, PdfSource, PdfViewerTheme, PdfViewerTool, PdfZoom } from '../core/types';
 import { ViewerStore } from '../core/viewer-store';
+import { AnnotationStore } from '../annotations/annotation-store';
+import { PdfAnnotation } from '../annotations/model';
 import { DocumentView } from '../document/document-view';
 import { FileActions } from '../features/file-actions';
 import { PrintService } from '../features/print';
@@ -43,7 +45,7 @@ export interface PdfLoadErrorEvent {
   imports: [Toolbar, DocumentView, SearchBar, PrintDialog],
   templateUrl: './pdf-viewer.html',
   styleUrl: './pdf-viewer.scss',
-  providers: [ViewerStore, SearchStore, FileActions, PrintService],
+  providers: [ViewerStore, SearchStore, FileActions, PrintService, AnnotationStore],
   host: {
     role: 'group',
     '[attr.aria-label]': 'messages.viewerLabel',
@@ -62,6 +64,7 @@ export class PdfViewer {
   protected readonly search = inject(SearchStore);
   protected readonly files = inject(FileActions);
   protected readonly printer = inject(PrintService);
+  private readonly annotationStore = inject(AnnotationStore);
 
   /** The PDF to display: a URL, binary data, or a `Blob`/`File`. */
   readonly src = input<PdfSource | null | undefined>(undefined);
@@ -80,6 +83,12 @@ export class PdfViewer {
    * Defaults to the `providePdfViewer()` value. Supports two-way binding: `[(zoom)]`.
    */
   readonly zoom = model<PdfZoom | undefined>(undefined);
+
+  /**
+   * Highlights and text notes of the document. Supports two-way binding: `[(annotations)]`.
+   * They are saved into the downloaded file as standard PDF annotations, and printed.
+   */
+  readonly annotations = model<readonly PdfAnnotation[] | undefined>(undefined);
 
   /** Emitted each time a document has been opened. */
   readonly loaded = output<PdfLoadedEvent>();
@@ -101,8 +110,10 @@ export class PdfViewer {
 
   constructor() {
     this.store.connect({ src: this.src, pageMode: this.pageMode, zoom: this.zoom, fileName: this.fileName });
+    this.annotationStore.connect(this.annotations);
     this.syncPage();
     this.syncZoom();
+    this.syncAnnotations();
     this.notifyDocumentChanges();
     if (isDevMode()) {
       this.warnOnMissingTheme();
@@ -196,6 +207,18 @@ export class PdfViewer {
       untracked(() => {
         if (zoom !== this.zoom()) {
           this.zoom.set(zoom);
+        }
+      });
+    });
+  }
+
+  /** Viewer -> parent: annotations added, changed or removed in the viewer. */
+  private syncAnnotations(): void {
+    effect(() => {
+      const annotations = this.annotationStore.annotations();
+      untracked(() => {
+        if (annotations !== this.annotations() && (this.annotations() !== undefined || annotations.length > 0)) {
+          this.annotations.set(annotations);
         }
       });
     });

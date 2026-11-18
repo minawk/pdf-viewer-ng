@@ -33,7 +33,7 @@
             [disabled]="!store.hasDocument()"
             [attr.aria-label]="toggle.label"
             [attr.aria-pressed]="store.tool() === toggle.tool"
-            (click)="toggleAnnotationTool(toggle.tool)"
+            (click)="toggleAnnotationTool(toggle.tool, $event)"
           >
             <pdfv-icon [name]="toggle.icon" />
           </button>

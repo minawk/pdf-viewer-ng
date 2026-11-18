@@ -9,6 +9,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { AnnotationStore } from '../annotations/annotation-store';
 import { PDF_VIEWER_MESSAGES } from '../core/messages';
 import { ScrollPosition, ViewerStore } from '../core/viewer-store';
 import { PAGE_GAP } from '../utils/zoom';
@@ -50,6 +51,7 @@ interface ScrollAnchor {
     '[attr.aria-busy]': "store.status() === 'loading'",
     '[attr.data-page-mode]': 'store.pageMode()',
     '[class.pan]': "store.tool() === 'pan'",
+    '(pointerup)': 'onPointerUp()',
     '[style.--pdfv-page-gap.px]': 'pageGap',
     '(keydown)': 'onKeydown($event)',
   },
@@ -58,6 +60,7 @@ export class DocumentView {
   protected readonly store = inject(ViewerStore);
   protected readonly messages = inject(PDF_VIEWER_MESSAGES);
   protected readonly pageGap = PAGE_GAP;
+  private readonly annotations = inject(AnnotationStore);
 
   /** Pages intersecting the visible area extended by one screen above and below. */
   readonly nearPages = signal<ReadonlySet<number>>(new Set());
@@ -182,6 +185,14 @@ export class DocumentView {
     this.intersectionObserver?.unobserve(element);
     if (pageNumber !== undefined) {
       this.nearPages.update((pages) => withPage(pages, pageNumber, false));
+    }
+  }
+
+  /** Highlight tool: releasing the pointer after selecting text highlights it. */
+  protected onPointerUp(): void {
+    if (this.store.tool() === 'highlight') {
+      // After the browser has finalized the selection.
+      setTimeout(() => this.annotations.highlightSelection());
     }
   }
 

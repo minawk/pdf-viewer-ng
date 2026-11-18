@@ -1,4 +1,5 @@
 import { EnvironmentProviders, InjectionToken, makeEnvironmentProviders } from '@angular/core';
+import type { AnnotationColorName } from '../annotations/model';
 import { PdfLoadErrorKind } from './errors';
 
 /** Every user-facing string of the viewer, including accessible names. Override for i18n. */
@@ -68,6 +69,23 @@ export interface PdfViewerMessages {
   readonly printReady: string;
   readonly printCancelled: string;
   readonly printFailed: string;
+
+  readonly highlightAdded: string;
+  readonly textNoteAdded: string;
+  readonly annotationDeleted: string;
+  readonly highlightLabel: (text: string) => string;
+  readonly textNoteLabel: (text: string) => string;
+  /** Accessible name of the field used to write a text note. */
+  readonly textNoteEditor: string;
+  readonly highlightHint: string;
+  readonly textNoteHint: string;
+  readonly annotationToolbar: string;
+  readonly annotationColor: string;
+  readonly colorNames: Readonly<Record<AnnotationColorName, string>>;
+  readonly editTextNote: string;
+  readonly increaseFontSize: string;
+  readonly decreaseFontSize: string;
+  readonly deleteAnnotation: string;
 }
 
 export const DEFAULT_PDF_VIEWER_MESSAGES: PdfViewerMessages = {
@@ -138,6 +156,29 @@ export const DEFAULT_PDF_VIEWER_MESSAGES: PdfViewerMessages = {
   printReady: 'Document ready to print.',
   printCancelled: 'Printing cancelled.',
   printFailed: 'The document could not be printed.',
+
+  highlightAdded: 'Highlight added.',
+  textNoteAdded: 'Text note added. Type your text, then press Escape.',
+  annotationDeleted: 'Annotation deleted.',
+  highlightLabel: (text) => `Highlight: ${text}`,
+  textNoteLabel: (text) => (text ? `Text note: ${text}` : 'Empty text note'),
+  textNoteEditor: 'Text note',
+  highlightHint: 'Press Delete to remove.',
+  textNoteHint: 'Press Enter to edit, Delete to remove, arrow keys to move.',
+  annotationToolbar: 'Annotation options',
+  annotationColor: 'Color',
+  colorNames: {
+    yellow: 'Yellow',
+    green: 'Green',
+    blue: 'Blue',
+    pink: 'Pink',
+    red: 'Red',
+    black: 'Black',
+  },
+  editTextNote: 'Edit text',
+  increaseFontSize: 'Larger text',
+  decreaseFontSize: 'Smaller text',
+  deleteAnnotation: 'Delete annotation',
 };
 
 export const PDF_VIEWER_MESSAGES = new InjectionToken<PdfViewerMessages>('PDF_VIEWER_MESSAGES', {
