@@ -1,7 +1,7 @@
 {
   "name": "pdf-viewer-ng",
   "version": "0.0.1",
-  "author": "Benjamina Randrianasolo <minarandria@gmail.com>",
+  "author": "minawk",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -9,7 +9,8 @@
     "build": "ng build pdf-viewer-ng && ng build demo",
     "build:lib": "ng build pdf-viewer-ng",
     "watch:lib": "ng build pdf-viewer-ng --watch --configuration development",
-    "test": "ng test pdf-viewer-ng --watch=false"
+    "test": "ng test pdf-viewer-ng --watch=false",
+    "e2e": "playwright test"
   },
   "private": true,
   "packageManager": "npm@11.13.0",
@@ -27,6 +28,8 @@
     "@angular/build": "^22.2.7",
     "@angular/cli": "^22.2.6",
     "@angular/compiler-cli": "^22.2.0",
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.1",
     "jsdom": "^30.0.0",
     "ng-packagr": "^22.2.0",
     "pdfjs-dist": "^6.5.438",

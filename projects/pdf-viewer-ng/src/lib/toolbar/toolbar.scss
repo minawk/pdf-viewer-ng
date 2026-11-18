@@ -56,7 +56,7 @@
       background: var(--pdfv-color-state-pressed);
     }
 
-    &[aria-pressed='true'] {
+    &[aria-pressed='true']:not(:disabled) {
       color: var(--pdfv-color-on-selected);
       background: var(--pdfv-color-selected);
       border-color: var(--pdfv-color-primary);
