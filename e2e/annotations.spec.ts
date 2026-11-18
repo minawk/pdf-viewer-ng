@@ -126,6 +126,8 @@ test.describe('text notes', () => {
     await open(page);
     await addNoteWithTextTool(page, 'Reviewed\nby QA');
     await expect(notes(page)).toHaveText('Reviewed\nby QA');
+    // Exactly the typed text: toHaveText() would ignore stray whitespace around it.
+    expect(await notes(page).evaluate((note) => note.textContent)).toBe('Reviewed\nby QA');
     await expect(notes(page)).toBeFocused();
     await expect(notes(page)).toHaveAccessibleName('Text note: Reviewed\nby QA');
     await expect(page.locator('output')).toContainText('annotations 1');

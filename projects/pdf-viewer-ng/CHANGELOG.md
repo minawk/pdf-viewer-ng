@@ -2,6 +2,17 @@
 
 All notable changes to `@minawk/pdf-viewer-ng`. Versions follow [semantic versioning](https://semver.org).
 
+## 0.2.3 (2026-11-18)
+
+### Fixed
+
+- Text notes no longer start with stray whitespace, on screen and in the downloaded PDF
+  (`/Contents (  Approved)` instead of `(Approved)`). A regression of 0.2.2: reformatting the
+  template moved the note text onto its own indented line, which notes display as typed. The text is
+  now bound with `[textContent]`, so formatting cannot change it again.
+- With the text tool, a press on the page right after choosing the tool could be missed when the
+  browser was busy: the note is now created whatever the rendering state.
+
 ## 0.2.2 (2026-11-18)
 
 No change of features : prettify and format all files

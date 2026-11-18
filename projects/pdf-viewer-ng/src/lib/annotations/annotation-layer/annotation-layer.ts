@@ -58,9 +58,9 @@ let nextId = 0;
   templateUrl: './annotation-layer.html',
   styleUrl: './annotation-layer.scss',
   host: {
+    // Visual only (text cursor, no text selection): creation itself does not wait for this
+    // class to be rendered, see onPagePointerDown().
     '[class.creating]': "viewer.tool() === 'text'",
-    '(pointerdown)': 'onSurfacePointerDown($event)',
-    '(mousedown)': 'onSurfaceMouseDown($event)',
   },
 })
 export class AnnotationLayer implements AnnotationLayerHandle {
@@ -117,6 +117,9 @@ export class AnnotationLayer implements AnnotationLayerHandle {
       }
       const controller = new AbortController();
       pageElement.addEventListener('pointerdown', (event) => this.onPagePointerDown(event), {
+        signal: controller.signal,
+      });
+      pageElement.addEventListener('mousedown', (event) => this.onPageMouseDown(event), {
         signal: controller.signal,
       });
       pageElement.addEventListener('click', (event) => this.onPageClick(event), {
@@ -315,30 +318,6 @@ export class AnnotationLayer implements AnnotationLayerHandle {
 
   // ---- Pointer ----------------------------------------------------------------------------
 
-  /** Text tool: a press on an empty area of the page writes a note there. */
-  protected onSurfacePointerDown(event: PointerEvent): void {
-    if (this.viewer.tool() !== 'text' || event.target !== this.host || event.button !== 0) {
-      return;
-    }
-    event.preventDefault(); // keeps the focus for the new note
-    const origin = this.host.getBoundingClientRect();
-    const scale = this.scale();
-    this.createTextNote(
-      (event.clientX - origin.left) / scale,
-      (event.clientY - origin.top) / scale,
-    );
-  }
-
-  /**
-   * Text tool: the default action of mousedown would move the focus to the document area,
-   * taking it away from the new note (cancelling pointerdown does not prevent it).
-   */
-  protected onSurfaceMouseDown(event: MouseEvent): void {
-    if (this.viewer.tool() === 'text' && event.target === this.host) {
-      event.preventDefault();
-    }
-  }
-
   /** Press on a note: select it, and drag it to move it. */
   protected onNotePointerDown(item: AnnotationView, event: PointerEvent): void {
     if (event.button !== 0) {
@@ -371,12 +350,41 @@ export class AnnotationLayer implements AnnotationLayerHandle {
     element.addEventListener('pointercancel', onEnd);
   }
 
-  /** A press outside the annotations of the page clears the selection. */
+  /**
+   * A press outside the annotations of the page clears the selection; with the text tool,
+   * it writes a note there. Listening on the page, which always receives the press, and reading
+   * the tool from the store: a press right after choosing the tool works even before the layer
+   * is re-rendered.
+   */
   private onPagePointerDown(event: PointerEvent): void {
-    const target = event.target as Element;
-    if (!target.closest('[data-annotation-id], .annotation-toolbar')) {
-      this.annotations.selectedId.set(null);
+    if (this.isOnAnnotation(event)) {
+      return;
     }
+    this.annotations.selectedId.set(null);
+    if (this.viewer.tool() !== 'text' || event.button !== 0) {
+      return;
+    }
+    event.preventDefault(); // no text selection
+    const origin = this.host.getBoundingClientRect();
+    const scale = this.scale();
+    this.createTextNote(
+      (event.clientX - origin.left) / scale,
+      (event.clientY - origin.top) / scale,
+    );
+  }
+
+  /**
+   * Text tool: the default action of mousedown would move the focus to the document area,
+   * taking it away from the new note (cancelling pointerdown does not prevent it).
+   */
+  private onPageMouseDown(event: MouseEvent): void {
+    if (this.viewer.tool() === 'text' && event.button === 0 && !this.isOnAnnotation(event)) {
+      event.preventDefault();
+    }
+  }
+
+  private isOnAnnotation(event: Event): boolean {
+    return !!(event.target as Element).closest('[data-annotation-id], .annotation-toolbar');
   }
 
   /** A click (not a text selection) on a highlight selects it. */
