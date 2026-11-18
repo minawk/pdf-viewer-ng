@@ -3,18 +3,18 @@ import { DEFAULT_TOOLS, PdfPageMode, PdfViewerTheme, PdfViewerTool, PdfZoom } fr
 
 export interface PdfViewerConfig {
   /**
-   * URL of the pdf.js worker script. Copy it into your build with this
-   * angular.json asset entry:
-   * `{ "glob": "pdf.worker.min.mjs", "input": "node_modules/pdfjs-dist/build", "output": "assets/pdfjs" }`
+   * URL of the pdf.js worker script, copied into the build by `ng add @minawk/pdf-viewer-ng`.
+   * `'cdn'` loads it from jsDelivr instead, at the installed pdf.js version: no setup, but a
+   * third-party server is involved, which fails offline and under a strict Content Security Policy.
    */
-  readonly workerSrc: string;
+  readonly workerSrc: 'cdn' | (string & {});
   /**
    * Optional base URL of the pdf.js data folders (`cmaps/`, `standard_fonts/`, `wasm/`, `iccs/`),
    * copied from `node_modules/pdfjs-dist`. They improve rendering of PDFs with CJK text,
    * non-embedded standard fonts, JPEG 2000/JBIG2 images and ICC color profiles.
-   * `null` disables them; pdf.js then falls back to system fonts.
+   * `'cdn'` loads them from jsDelivr. `null` disables them; pdf.js then falls back to system fonts.
    */
-  readonly assetsUrl: string | null;
+  readonly assetsUrl: 'cdn' | (string & {}) | null;
   /** Theme used when the viewer's `theme` input is not set. */
   readonly theme: PdfViewerTheme;
   /** Toolbar items used when the viewer's `tools` input is not set. */

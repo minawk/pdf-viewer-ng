@@ -7,7 +7,7 @@ viewer for Angular, and its demo application.
 
 | Path | What |
 | --- | --- |
-| `projects/pdf-viewer-ng` | The library (ng-packagr). Its README is the npm documentation. |
+| `projects/pdf-viewer-ng` | The library (ng-packagr), and its `ng add` schematic in `schematics/` (compiled separately to CommonJS). Its README is the npm documentation. |
 | `projects/demo` | Demo application: documents, themes, page modes, bindings. Compiles the library from source. |
 | `e2e` | Playwright tests on the demo, accessibility audits (axe) included. |
 | `tools/make-sample-pdfs.mjs` | Generates the demo's sample PDFs (`node tools/make-sample-pdfs.mjs`). |
@@ -33,12 +33,13 @@ styles/             tokens, themes, mixins (published as Sass)
 | --- | --- |
 | `npm start` | Demo on http://localhost:4200, library from source with live reload. |
 | `npm test` | Library unit tests (Vitest). |
+| `npm run test:schematics` | Builds the library, then tests `ng add` on a generated Angular workspace (node:test). |
 | `npm run e2e` | End-to-end and accessibility tests. Uses Playwright's Chromium, or a local one: `PW_CHROMIUM_PATH=/usr/bin/chromium npm run e2e`. |
-| `npm run build` | Builds the library (`dist/minawk/pdf-viewer-ng`), then the demo. |
+| `npm run build` | Builds the library (`dist/minawk/pdf-viewer-ng`) with its `ng add` schematic, then the demo. |
 | `npm run publish:lib` | Builds the library and publishes it to npm (public, scoped package). |
 
 ## Releasing
 
 1. Update `version` in `projects/pdf-viewer-ng/package.json` and `projects/pdf-viewer-ng/CHANGELOG.md`.
-2. `npm test && npm run e2e`.
+2. `npm test && npm run test:schematics && npm run e2e`.
 3. `npm login` (once), then `npm run publish:lib`.

@@ -13,56 +13,22 @@ A lightweight, accessible PDF viewer for Angular 22, built entirely on signals.
 ## Installation
 
 ```bash
-npm install @minawk/pdf-viewer-ng pdfjs-dist
+ng add @minawk/pdf-viewer-ng
 ```
+
+That is all the setup. The command:
+
+- installs `pdfjs-dist`, the PDF engine;
+- copies its worker and data files into your build (`angular.json` assets);
+- adds `providePdfViewer()` to your application configuration;
+- adds the built-in themes to your global styles.
+
+Options: `--project <name>` for a multi-application workspace, `--pdfjs-files=false` to copy only the
+required worker, `--themes=false` to skip the themes. Running it again changes nothing.
 
 Requires Angular 22 and pdfjs-dist 6.5 or later.
 
-### 1. Copy the pdf.js files
-
-In `angular.json`, in the `assets` of your application's build options:
-
-```json
-{ "glob": "pdf.worker.min.mjs", "input": "node_modules/pdfjs-dist/build", "output": "assets/pdfjs" },
-{ "glob": "**/*", "input": "node_modules/pdfjs-dist/cmaps", "output": "assets/pdfjs/cmaps" },
-{ "glob": "**/*", "input": "node_modules/pdfjs-dist/standard_fonts", "output": "assets/pdfjs/standard_fonts" },
-{ "glob": "**/*", "input": "node_modules/pdfjs-dist/wasm", "output": "assets/pdfjs/wasm" },
-{ "glob": "**/*", "input": "node_modules/pdfjs-dist/iccs", "output": "assets/pdfjs/iccs" }
-```
-
-The worker is required. The other folders are optional: they improve the rendering of documents with
-Asian scripts, non-embedded standard fonts, JPEG 2000 / JBIG2 images and ICC color profiles.
-
-### 2. Configure the viewer
-
-```ts
-// app.config.ts
-import { providePdfViewer } from '@minawk/pdf-viewer-ng';
-
-export const appConfig: ApplicationConfig = {
-  providers: [
-    providePdfViewer({
-      workerSrc: 'assets/pdfjs/pdf.worker.min.mjs',
-      assetsUrl: 'assets/pdfjs/', // only if you copied the optional folders
-    }),
-  ],
-};
-```
-
-### 3. Load the themes you use
-
-The light theme is built in. For the others, in your global styles:
-
-```scss
-@use '@minawk/pdf-viewer-ng/styles' as pdfv;
-
-@include pdfv.all-themes(); // or: @include pdfv.builtin-theme('dark');
-```
-
-Or add a ready-made stylesheet to the `styles` of `angular.json`, for example
-`node_modules/@minawk/pdf-viewer-ng/styles/themes/dark.scss` (`all.scss` contains every theme).
-
-### 4. Use it
+### Use it
 
 ```ts
 import { PdfViewer } from '@minawk/pdf-viewer-ng';
@@ -78,6 +44,48 @@ export class Report {
 ```
 
 The viewer fills the height of its container (minimum 20rem): give it a height.
+
+### Without copying files: CDN
+
+pdf.js reads PDFs in a web worker, a script that must be served as a file: a library cannot add it to
+your build by itself, which is why `ng add` configures the copy. To skip the copy, load the pdf.js
+files from the jsDelivr CDN, at the exact version installed:
+
+```ts
+providePdfViewer({ workerSrc: 'cdn', assetsUrl: 'cdn' });
+```
+
+Convenient for prototypes; for production, prefer your own copy: the CDN is a third-party server
+(it sees your users' requests), is unreachable offline, and is blocked by a strict Content Security Policy.
+
+### Manual setup
+
+What `ng add` does, if you prefer to do it yourself:
+
+1. `npm install @minawk/pdf-viewer-ng pdfjs-dist`
+2. In `angular.json`, in the `assets` of your application's build options (only the worker is required;
+   the other folders improve the rendering of Asian scripts, non-embedded fonts, JPEG 2000 / JBIG2
+   images and ICC color profiles):
+
+   ```json
+   { "glob": "pdf.worker.min.mjs", "input": "node_modules/pdfjs-dist/build", "output": "assets/pdfjs" },
+   { "glob": "**/*", "input": "node_modules/pdfjs-dist/cmaps", "output": "assets/pdfjs/cmaps" },
+   { "glob": "**/*", "input": "node_modules/pdfjs-dist/standard_fonts", "output": "assets/pdfjs/standard_fonts" },
+   { "glob": "**/*", "input": "node_modules/pdfjs-dist/wasm", "output": "assets/pdfjs/wasm" },
+   { "glob": "**/*", "input": "node_modules/pdfjs-dist/iccs", "output": "assets/pdfjs/iccs" }
+   ```
+
+3. In `app.config.ts`: `providePdfViewer({ assetsUrl: 'assets/pdfjs/' })` (or `providePdfViewer()`
+   with the worker only).
+4. Themes: the light theme is built in. For the others, add
+   `node_modules/@minawk/pdf-viewer-ng/styles/themes/all.scss` (or `dark.scss`, `high-contrast.scss`...)
+   to the `styles` of `angular.json`, or in your global Sass:
+
+   ```scss
+   @use '@minawk/pdf-viewer-ng/styles' as pdfv;
+
+   @include pdfv.all-themes(); // or: @include pdfv.builtin-theme('dark');
+   ```
 
 ## API
 
@@ -118,8 +126,8 @@ For custom toolbars: `openFile()`, `download()`, `print()`.
 
 | Option | Default | Description |
 | --- | --- | --- |
-| `workerSrc` | `'assets/pdfjs/pdf.worker.min.mjs'` | URL of the pdf.js worker. |
-| `assetsUrl` | `null` | Base URL of the optional pdf.js folders. |
+| `workerSrc` | `'assets/pdfjs/pdf.worker.min.mjs'` | URL of the pdf.js worker, or `'cdn'`. |
+| `assetsUrl` | `null` (`ng add` sets `'assets/pdfjs/'`) | Base URL of the optional pdf.js folders, or `'cdn'`. |
 | `theme`, `tools`, `pageMode`, `zoom` | `'light'`, every tool, `'continuous'`, `'fit-width'` | Defaults of the inputs. |
 | `maxPixelRatio` | `2` | Canvas resolution cap on high-density screens (memory). |
 | `printResolution` | `150` | Print resolution, in dots per inch. |

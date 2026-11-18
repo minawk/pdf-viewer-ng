@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "PdfViewerNgAdd",
+  "title": "Set up @minawk/pdf-viewer-ng",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "Name of the application to set up.",
+      "$default": { "$source": "projectName" }
+    },
+    "pdfjsFiles": {
+      "type": "boolean",
+      "default": true,
+      "description": "Also copy the optional pdf.js files (fonts, character maps, image decoders, color profiles) for the best rendering of every PDF.",
+      "x-prompt": "Copy the optional pdf.js files for the best rendering (fonts, Asian scripts, images)?"
+    },
+    "themes": {
+      "type": "boolean",
+      "default": true,
+      "description": "Add the built-in themes (dark, high contrast, material, auto) to the global styles. The light theme is always available.",
+      "x-prompt": "Add the built-in themes (dark, high contrast, material, auto)?"
+    }
+  },
+  "required": []
+}

@@ -1,6 +1,7 @@
 import { DOCUMENT, inject, Service } from '@angular/core';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { PDF_VIEWER_CONFIG } from './config';
+import { resolveAssetsRoot, resolveWorkerSrc } from './pdfjs-urls/pdfjs-urls';
 import { toDocumentParams } from './source/source';
 import { PdfSource } from './types';
 
@@ -28,7 +29,7 @@ export class PdfEngine {
       (pdfjs) => {
         const workerOptions = pdfjs.GlobalWorkerOptions;
         if (!workerOptions.workerSrc && !workerOptions.workerPort) {
-          workerOptions.workerSrc = this.absoluteUrl(this.config.workerSrc);
+          workerOptions.workerSrc = resolveWorkerSrc(this.config.workerSrc, pdfjs.version, this.document.baseURI);
         }
         return pdfjs;
       },
@@ -44,7 +45,7 @@ export class PdfEngine {
     const [pdfjs, params] = await Promise.all([this.pdfjs(), toDocumentParams(source)]);
     signal.throwIfAborted();
 
-    const task = pdfjs.getDocument({ ...params, ...this.assetParams() });
+    const task = pdfjs.getDocument({ ...params, ...this.assetParams(pdfjs.version) });
     if (onProgress) {
       task.onProgress = ({ loaded, total }: { loaded: number; total: number }) =>
         onProgress(total > 0 ? Math.min(1, loaded / total) : null);
@@ -64,13 +65,11 @@ export class PdfEngine {
     }
   }
 
-  private assetParams() {
-    const base = this.config.assetsUrl;
-    if (!base) {
+  private assetParams(version: string) {
+    const root = resolveAssetsRoot(this.config.assetsUrl, version, this.document.baseURI);
+    if (!root) {
       return {};
     }
-    // Absolute URLs: pdf.js fetches these from its worker, whose base URL is the worker script.
-    const root = this.absoluteUrl(base.endsWith('/') ? base : `${base}/`);
     return {
       cMapUrl: `${root}cmaps/`,
       cMapPacked: true,
@@ -78,9 +77,5 @@ export class PdfEngine {
       wasmUrl: `${root}wasm/`,
       iccUrl: `${root}iccs/`,
     };
-  }
-
-  private absoluteUrl(url: string): string {
-    return new URL(url, this.document.baseURI).href;
   }
 }

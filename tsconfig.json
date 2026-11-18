@@ -32,6 +32,9 @@
     },
     {
       "path": "./projects/demo/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/pdf-viewer-ng/tsconfig.schematics.spec.json"
     }
   ]
 }

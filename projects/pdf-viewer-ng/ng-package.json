@@ -10,6 +10,11 @@
       "glob": "**/*.scss",
       "output": "styles"
     },
+    {
+      "input": "schematics",
+      "glob": "**/*.json",
+      "output": "schematics"
+    },
     "LICENSE",
     "CHANGELOG.md"
   ]

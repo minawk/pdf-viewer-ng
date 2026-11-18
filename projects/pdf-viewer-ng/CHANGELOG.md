@@ -4,6 +4,8 @@
 
 First release.
 
+- `ng add @minawk/pdf-viewer-ng`: one-command setup (pdf.js, build assets, provider, themes).
+- `workerSrc: 'cdn'` and `assetsUrl: 'cdn'`: load the pdf.js files from jsDelivr, without copying them.
 - PDF rendering with pdf.js 6, loaded lazily; only pages near the visible area are rendered.
 - Continuous and single page modes, pagination, `[(page)]`.
 - Zoom: presets, fit to width, fit to page, Ctrl + wheel, pinch, keyboard shortcuts, `[(zoom)]`.
