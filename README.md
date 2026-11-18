@@ -3,6 +3,8 @@
 Source of [`@minawk/pdf-viewer-ng`](projects/pdf-viewer-ng/README.md), an accessible, signal-based PDF
 viewer for Angular, and its demo application.
 
+**Live demo: https://minawk.github.io/pdf-viewer-ng/**
+
 ## Projects
 
 | Path | What |
@@ -36,6 +38,7 @@ styles/             tokens, themes, mixins (published as Sass)
 | `npm run test:schematics` | Builds the library, then tests `ng add` on a generated Angular workspace (node:test). |
 | `npm run e2e` | End-to-end and accessibility tests. Uses Playwright's Chromium, or a local one: `PW_CHROMIUM_PATH=/usr/bin/chromium npm run e2e`. |
 | `npm run build` | Builds the library (`dist/minawk/pdf-viewer-ng`) with its `ng add` schematic, then the demo. |
+| `npm run build:pages` | Builds the demo as served on GitHub Pages (under `/pdf-viewer-ng/`), in `dist/demo/browser`. |
 | `npm run publish:lib` | Builds the library and publishes it to npm (public, scoped package). |
 
 ## Releasing
@@ -43,3 +46,16 @@ styles/             tokens, themes, mixins (published as Sass)
 1. Update `version` in `projects/pdf-viewer-ng/package.json` and `projects/pdf-viewer-ng/CHANGELOG.md`.
 2. `npm test && npm run test:schematics && npm run e2e`.
 3. `npm login` (once), then `npm run publish:lib`.
+
+## Demo deployment
+
+The [Demo workflow](.github/workflows/demo.yml) runs on every push to `main` (and on demand, from the
+Actions tab): it runs the unit, `ng add` and end-to-end tests, then builds the demo and publishes it to
+GitHub Pages. A failing test stops the deployment; the test report is kept as a run artifact.
+
+One-time setup, in the repository settings on GitHub: **Settings › Pages › Build and deployment ›
+Source: GitHub Actions**. GitHub Pages requires a public repository on the free plan.
+
+The demo is built with `--base-href /<repository name>/`, the path of project pages. Every URL in the
+demo is relative (sample PDFs, pdf.js worker and data files), so it works under any path.
+

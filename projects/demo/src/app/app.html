@@ -1,6 +1,19 @@
 <header class="header">
-  <h1 class="title">pdf-viewer-ng</h1>
-  <div class="controls">
+  <div class="intro">
+    <div class="brand">
+      <h1 class="title">pdf-viewer-ng</h1>
+      <p class="tagline">
+        Accessible, signal-based PDF viewer for Angular. Install:
+        <code class="install">ng add &#64;minawk/pdf-viewer-ng</code>
+      </p>
+    </div>
+    <nav class="links" aria-label="Project">
+      <a href="https://github.com/minawk/pdf-viewer-ng">GitHub</a>
+      <a href="https://github.com/minawk/pdf-viewer-ng/tree/main/projects/pdf-viewer-ng#readme">Documentation</a>
+      <a href="https://www.npmjs.com/package/@minawk/pdf-viewer-ng">npm</a>
+    </nav>
+  </div>
+  <div class="controls" role="group" aria-label="Demo settings">
     <div class="field">
       <label for="document-select">Document</label>
       <select id="document-select" [value]="src()" (change)="onDocumentChange($event)">

@@ -10,6 +10,8 @@ A lightweight, accessible PDF viewer for Angular 22, built entirely on signals.
 - **Accessible**: WCAG 2.2 AA (checked with axe), full keyboard support, screen reader announcements.
 - **Fast and light**: pdf.js is loaded only when a document is opened; only the pages near the visible area are rendered.
 
+**[Live demo](https://minawk.github.io/pdf-viewer-ng/)** · [Source](https://github.com/minawk/pdf-viewer-ng) · [Changelog](https://github.com/minawk/pdf-viewer-ng/blob/main/projects/pdf-viewer-ng/CHANGELOG.md)
+
 ## Installation
 
 ```bash

@@ -6,7 +6,10 @@ export default defineConfig({
   testDir: './e2e',
   outputDir: './e2e/results',
   fullyParallel: true,
-  reporter: 'list',
+  // On CI: no `test.only` left behind, one retry for infrastructure hiccups, annotations in the run summary.
+  forbidOnly: !!process.env['CI'],
+  retries: process.env['CI'] ? 1 : 0,
+  reporter: process.env['CI'] ? [['github'], ['list']] : 'list',
   use: {
     baseURL: `http://localhost:${port}`,
     launchOptions: {

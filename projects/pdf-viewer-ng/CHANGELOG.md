@@ -1,11 +1,42 @@
 # Changelog
 
-## 0.1.0
+All notable changes to `@minawk/pdf-viewer-ng`. Versions follow [semantic versioning](https://semver.org).
+
+## 0.2.1 (2026-11-18)
+
+No change to the library code: documentation and project only.
+
+### Documentation
+
+- Live demo, published on GitHub Pages: https://minawk.github.io/pdf-viewer-ng/. The README links to it,
+  with the source and this changelog.
+
+### Project
+
+- The demo is tested (unit, `ng add`, end-to-end and accessibility tests) and deployed by a GitHub
+  Actions workflow on every push to `main`.
+- The demo page introduces the library: install command, links to the source, documentation and npm.
+
+## 0.2.0 (2026-11-18)
+
+### Added
+
+- `ng add @minawk/pdf-viewer-ng`: one-command setup. Installs pdf.js, copies its worker and data files
+  into the build, registers `providePdfViewer()` and adds the built-in themes. Options: `--project`,
+  `--pdfjs-files=false` (worker only), `--themes=false`. Safe to run again.
+- `workerSrc: 'cdn'` and `assetsUrl: 'cdn'`: load the pdf.js files from the jsDelivr CDN, at the
+  installed pdf.js version, without copying them. Meant for prototypes: the CDN is a third-party
+  server, unavailable offline and blocked by a strict Content Security Policy.
+
+### Documentation
+
+- The README installation starts with `ng add`, explains why pdf.js needs its worker file, and keeps
+  the manual setup steps.
+
+## 0.1.0 (2026-11-18)
 
 First release.
 
-- `ng add @minawk/pdf-viewer-ng`: one-command setup (pdf.js, build assets, provider, themes).
-- `workerSrc: 'cdn'` and `assetsUrl: 'cdn'`: load the pdf.js files from jsDelivr, without copying them.
 - PDF rendering with pdf.js 6, loaded lazily; only pages near the visible area are rendered.
 - Continuous and single page modes, pagination, `[(page)]`.
 - Zoom: presets, fit to width, fit to page, Ctrl + wheel, pinch, keyboard shortcuts, `[(zoom)]`.
@@ -14,5 +45,6 @@ First release.
 - Open (file picker, drag and drop), download, print.
 - Highlight and free text annotations, saved into the downloaded PDF and printed, `[(annotations)]`.
 - Themes: light, dark, high contrast, material, auto, and custom themes from CSS variables or a Sass mixin.
+- Narrow viewers move secondary tools into a "More tools" menu.
 - Accessibility: WAI-ARIA toolbar and menu patterns, screen reader announcements, full keyboard support, WCAG 2.2 AA (axe-checked).
 - Every string can be translated with `providePdfViewerMessages()`.
