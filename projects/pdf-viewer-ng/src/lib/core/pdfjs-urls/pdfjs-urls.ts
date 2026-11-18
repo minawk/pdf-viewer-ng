@@ -19,7 +19,11 @@ export function resolveWorkerSrc(workerSrc: string, version: string, baseUri: st
  * `wasm/` and `iccs/` folders, or `null` when they are not used. Absolute, because pdf.js fetches
  * them from its worker, whose base URL is the worker script.
  */
-export function resolveAssetsRoot(assetsUrl: string | null, version: string, baseUri: string): string | null {
+export function resolveAssetsRoot(
+  assetsUrl: string | null,
+  version: string,
+  baseUri: string,
+): string | null {
   if (!assetsUrl) {
     return null;
   }

@@ -38,7 +38,11 @@ import { PdfViewer } from '@minawk/pdf-viewer-ng';
 @Component({
   imports: [PdfViewer],
   template: `<pdfv-viewer src="assets/report.pdf" [(page)]="page" theme="auto" />`,
-  styles: `pdfv-viewer { block-size: 80dvh; }`,
+  styles: `
+    pdfv-viewer {
+      block-size: 80dvh;
+    }
+  `,
 })
 export class Report {
   protected readonly page = signal(1);
@@ -93,30 +97,30 @@ What `ng add` does, if you prefer to do it yourself:
 
 ### Inputs
 
-| Input | Type | Default | Description |
-| --- | --- | --- | --- |
-| `src` | `string \| URL \| ArrayBuffer \| Uint8Array \| Blob \| File` | | The document. Binary data is copied, never detached. |
-| `fileName` | `string` | name of the opened file or last URL segment | Name of the downloaded file. |
-| `theme` | `'light' \| 'dark' \| 'high-contrast' \| 'material' \| 'auto' \| string` | `'light'` | Built-in or custom theme. |
-| `tools` | `PdfViewerTool[]` | every tool | Toolbar items, in order: `'pager'`, `'zoom'`, `'interaction'`, `'annotate'`, `'search'`, `'open'`, `'download'`, `'print'`, `'spacer'`. `[]` hides the toolbar. Dropping files needs `'open'`. |
-| `pageMode` | `'continuous' \| 'single'` | `'continuous'` | All pages in one scrolling view, or one page per view. |
+| Input      | Type                                                                     | Default                                     | Description                                                                                                                                                                                    |
+| ---------- | ------------------------------------------------------------------------ | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src`      | `string \| URL \| ArrayBuffer \| Uint8Array \| Blob \| File`             |                                             | The document. Binary data is copied, never detached.                                                                                                                                           |
+| `fileName` | `string`                                                                 | name of the opened file or last URL segment | Name of the downloaded file.                                                                                                                                                                   |
+| `theme`    | `'light' \| 'dark' \| 'high-contrast' \| 'material' \| 'auto' \| string` | `'light'`                                   | Built-in or custom theme.                                                                                                                                                                      |
+| `tools`    | `PdfViewerTool[]`                                                        | every tool                                  | Toolbar items, in order: `'pager'`, `'zoom'`, `'interaction'`, `'annotate'`, `'search'`, `'open'`, `'download'`, `'print'`, `'spacer'`. `[]` hides the toolbar. Dropping files needs `'open'`. |
+| `pageMode` | `'continuous' \| 'single'`                                               | `'continuous'`                              | All pages in one scrolling view, or one page per view.                                                                                                                                         |
 
 ### Two-way bindings
 
-| Model | Type | Description |
-| --- | --- | --- |
-| `[(page)]` | `number` | Current page, 1-based. Follows scrolling and navigation. Set it with `src` to open a document at a given page. |
-| `[(zoom)]` | `'fit-width' \| 'fit-page' \| number` | Zoom; numbers are factors of the actual size (`1` = 100%, from `0.1` to `4`). |
-| `[(annotations)]` | `PdfAnnotation[]` | Highlights and text notes. A replacing document starts without annotations unless you provide new ones. |
+| Model             | Type                                  | Description                                                                                                    |
+| ----------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `[(page)]`        | `number`                              | Current page, 1-based. Follows scrolling and navigation. Set it with `src` to open a document at a given page. |
+| `[(zoom)]`        | `'fit-width' \| 'fit-page' \| number` | Zoom; numbers are factors of the actual size (`1` = 100%, from `0.1` to `4`).                                  |
+| `[(annotations)]` | `PdfAnnotation[]`                     | Highlights and text notes. A replacing document starts without annotations unless you provide new ones.        |
 
 ### Outputs
 
-| Output | Payload | When |
-| --- | --- | --- |
-| `(loaded)` | `{ pageCount, document }` | A document was opened. `document` is the pdf.js `PDFDocumentProxy` (do not destroy it). |
-| `(loadError)` | `{ kind: 'invalid' \| 'missing' \| 'password' \| 'unknown', error }` | A document could not be opened. |
-| `(fileOpened)` | `File` | The user opened a local file. |
-| `(downloaded)` | `{ fileName, size }` | The document was downloaded. |
+| Output         | Payload                                                              | When                                                                                    |
+| -------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `(loaded)`     | `{ pageCount, document }`                                            | A document was opened. `document` is the pdf.js `PDFDocumentProxy` (do not destroy it). |
+| `(loadError)`  | `{ kind: 'invalid' \| 'missing' \| 'password' \| 'unknown', error }` | A document could not be opened.                                                         |
+| `(fileOpened)` | `File`                                                               | The user opened a local file.                                                           |
+| `(downloaded)` | `{ fileName, size }`                                                 | The document was downloaded.                                                            |
 
 ### Methods
 
@@ -126,13 +130,13 @@ For custom toolbars: `openFile()`, `download()`, `print()`.
 
 `providePdfViewer(config)`, every option is optional:
 
-| Option | Default | Description |
-| --- | --- | --- |
-| `workerSrc` | `'assets/pdfjs/pdf.worker.min.mjs'` | URL of the pdf.js worker, or `'cdn'`. |
-| `assetsUrl` | `null` (`ng add` sets `'assets/pdfjs/'`) | Base URL of the optional pdf.js folders, or `'cdn'`. |
-| `theme`, `tools`, `pageMode`, `zoom` | `'light'`, every tool, `'continuous'`, `'fit-width'` | Defaults of the inputs. |
-| `maxPixelRatio` | `2` | Canvas resolution cap on high-density screens (memory). |
-| `printResolution` | `150` | Print resolution, in dots per inch. |
+| Option                               | Default                                              | Description                                             |
+| ------------------------------------ | ---------------------------------------------------- | ------------------------------------------------------- |
+| `workerSrc`                          | `'assets/pdfjs/pdf.worker.min.mjs'`                  | URL of the pdf.js worker, or `'cdn'`.                   |
+| `assetsUrl`                          | `null` (`ng add` sets `'assets/pdfjs/'`)             | Base URL of the optional pdf.js folders, or `'cdn'`.    |
+| `theme`, `tools`, `pageMode`, `zoom` | `'light'`, every tool, `'continuous'`, `'fit-width'` | Defaults of the inputs.                                 |
+| `maxPixelRatio`                      | `2`                                                  | Canvas resolution cap on high-density screens (memory). |
+| `printResolution`                    | `150`                                                | Print resolution, in dots per inch.                     |
 
 ## Annotations
 
@@ -170,11 +174,15 @@ Or define a named theme from a built-in base, and select it with `theme="ocean"`
 ```scss
 @use '@minawk/pdf-viewer-ng/styles' as pdfv;
 
-@include pdfv.theme('ocean', (
-  'color-primary': #006782,
-  'color-toolbar': #e3f2f7,
-  'color-canvas': #cfe6ee,
-), $base: 'light');
+@include pdfv.theme(
+  'ocean',
+  (
+    'color-primary': #006782,
+    'color-toolbar': #e3f2f7,
+    'color-canvas': #cfe6ee,
+  ),
+  $base: 'light'
+);
 ```
 
 Tokens, without the `--pdfv-` prefix: `font-family`, `font-size`, `line-height`, `radius`, `radius-sm`,
@@ -212,19 +220,19 @@ readers; navigation, zoom, search results and edits are announced; every feature
 keyboard; the high contrast theme and Windows high contrast mode are supported; motion is reduced
 when the user asks for it.
 
-| Where | Keys | Action |
-| --- | --- | --- |
-| Toolbar | Tab, then ← → Home End | Move between tools |
-| "More tools" | ↓ ↑ to open, ↓ ↑ Home End, Escape | Menu |
-| Anywhere in the viewer | Ctrl/⌘ + F | Search |
-| | F3 or Ctrl/⌘ + G (Shift: previous) | Next search result |
-| | Ctrl/⌘ + `+` `-` `0` | Zoom in, out, reset |
-| Search field | Enter, Shift + Enter, Escape | Next, previous result, close |
-| Document | Home, End | First, last page |
-| Document, single page mode | ← →, Page Up/Down | Previous, next page |
-| Annotation | Delete, Escape | Delete, deselect |
-| Text note | Enter, arrows (Shift: ×10) | Edit, move |
-| Text note being written | Escape or Ctrl/⌘ + Enter | Done |
+| Where                      | Keys                               | Action                       |
+| -------------------------- | ---------------------------------- | ---------------------------- |
+| Toolbar                    | Tab, then ← → Home End             | Move between tools           |
+| "More tools"               | ↓ ↑ to open, ↓ ↑ Home End, Escape  | Menu                         |
+| Anywhere in the viewer     | Ctrl/⌘ + F                         | Search                       |
+|                            | F3 or Ctrl/⌘ + G (Shift: previous) | Next search result           |
+|                            | Ctrl/⌘ + `+` `-` `0`               | Zoom in, out, reset          |
+| Search field               | Enter, Shift + Enter, Escape       | Next, previous result, close |
+| Document                   | Home, End                          | First, last page             |
+| Document, single page mode | ← →, Page Up/Down                  | Previous, next page          |
+| Annotation                 | Delete, Escape                     | Delete, deselect             |
+| Text note                  | Enter, arrows (Shift: ×10)         | Edit, move                   |
+| Text note being written    | Escape or Ctrl/⌘ + Enter           | Done                         |
 
 In continuous mode, the text of pages far from the visible area is not in the page yet (as in every
 pdf.js based viewer): use search, or navigate, to reach it.

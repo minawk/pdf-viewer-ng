@@ -58,7 +58,9 @@ export class SearchStore {
     if (!current) {
       return 0;
     }
-    return this.results().findIndex((r) => r.page === current.page && r.index === current.index) + 1;
+    return (
+      this.results().findIndex((r) => r.page === current.page && r.index === current.index) + 1
+    );
   });
 
   constructor() {
@@ -72,7 +74,10 @@ export class SearchStore {
         return;
       }
       const controller = new AbortController();
-      const timer = setTimeout(() => void this.run(pdf.numPages, pattern, controller.signal), SEARCH_DEBOUNCE_MS);
+      const timer = setTimeout(
+        () => void this.run(pdf.numPages, pattern, controller.signal),
+        SEARCH_DEBOUNCE_MS,
+      );
       onCleanup(() => {
         clearTimeout(timer);
         controller.abort();

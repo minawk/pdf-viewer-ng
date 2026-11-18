@@ -29,7 +29,11 @@ export class PdfEngine {
       (pdfjs) => {
         const workerOptions = pdfjs.GlobalWorkerOptions;
         if (!workerOptions.workerSrc && !workerOptions.workerPort) {
-          workerOptions.workerSrc = resolveWorkerSrc(this.config.workerSrc, pdfjs.version, this.document.baseURI);
+          workerOptions.workerSrc = resolveWorkerSrc(
+            this.config.workerSrc,
+            pdfjs.version,
+            this.document.baseURI,
+          );
         }
         return pdfjs;
       },
@@ -41,7 +45,10 @@ export class PdfEngine {
     return this.module;
   }
 
-  async open(source: PdfSource, { signal, onProgress }: OpenDocumentOptions): Promise<PDFDocumentProxy> {
+  async open(
+    source: PdfSource,
+    { signal, onProgress }: OpenDocumentOptions,
+  ): Promise<PDFDocumentProxy> {
     const [pdfjs, params] = await Promise.all([this.pdfjs(), toDocumentParams(source)]);
     signal.throwIfAborted();
 

@@ -30,7 +30,10 @@ export function resolveScale(zoom: PdfZoom, page: Size, container: Size, gap = P
     return PDF_TO_CSS_UNITS;
   }
   const widthScale = (container.width - 2 * gap) / page.width;
-  const scale = zoom === 'fit-width' ? widthScale : Math.min(widthScale, (container.height - 2 * gap) / page.height);
+  const scale =
+    zoom === 'fit-width'
+      ? widthScale
+      : Math.min(widthScale, (container.height - 2 * gap) / page.height);
   return clampZoom(scale / PDF_TO_CSS_UNITS) * PDF_TO_CSS_UNITS;
 }
 
@@ -68,7 +71,11 @@ export function zoomPercent(zoom: number): number {
  * Canvas pixel ratio: the device pixel ratio capped by the configuration and by the maximum
  * canvas area browsers support (about 16.7 megapixels on iOS Safari).
  */
-export function canvasPixelRatio(cssSize: Size, devicePixelRatio: number, maxPixelRatio: number): number {
+export function canvasPixelRatio(
+  cssSize: Size,
+  devicePixelRatio: number,
+  maxPixelRatio: number,
+): number {
   const MAX_CANVAS_AREA = 16_777_216;
   const ratio = Math.min(devicePixelRatio || 1, maxPixelRatio);
   const area = cssSize.width * cssSize.height;

@@ -62,7 +62,9 @@ export class Page {
 
   protected readonly near = computed(() => this.documentView.nearPages().has(this.pageNumber()));
   protected readonly renderFailed = signal(false);
-  protected readonly label = computed(() => this.messages.pageLabel(this.pageNumber(), this.store.pageCount()));
+  protected readonly label = computed(() =>
+    this.messages.pageLabel(this.pageNumber(), this.store.pageCount()),
+  );
   protected readonly errorText = this.messages.pageRenderError;
 
   private readonly pageResource = resource({
@@ -92,7 +94,13 @@ export class Page {
    * the first page size until then.
    */
   private readonly size = linkedSignal<
-    { pdf: unknown; pageNumber: number; page: PDFPageProxy | null; known: Size | undefined; reference: Size },
+    {
+      pdf: unknown;
+      pageNumber: number;
+      page: PDFPageProxy | null;
+      known: Size | undefined;
+      reference: Size;
+    },
     PageSize
   >({
     source: () => ({
@@ -155,7 +163,10 @@ export class Page {
           task.promise.then(
             () => undefined,
             (error: unknown) => {
-              if (!cancelled && (error as { name?: string })?.name !== 'RenderingCancelledException') {
+              if (
+                !cancelled &&
+                (error as { name?: string })?.name !== 'RenderingCancelledException'
+              ) {
                 this.renderFailed.set(true);
               }
             },
@@ -178,7 +189,11 @@ export class Page {
    */
   private render(page: PDFPageProxy, scale: number): RenderTask {
     const viewport = page.getViewport({ scale });
-    const ratio = canvasPixelRatio(viewport, globalThis.devicePixelRatio ?? 1, this.config.maxPixelRatio);
+    const ratio = canvasPixelRatio(
+      viewport,
+      globalThis.devicePixelRatio ?? 1,
+      this.config.maxPixelRatio,
+    );
     const canvas = this.host.ownerDocument.createElement('canvas');
     canvas.width = Math.floor(viewport.width * ratio);
     canvas.height = Math.floor(viewport.height * ratio);

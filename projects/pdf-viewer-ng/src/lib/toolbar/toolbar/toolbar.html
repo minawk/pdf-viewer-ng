@@ -56,7 +56,13 @@
       </button>
     }
     @case ('open') {
-      <button type="button" class="button" pdfvToolbarItem [attr.aria-label]="messages.open" (click)="files.pick()">
+      <button
+        type="button"
+        class="button"
+        pdfvToolbarItem
+        [attr.aria-label]="messages.open"
+        (click)="files.pick()"
+      >
         <pdfv-icon name="open" />
       </button>
     }

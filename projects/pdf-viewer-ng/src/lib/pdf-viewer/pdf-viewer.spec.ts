@@ -32,7 +32,9 @@ describe('PdfViewer', () => {
 
   it('exposes labelled landmarks and a status live region', async () => {
     const { host } = await create();
-    expect(host.querySelector('[role="toolbar"]')?.getAttribute('aria-label')).toBe('PDF viewer toolbar');
+    expect(host.querySelector('[role="toolbar"]')?.getAttribute('aria-label')).toBe(
+      'PDF viewer toolbar',
+    );
     const region = host.querySelector('[role="region"]');
     expect(region?.getAttribute('aria-label')).toBe('PDF document');
     expect(region?.getAttribute('tabindex')).toBe('0');
@@ -70,7 +72,9 @@ describe('PdfViewer', () => {
       providers: [providePdfViewerMessages({ print: 'Imprimer', toolbarLabel: 'Barre d’outils' })],
     });
     const { host } = await create();
-    expect(host.querySelector('[role="toolbar"]')?.getAttribute('aria-label')).toBe('Barre d’outils');
+    expect(host.querySelector('[role="toolbar"]')?.getAttribute('aria-label')).toBe(
+      'Barre d’outils',
+    );
     expect(host.querySelector('button[aria-label="Imprimer"]')).not.toBeNull();
   });
 });

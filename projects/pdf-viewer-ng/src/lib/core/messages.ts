@@ -97,7 +97,8 @@ export const DEFAULT_PDF_VIEWER_MESSAGES: PdfViewerMessages = {
   documentLabel: 'PDF document',
   noDocument: 'No document loaded.',
   loading: 'Loading document…',
-  documentLoaded: (pageCount) => `Document loaded, ${pageCount} ${pageCount === 1 ? 'page' : 'pages'}.`,
+  documentLoaded: (pageCount) =>
+    `Document loaded, ${pageCount} ${pageCount === 1 ? 'page' : 'pages'}.`,
   loadErrors: {
     invalid: 'This file is not a valid PDF document.',
     missing: 'The document could not be found or downloaded.',
@@ -190,7 +191,9 @@ export const PDF_VIEWER_MESSAGES = new InjectionToken<PdfViewerMessages>('PDF_VI
 });
 
 /** Overrides some or all viewer strings (translations, custom wording). */
-export function providePdfViewerMessages(messages: Partial<PdfViewerMessages>): EnvironmentProviders {
+export function providePdfViewerMessages(
+  messages: Partial<PdfViewerMessages>,
+): EnvironmentProviders {
   return makeEnvironmentProviders([
     { provide: PDF_VIEWER_MESSAGES, useValue: { ...DEFAULT_PDF_VIEWER_MESSAGES, ...messages } },
   ]);

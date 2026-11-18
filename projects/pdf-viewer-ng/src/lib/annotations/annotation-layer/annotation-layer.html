@@ -49,7 +49,9 @@
           (blur)="commit(item, $event)"
           (keydown)="onEditKeydown(annotation, $event)"
           (pointerdown)="$event.stopPropagation()"
-        >{{ annotation.text }}</div>
+        >
+          {{ annotation.text }}
+        </div>
       } @else {
         <div
           class="note"
@@ -69,7 +71,9 @@
           (keydown)="onKeydown(item, $event)"
           (dblclick)="edit(annotation.id)"
           (pointerdown)="onNotePointerDown(item, $event)"
-        >{{ annotation.text }}</div>
+        >
+          {{ annotation.text }}
+        </div>
       }
     }
   }
@@ -99,17 +103,41 @@
         }
       </div>
       @if (annotation.type === 'text') {
-        <button type="button" class="button" pdfvToolbarItem [attr.aria-label]="messages.editTextNote" (click)="edit(annotation.id)">
+        <button
+          type="button"
+          class="button"
+          pdfvToolbarItem
+          [attr.aria-label]="messages.editTextNote"
+          (click)="edit(annotation.id)"
+        >
           <pdfv-icon name="edit" />
         </button>
-        <button type="button" class="button" pdfvToolbarItem [attr.aria-label]="messages.decreaseFontSize" (click)="changeFontSize(annotation, -2)">
+        <button
+          type="button"
+          class="button"
+          pdfvToolbarItem
+          [attr.aria-label]="messages.decreaseFontSize"
+          (click)="changeFontSize(annotation, -2)"
+        >
           <pdfv-icon name="remove" />
         </button>
-        <button type="button" class="button" pdfvToolbarItem [attr.aria-label]="messages.increaseFontSize" (click)="changeFontSize(annotation, 2)">
+        <button
+          type="button"
+          class="button"
+          pdfvToolbarItem
+          [attr.aria-label]="messages.increaseFontSize"
+          (click)="changeFontSize(annotation, 2)"
+        >
           <pdfv-icon name="add" />
         </button>
       }
-      <button type="button" class="button" pdfvToolbarItem [attr.aria-label]="messages.deleteAnnotation" (click)="delete(annotation.id)">
+      <button
+        type="button"
+        class="button"
+        pdfvToolbarItem
+        [attr.aria-label]="messages.deleteAnnotation"
+        (click)="delete(annotation.id)"
+      >
         <pdfv-icon name="delete" />
       </button>
     </div>

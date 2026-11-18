@@ -36,7 +36,9 @@ function connect(
 }
 
 describe('ViewerStore', () => {
-  let open: ReturnType<typeof vi.fn<(source: PdfSource, options: OpenDocumentOptions) => Promise<unknown>>>;
+  let open: ReturnType<
+    typeof vi.fn<(source: PdfSource, options: OpenDocumentOptions) => Promise<unknown>>
+  >;
 
   function setup(platform = 'browser') {
     open = vi.fn();
@@ -67,7 +69,10 @@ describe('ViewerStore', () => {
     expect(store.status()).toBe('loading');
 
     await settle();
-    expect(open).toHaveBeenCalledWith('a.pdf', expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(open).toHaveBeenCalledWith(
+      'a.pdf',
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
     expect(store.status()).toBe('ready');
     expect(store.pageCount()).toBe(3);
     expect(store.referenceSize()).toEqual({ width: 600, height: 800 });
@@ -188,10 +193,18 @@ describe('ViewerStore', () => {
     it('takes the page mode from the input, else from the configuration', () => {
       const { store } = setup();
       let mode: PdfPageMode | undefined;
-      connect(store, () => null, () => mode);
+      connect(
+        store,
+        () => null,
+        () => mode,
+      );
       expect(store.pageMode()).toBe('continuous');
       mode = 'single';
-      connect(store, () => null, () => mode);
+      connect(
+        store,
+        () => null,
+        () => mode,
+      );
       expect(store.pageMode()).toBe('single');
     });
   });
@@ -206,11 +219,21 @@ describe('ViewerStore', () => {
     it('follows the zoom input, then the configuration default', async () => {
       const { store, settle } = await ready();
       let zoom: PdfZoom | undefined;
-      connect(store, () => 'a.pdf', () => undefined, () => zoom);
+      connect(
+        store,
+        () => 'a.pdf',
+        () => undefined,
+        () => zoom,
+      );
       await settle();
       expect(store.zoom()).toBe('fit-width');
       zoom = 1.5;
-      connect(store, () => 'a.pdf', () => undefined, () => zoom);
+      connect(
+        store,
+        () => 'a.pdf',
+        () => undefined,
+        () => zoom,
+      );
       expect(store.zoom()).toBe(1.5);
       expect(store.effectiveZoom()).toBeCloseTo(1.5);
     });
@@ -261,14 +284,22 @@ describe('ViewerStore', () => {
     it('fits the first page in continuous mode, the displayed page in single mode', async () => {
       const { store, settle } = await ready(3, [2]);
       let mode: PdfPageMode = 'continuous';
-      connect(store, () => 'a.pdf', () => mode);
+      connect(
+        store,
+        () => 'a.pdf',
+        () => mode,
+      );
       await settle();
       store.containerSize.set({ width: 832, height: 2000 });
       store.goToPage(2);
       expect(store.scale()).toBeCloseTo(800 / 600); // first page: 600 pt wide
 
       mode = 'single';
-      connect(store, () => 'a.pdf', () => mode);
+      connect(
+        store,
+        () => 'a.pdf',
+        () => mode,
+      );
       expect(store.scale()).toBeCloseTo(1); // landscape page 2: 800 pt wide
     });
   });

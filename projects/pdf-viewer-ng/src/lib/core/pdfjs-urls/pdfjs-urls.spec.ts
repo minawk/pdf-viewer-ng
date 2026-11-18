@@ -22,10 +22,14 @@ describe('resolveAssetsRoot', () => {
   });
 
   it('resolves a local folder, with a trailing slash', () => {
-    expect(resolveAssetsRoot('assets/pdfjs', '6.5.438', base)).toBe('https://app.example.com/viewer/assets/pdfjs/');
+    expect(resolveAssetsRoot('assets/pdfjs', '6.5.438', base)).toBe(
+      'https://app.example.com/viewer/assets/pdfjs/',
+    );
   });
 
   it("uses the CDN package root with 'cdn'", () => {
-    expect(resolveAssetsRoot('cdn', '6.5.438', base)).toBe('https://cdn.jsdelivr.net/npm/pdfjs-dist@6.5.438/');
+    expect(resolveAssetsRoot('cdn', '6.5.438', base)).toBe(
+      'https://cdn.jsdelivr.net/npm/pdfjs-dist@6.5.438/',
+    );
   });
 });

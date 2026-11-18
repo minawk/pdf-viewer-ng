@@ -3,7 +3,8 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, Page, test } from '@playwright/test';
 
 const firstPage = (page: Page) => page.locator('pdfv-page[data-page-number="1"]');
-const run = (page: Page, text: string) => firstPage(page).locator('pdfv-text-layer span').filter({ hasText: text });
+const run = (page: Page, text: string) =>
+  firstPage(page).locator('pdfv-text-layer span').filter({ hasText: text });
 const status = (page: Page) => page.locator('pdfv-viewer [role="status"]');
 const highlights = (page: Page) => page.locator('pdfv-annotation-layer .highlight');
 const notes = (page: Page) => page.locator('pdfv-annotation-layer .note:not(.editing)');
@@ -41,7 +42,9 @@ test.describe('highlights', () => {
 
     await expect(highlights(page)).toHaveCount(1);
     await expect(highlights(page).locator('.line')).toHaveCount(2); // one per line
-    await expect(highlights(page)).toHaveAccessibleName(/^Highlight: A PDF viewer spends most of its time/);
+    await expect(highlights(page)).toHaveAccessibleName(
+      /^Highlight: A PDF viewer spends most of its time/,
+    );
     await expect(status(page)).toHaveText('Highlight added.');
     await expect(page.locator('output')).toContainText('annotations 1');
     expect(await page.evaluate(() => String(getSelection()))).toBe('');
@@ -76,7 +79,9 @@ test.describe('highlights', () => {
     };
     const before = await offset();
     await page.getByRole('combobox', { name: 'Zoom level' }).selectOption('2');
-    await expect.poll(async () => (await firstPage(page).boundingBox())!.width).toBeCloseTo(1632, 0);
+    await expect
+      .poll(async () => (await firstPage(page).boundingBox())!.width)
+      .toBeCloseTo(1632, 0);
     await expect.poll(async () => (await offset()).x).toBeCloseTo(before.x, 2);
     expect((await offset()).y).toBeCloseTo(before.y, 2);
   });
@@ -105,8 +110,14 @@ test.describe('highlights', () => {
     await highlights(page).focus();
     const toolbar = page.getByRole('toolbar', { name: 'Annotation options' });
     await toolbar.getByRole('button', { name: 'Green' }).click();
-    await expect(toolbar.getByRole('button', { name: 'Green' })).toHaveAttribute('aria-pressed', 'true');
-    await expect(highlights(page).locator('.line').first()).toHaveCSS('background-color', 'rgb(83, 255, 188)');
+    await expect(toolbar.getByRole('button', { name: 'Green' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await expect(highlights(page).locator('.line').first()).toHaveCSS(
+      'background-color',
+      'rgb(83, 255, 188)',
+    );
   });
 });
 
@@ -155,7 +166,10 @@ test.describe('text notes', () => {
 
     const size = () => notes(page).evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
     const fontBefore = await size();
-    await page.getByRole('toolbar', { name: 'Annotation options' }).getByRole('button', { name: 'Larger text' }).click();
+    await page
+      .getByRole('toolbar', { name: 'Annotation options' })
+      .getByRole('button', { name: 'Larger text' })
+      .click();
     await expect.poll(size).toBeGreaterThan(fontBefore);
   });
 
@@ -244,7 +258,9 @@ test('annotations are printed', async ({ page }) => {
   const printYellow = async () => {
     await page.evaluate(() => delete (window as unknown as { yellowPixels?: number }).yellowPixels);
     await page.getByRole('button', { name: 'Print' }).click();
-    await page.waitForFunction(() => (window as unknown as { yellowPixels?: number }).yellowPixels !== undefined);
+    await page.waitForFunction(
+      () => (window as unknown as { yellowPixels?: number }).yellowPixels !== undefined,
+    );
     return page.evaluate(() => (window as unknown as { yellowPixels: number }).yellowPixels);
   };
 

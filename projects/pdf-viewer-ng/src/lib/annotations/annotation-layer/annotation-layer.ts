@@ -15,7 +15,13 @@ import { ViewerStore } from '../../core/viewer-store/viewer-store';
 import { Icon } from '../../icon/icon';
 import { RovingToolbar, ToolbarItem } from '../../toolbar/roving-toolbar/roving-toolbar';
 import { AnnotationLayerHandle, AnnotationStore } from '../annotation-store/annotation-store';
-import { Box, boundingRect, boxToPdfRect, containsPoint, pdfRectToPercentBox } from '../geometry/geometry';
+import {
+  Box,
+  boundingRect,
+  boxToPdfRect,
+  containsPoint,
+  pdfRectToPercentBox,
+} from '../geometry/geometry';
 import {
   AnnotationColor,
   createAnnotationId,
@@ -113,7 +119,9 @@ export class AnnotationLayer implements AnnotationLayerHandle {
       pageElement.addEventListener('pointerdown', (event) => this.onPagePointerDown(event), {
         signal: controller.signal,
       });
-      pageElement.addEventListener('click', (event) => this.onPageClick(event), { signal: controller.signal });
+      pageElement.addEventListener('click', (event) => this.onPageClick(event), {
+        signal: controller.signal,
+      });
       destroyRef.onDestroy(() => controller.abort());
     });
 
@@ -315,7 +323,10 @@ export class AnnotationLayer implements AnnotationLayerHandle {
     event.preventDefault(); // keeps the focus for the new note
     const origin = this.host.getBoundingClientRect();
     const scale = this.scale();
-    this.createTextNote((event.clientX - origin.left) / scale, (event.clientY - origin.top) / scale);
+    this.createTextNote(
+      (event.clientX - origin.left) / scale,
+      (event.clientY - origin.top) / scale,
+    );
   }
 
   /**
@@ -380,7 +391,9 @@ export class AnnotationLayer implements AnnotationLayerHandle {
       (event.clientY - origin.top) / scale,
     );
     const hit = this.items().find(
-      ({ annotation }) => annotation.type === 'highlight' && annotation.rects.some((rect) => containsPoint(rect, x, y)),
+      ({ annotation }) =>
+        annotation.type === 'highlight' &&
+        annotation.rects.some((rect) => containsPoint(rect, x, y)),
     );
     if (hit) {
       this.element(hit.annotation.id)?.focus();
@@ -417,8 +430,14 @@ export class AnnotationLayer implements AnnotationLayerHandle {
     const viewport = this.viewport();
     const width = ((from.right - from.left) / 100) * viewport.width;
     const height = ((from.bottom - from.top) / 100) * viewport.height;
-    const left = Math.min(Math.max(0, (from.left / 100) * viewport.width + dx), viewport.width - width);
-    const top = Math.min(Math.max(0, (from.top / 100) * viewport.height + dy), viewport.height - height);
+    const left = Math.min(
+      Math.max(0, (from.left / 100) * viewport.width + dx),
+      viewport.width - width,
+    );
+    const top = Math.min(
+      Math.max(0, (from.top / 100) * viewport.height + dy),
+      viewport.height - height,
+    );
     this.annotations.update(annotation.id, {
       rect: boxToPdfRect(viewport, { left, top, right: left + width, bottom: top + height }),
     });

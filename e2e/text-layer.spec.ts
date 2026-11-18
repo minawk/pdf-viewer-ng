@@ -1,7 +1,8 @@
 import { expect, Page, test } from '@playwright/test';
 
 const firstPage = (page: Page) => page.locator('pdfv-page[data-page-number="1"]');
-const textRun = (page: Page, text: string) => firstPage(page).locator('pdfv-text-layer span').filter({ hasText: text });
+const textRun = (page: Page, text: string) =>
+  firstPage(page).locator('pdfv-text-layer span').filter({ hasText: text });
 
 async function open(page: Page) {
   await page.goto('/');
@@ -18,7 +19,9 @@ async function dragSelect(page: Page, fromText: string, toText: string) {
   await page.mouse.up();
 }
 
-test('exposes the page text to assistive technology, in the document language', async ({ page }) => {
+test('exposes the page text to assistive technology, in the document language', async ({
+  page,
+}) => {
   await open(page);
   const group = page.getByRole('group', { name: 'Page 1 of 12' });
   await expect(group).toContainText('Chapter 1');
@@ -76,7 +79,9 @@ test('only pages near the visible area have a text layer', async ({ page }) => {
   await page.getByLabel('Document', { exact: true }).selectOption('samples/long.pdf');
   await expect(page.locator('pdfv-page')).toHaveCount(300, { timeout: 15_000 });
   await page.locator('pdfv-document-view').evaluate((el) => (el.scrollTop = el.scrollHeight / 2));
-  await expect(page.locator('pdfv-page[data-page-number="150"] pdfv-text-layer span').first()).toBeAttached();
+  await expect(
+    page.locator('pdfv-page[data-page-number="150"] pdfv-text-layer span').first(),
+  ).toBeAttached();
   expect(await page.locator('pdfv-text-layer').count()).toBeLessThanOrEqual(4);
   await expect(page.locator('pdfv-page[data-page-number="1"] pdfv-text-layer')).toHaveCount(0);
 });

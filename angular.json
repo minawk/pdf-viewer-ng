@@ -103,13 +103,9 @@
                 "output": "assets/pdfjs/iccs"
               }
             ],
-            "styles": [
-              "projects/demo/src/styles.scss"
-            ],
+            "styles": ["projects/demo/src/styles.scss"],
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "projects"
-              ]
+              "includePaths": ["projects"]
             }
           },
           "configurations": {

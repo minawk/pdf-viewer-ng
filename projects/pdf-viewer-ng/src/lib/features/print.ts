@@ -54,7 +54,9 @@ export class PrintService {
       this.store.announce(this.messages.printReady);
       handedOver = true;
       // The print frame frees the images itself once printing is over.
-      await printImages(this.document, pages, () => urls.forEach((url) => URL.revokeObjectURL(url)));
+      await printImages(this.document, pages, () =>
+        urls.forEach((url) => URL.revokeObjectURL(url)),
+      );
     } catch (error) {
       if (controller.signal.aborted) {
         this.store.announce(this.messages.printCancelled);
@@ -75,7 +77,11 @@ export class PrintService {
     this.controller?.abort();
   }
 
-  private async renderPages(pdf: PDFDocumentProxy, signal: AbortSignal, urls: string[]): Promise<PrintPage[]> {
+  private async renderPages(
+    pdf: PDFDocumentProxy,
+    signal: AbortSignal,
+    urls: string[],
+  ): Promise<PrintPage[]> {
     const pdfjs = await this.engine.pdfjs();
     const dpiScale = this.config.printResolution / 72;
     const pages: PrintPage[] = [];
@@ -121,7 +127,10 @@ export class PrintService {
 
 function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   return new Promise((resolve, reject) =>
-    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Canvas export failed'))), 'image/png'),
+    canvas.toBlob(
+      (blob) => (blob ? resolve(blob) : reject(new Error('Canvas export failed'))),
+      'image/png',
+    ),
   );
 }
 
@@ -129,7 +138,11 @@ function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
  * Prints page images from a hidden frame, one per sheet, sized in points. Resolves once the
  * print dialog was requested; the frame is removed (and `onFinished` called) after printing.
  */
-async function printImages(document: Document, pages: readonly PrintPage[], onFinished: () => void): Promise<void> {
+async function printImages(
+  document: Document,
+  pages: readonly PrintPage[],
+  onFinished: () => void,
+): Promise<void> {
   // A named @page per distinct page size, so mixed portrait/landscape documents print correctly.
   const pageNames = new Map<string, string>();
   const css = [
@@ -153,8 +166,11 @@ async function printImages(document: Document, pages: readonly PrintPage[], onFi
   frame.setAttribute('aria-hidden', 'true');
   frame.tabIndex = -1;
   // Not display:none nor visibility:hidden: some browsers then print a blank page.
-  frame.style.cssText = 'position:fixed;inset-inline-end:0;inset-block-end:0;width:0;height:0;border:0;';
-  const loaded = new Promise<void>((resolve) => frame.addEventListener('load', () => resolve(), { once: true }));
+  frame.style.cssText =
+    'position:fixed;inset-inline-end:0;inset-block-end:0;width:0;height:0;border:0;';
+  const loaded = new Promise<void>((resolve) =>
+    frame.addEventListener('load', () => resolve(), { once: true }),
+  );
   frame.srcdoc = `<!doctype html><html><head><title>${escapeHtml(document.title)}</title><style>${css.join('\n')}</style></head><body>${images.join('')}</body></html>`;
   document.body.append(frame);
   let cleaned = false;

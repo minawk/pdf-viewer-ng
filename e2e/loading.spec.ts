@@ -5,7 +5,9 @@ test.describe('document loading and rendering', () => {
     await page.goto('/');
     await expect(page.locator('pdfv-page')).toHaveCount(12, { timeout: 15_000 });
     await expect(page.locator('pdfv-page').first().locator('canvas')).toBeAttached();
-    await expect(page.locator('pdfv-viewer [role="status"]')).toHaveText('Document loaded, 12 pages.');
+    await expect(page.locator('pdfv-viewer [role="status"]')).toHaveText(
+      'Document loaded, 12 pages.',
+    );
     await expect(page.locator('output')).toContainText('loaded: 12 pages');
     await expect(page.getByRole('group', { name: 'Page 1 of 12' })).toBeVisible();
   });
@@ -54,7 +56,10 @@ test.describe('document loading and rendering', () => {
 
   test('loads the pdf.js worker from the configured URL', async ({ page }) => {
     const scripts: string[] = [];
-    page.on('request', (request) => request.resourceType() === 'script' && scripts.push(request.url()));
+    page.on(
+      'request',
+      (request) => request.resourceType() === 'script' && scripts.push(request.url()),
+    );
     await page.goto('/');
     await expect(page.locator('pdfv-page canvas').first()).toBeAttached({ timeout: 15_000 });
     // The worker is fetched separately, from the configured asset URL.

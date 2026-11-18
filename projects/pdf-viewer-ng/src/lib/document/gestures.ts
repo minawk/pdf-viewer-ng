@@ -73,7 +73,10 @@ export function attachGestures(host: HTMLElement, handlers: GestureHandlers): ()
     event.preventDefault(); // no native page zoom
     const current = distance(event.touches);
     const [a, b] = [event.touches[0], event.touches[1]];
-    scheduleZoom(current / pinchDistance, toViewport((a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2));
+    scheduleZoom(
+      current / pinchDistance,
+      toViewport((a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2),
+    );
     pinchDistance = current;
   };
   const onTouchEnd = (event: TouchEvent) => {
@@ -98,7 +101,11 @@ export function attachGestures(host: HTMLElement, handlers: GestureHandlers): ()
     if (drag?.pointerId !== event.pointerId) {
       return;
     }
-    host.scrollBy({ left: drag.x - event.clientX, top: drag.y - event.clientY, behavior: 'instant' });
+    host.scrollBy({
+      left: drag.x - event.clientX,
+      top: drag.y - event.clientY,
+      behavior: 'instant',
+    });
     drag = { ...drag, x: event.clientX, y: event.clientY };
   };
   const onPointerEnd = (event: PointerEvent) => {

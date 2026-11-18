@@ -13,7 +13,12 @@ import type { PDFPageProxy, TextLayer as PdfJsTextLayer } from 'pdfjs-dist';
 import { PdfEngine } from '../../core/pdf-engine';
 import { ViewerStore } from '../../core/viewer-store/viewer-store';
 import { SearchStore } from '../../search/search-store';
-import { buildPageText, matchItemRanges, PageText, TextMatch } from '../../search/text-search/text-search';
+import {
+  buildPageText,
+  matchItemRanges,
+  PageText,
+  TextMatch,
+} from '../../search/text-search/text-search';
 import { DocumentView } from '../document-view/document-view';
 import { TextSelection } from '../text-selection';
 
@@ -77,7 +82,11 @@ export class TextLayer {
       let cancelled = false;
       let layer: PdfJsTextLayer | null = null;
       untracked(() => {
-        void this.build(page, () => cancelled, (built) => (layer = built));
+        void this.build(
+          page,
+          () => cancelled,
+          (built) => (layer = built),
+        );
       });
       onCleanup(() => {
         cancelled = true;
@@ -168,7 +177,11 @@ export class TextLayer {
    * Wraps the matched parts of text runs in highlight elements (as the pdf.js viewer does):
    * they inherit the run's position and scaling, so they stay aligned at every zoom level.
    */
-  private highlight({ layer, text }: RenderedLayer, matches: readonly TextMatch[], selected: number): void {
+  private highlight(
+    { layer, text }: RenderedLayer,
+    matches: readonly TextMatch[],
+    selected: number,
+  ): void {
     const runs = layer.textDivs;
     const strings = layer.textContentItemsStr;
     for (const item of this.highlightedItems) {

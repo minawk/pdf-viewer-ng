@@ -19,7 +19,9 @@ describe('toDocumentParams', () => {
   });
 
   it('reads blobs and files', async () => {
-    const params = (await toDocumentParams(new Blob([new Uint8Array([1, 2, 3])]))) as { data: Uint8Array };
+    const params = (await toDocumentParams(new Blob([new Uint8Array([1, 2, 3])]))) as {
+      data: Uint8Array;
+    };
     expect(Array.from(params.data)).toEqual([1, 2, 3]);
   });
 });

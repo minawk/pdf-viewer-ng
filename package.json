@@ -1,6 +1,6 @@
 {
   "name": "pdf-viewer-ng",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "minawk",
   "license": "MIT",
   "scripts": {
@@ -15,7 +15,6 @@
     "test:schematics": "npm run build:lib && tsc -p projects/pdf-viewer-ng/tsconfig.schematics.spec.json && node --test out-tsc/schematics/ng-add/index.spec.js",
     "build:pages": "ng build demo --base-href /pdf-viewer-ng/"
   },
-  "private": true,
   "packageManager": "npm@11.13.0",
   "dependencies": {
     "@angular/common": "^22.2.0",

@@ -109,7 +109,12 @@ export class PdfViewer {
   private readonly canOpenFiles = computed(() => this.resolvedTools().includes('open'));
 
   constructor() {
-    this.store.connect({ src: this.src, pageMode: this.pageMode, zoom: this.zoom, fileName: this.fileName });
+    this.store.connect({
+      src: this.src,
+      pageMode: this.pageMode,
+      zoom: this.zoom,
+      fileName: this.fileName,
+    });
     this.annotationStore.connect(this.annotations);
     this.syncPage();
     this.syncZoom();
@@ -217,7 +222,10 @@ export class PdfViewer {
     effect(() => {
       const annotations = this.annotationStore.annotations();
       untracked(() => {
-        if (annotations !== this.annotations() && (this.annotations() !== undefined || annotations.length > 0)) {
+        if (
+          annotations !== this.annotations() &&
+          (this.annotations() !== undefined || annotations.length > 0)
+        ) {
           this.annotations.set(annotations);
         }
       });

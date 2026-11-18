@@ -69,6 +69,7 @@ let counter = 0;
 
 /** A new annotation id, unique in the page session. */
 export function createAnnotationId(): string {
-  const random = globalThis.crypto?.randomUUID?.() ?? `${Date.now().toString(36)}-${(counter++).toString(36)}`;
+  const random =
+    globalThis.crypto?.randomUUID?.() ?? `${Date.now().toString(36)}-${(counter++).toString(36)}`;
   return `pdfv-${random}`;
 }

@@ -4,7 +4,10 @@ import path from 'node:path';
 import { SchematicTestRunner, UnitTestTree } from '@angular-devkit/schematics/testing';
 
 // Runs the compiled schematic from the built package, as `ng add` does.
-const collection = path.resolve(__dirname, '../../../dist/minawk/pdf-viewer-ng/schematics/collection.json');
+const collection = path.resolve(
+  __dirname,
+  '../../../dist/minawk/pdf-viewer-ng/schematics/collection.json',
+);
 const runner = new SchematicTestRunner('@minawk/pdf-viewer-ng', collection);
 
 async function createApp(): Promise<UnitTestTree> {
@@ -13,7 +16,12 @@ async function createApp(): Promise<UnitTestTree> {
     newProjectRoot: 'projects',
     version: '22.0.0',
   });
-  return runner.runExternalSchematic('@schematics/angular', 'application', { name: 'app', standalone: true }, workspace);
+  return runner.runExternalSchematic(
+    '@schematics/angular',
+    'application',
+    { name: 'app', standalone: true },
+    workspace,
+  );
 }
 
 function buildOptions(tree: UnitTestTree) {
@@ -38,9 +46,17 @@ describe('ng-add', () => {
     const tree = await runner.runSchematic('ng-add', {}, app);
     const assets = buildOptions(tree).assets;
     assert.deepEqual(assets.slice(-5), [
-      { glob: 'pdf.worker.min.mjs', input: 'node_modules/pdfjs-dist/build', output: 'assets/pdfjs' },
+      {
+        glob: 'pdf.worker.min.mjs',
+        input: 'node_modules/pdfjs-dist/build',
+        output: 'assets/pdfjs',
+      },
       { glob: '**/*', input: 'node_modules/pdfjs-dist/cmaps', output: 'assets/pdfjs/cmaps' },
-      { glob: '**/*', input: 'node_modules/pdfjs-dist/standard_fonts', output: 'assets/pdfjs/standard_fonts' },
+      {
+        glob: '**/*',
+        input: 'node_modules/pdfjs-dist/standard_fonts',
+        output: 'assets/pdfjs/standard_fonts',
+      },
       { glob: '**/*', input: 'node_modules/pdfjs-dist/wasm', output: 'assets/pdfjs/wasm' },
       { glob: '**/*', input: 'node_modules/pdfjs-dist/iccs', output: 'assets/pdfjs/iccs' },
     ]);
@@ -55,7 +71,11 @@ describe('ng-add', () => {
 
   it('adds the built-in themes', async () => {
     const tree = await runner.runSchematic('ng-add', {}, app);
-    assert.ok(buildOptions(tree).styles.includes('node_modules/@minawk/pdf-viewer-ng/styles/themes/all.scss'));
+    assert.ok(
+      buildOptions(tree).styles.includes(
+        'node_modules/@minawk/pdf-viewer-ng/styles/themes/all.scss',
+      ),
+    );
   });
 
   it('keeps it minimal on demand: the worker only, no themes', async () => {
@@ -75,6 +95,9 @@ describe('ng-add', () => {
   });
 
   it('reports an unknown project', async () => {
-    await assert.rejects(runner.runSchematic('ng-add', { project: 'nope' }, app), /No Angular application named "nope"/);
+    await assert.rejects(
+      runner.runSchematic('ng-add', { project: 'nope' }, app),
+      /No Angular application named "nope"/,
+    );
   });
 });

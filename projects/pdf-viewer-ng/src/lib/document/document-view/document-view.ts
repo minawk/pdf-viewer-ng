@@ -109,10 +109,13 @@ export class DocumentView {
       this.measure();
 
       if (typeof IntersectionObserver !== 'undefined') {
-        this.intersectionObserver = new IntersectionObserver((entries) => this.onIntersect(entries), {
-          root: this.host,
-          rootMargin: '100% 0px',
-        });
+        this.intersectionObserver = new IntersectionObserver(
+          (entries) => this.onIntersect(entries),
+          {
+            root: this.host,
+            rootMargin: '100% 0px',
+          },
+        );
         this.observed.forEach((_, element) => this.intersectionObserver?.observe(element));
         destroyRef.onDestroy(() => this.intersectionObserver?.disconnect());
       }
@@ -198,7 +201,13 @@ export class DocumentView {
 
   protected onKeydown(event: KeyboardEvent): void {
     // Only when the document area itself has focus: never steal keys from inner controls.
-    if (event.target !== this.host || event.altKey || event.ctrlKey || event.metaKey || !this.store.hasDocument()) {
+    if (
+      event.target !== this.host ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      !this.store.hasDocument()
+    ) {
       return;
     }
     const single = this.store.pageMode() === 'single';
@@ -252,7 +261,8 @@ export class DocumentView {
 
   private onScrolled(): void {
     const programmatic =
-      this.expectedScrollTop !== null && Math.abs(this.host.scrollTop - this.expectedScrollTop) <= 1;
+      this.expectedScrollTop !== null &&
+      Math.abs(this.host.scrollTop - this.expectedScrollTop) <= 1;
     this.expectedScrollTop = null;
     this.anchor = this.readAnchor();
     if (!programmatic && this.store.pageMode() === 'continuous') {
@@ -271,7 +281,8 @@ export class DocumentView {
     if (position === 'nearest') {
       const { scrollTop, clientHeight } = this.host;
       const visible =
-        element.offsetTop < scrollTop + clientHeight && element.offsetTop + element.offsetHeight > scrollTop;
+        element.offsetTop < scrollTop + clientHeight &&
+        element.offsetTop + element.offsetHeight > scrollTop;
       if (visible) {
         return;
       }
@@ -322,7 +333,9 @@ export class DocumentView {
    * viewport, so zooming with the toolbar keeps the top of the reading position and the
    * horizontal center.
    */
-  private readAnchor(point: ViewportPoint = { x: this.host.clientWidth / 2, y: 0 }): ScrollAnchor | null {
+  private readAnchor(
+    point: ViewportPoint = { x: this.host.clientWidth / 2, y: 0 },
+  ): ScrollAnchor | null {
     const pages = this.pageElements();
     if (pages.length === 0) {
       return null;
@@ -370,8 +383,12 @@ export class DocumentView {
 
   private setScroll(left: number, top: number): void {
     const { scrollWidth, scrollHeight, clientWidth, clientHeight } = this.host;
-    const targetLeft = Math.round(Math.min(Math.max(0, left), Math.max(0, scrollWidth - clientWidth)));
-    const targetTop = Math.round(Math.min(Math.max(0, top), Math.max(0, scrollHeight - clientHeight)));
+    const targetLeft = Math.round(
+      Math.min(Math.max(0, left), Math.max(0, scrollWidth - clientWidth)),
+    );
+    const targetTop = Math.round(
+      Math.min(Math.max(0, top), Math.max(0, scrollHeight - clientHeight)),
+    );
     const moveTop = Math.abs(this.host.scrollTop - targetTop) >= 1;
     if (moveTop || Math.abs(this.host.scrollLeft - targetLeft) >= 1) {
       if (moveTop) {

@@ -32,7 +32,9 @@ describe('RovingToolbar', () => {
 
   it('sets the toolbar role and a single tab stop on the first enabled item', async () => {
     const { fixture, el } = await setup();
-    expect(fixture.nativeElement.querySelector('[pdfvRovingToolbar]').getAttribute('role')).toBe('toolbar');
+    expect(fixture.nativeElement.querySelector('[pdfvRovingToolbar]').getAttribute('role')).toBe(
+      'toolbar',
+    );
     expect(el('a').tabIndex).toBe(0);
     expect(el('b').tabIndex).toBe(-1);
     expect(el('d').tabIndex).toBe(-1);

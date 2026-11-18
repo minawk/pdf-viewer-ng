@@ -1,4 +1,13 @@
-import { afterNextRender, Component, computed, DestroyRef, DOCUMENT, ElementRef, inject, viewChild } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  computed,
+  DestroyRef,
+  DOCUMENT,
+  ElementRef,
+  inject,
+  viewChild,
+} from '@angular/core';
 import { PDF_VIEWER_MESSAGES } from '../../core/messages';
 import { PrintService } from '../print';
 

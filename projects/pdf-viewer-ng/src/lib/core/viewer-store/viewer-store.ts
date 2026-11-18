@@ -210,12 +210,18 @@ export class ViewerStore {
   });
 
   /** Render scale: CSS pixels per PDF point. */
-  readonly scale = computed(() => resolveScale(this.zoom(), this.fitReferenceSize(), this.containerSize()));
+  readonly scale = computed(() =>
+    resolveScale(this.zoom(), this.fitReferenceSize(), this.containerSize()),
+  );
 
   /** Zoom actually applied, as a factor of the actual size (1 = 100%), fit modes included. */
   readonly effectiveZoom = computed(() => this.scale() / PDF_TO_CSS_UNITS);
-  readonly canZoomIn = computed(() => this.hasDocument() && this.effectiveZoom() < MAX_ZOOM - 0.001);
-  readonly canZoomOut = computed(() => this.hasDocument() && this.effectiveZoom() > MIN_ZOOM + 0.001);
+  readonly canZoomIn = computed(
+    () => this.hasDocument() && this.effectiveZoom() < MAX_ZOOM - 0.001,
+  );
+  readonly canZoomOut = computed(
+    () => this.hasDocument() && this.effectiveZoom() > MIN_ZOOM + 0.001,
+  );
 
   // ---- Text ------------------------------------------------------------------------------
 
@@ -239,7 +245,9 @@ export class ViewerStore {
     if (!content) {
       content = pdf
         .getPage(pageNumber)
-        .then((page) => page.getTextContent({ includeMarkedContent: true, disableNormalization: true }));
+        .then((page) =>
+          page.getTextContent({ includeMarkedContent: true, disableNormalization: true }),
+        );
       // A failure is not cached: the next request tries again.
       content.catch(() => this.textCache.delete(pageNumber));
       this.textCache.set(pageNumber, content);

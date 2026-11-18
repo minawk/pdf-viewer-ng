@@ -1,6 +1,11 @@
 <div class="canvas-host" #canvasHost></div>
 @if (near() && page(); as page) {
-  <pdfv-text-layer [page]="page" [scale]="scale()" [matches]="matches()" [selectedMatch]="selectedMatch()" />
+  <pdfv-text-layer
+    [page]="page"
+    [scale]="scale()"
+    [matches]="matches()"
+    [selectedMatch]="selectedMatch()"
+  />
   <pdfv-annotation-layer [page]="page" [scale]="scale()" />
 }
 @if (renderFailed()) {

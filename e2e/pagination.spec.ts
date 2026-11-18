@@ -38,7 +38,10 @@ function pageOffset(page: Page, pageNumber: number) {
 test.describe('continuous mode', () => {
   test('pager buttons navigate, scroll and announce', async ({ page }) => {
     await open(page);
-    await expect(page.getByRole('button', { name: 'Previous page' })).toHaveAttribute('aria-disabled', 'true');
+    await expect(page.getByRole('button', { name: 'Previous page' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
 
     await page.getByRole('button', { name: 'Next page' }).click();
     await expect(pageInput(page)).toHaveValue('2');
@@ -47,7 +50,10 @@ test.describe('continuous mode', () => {
 
     await page.getByRole('button', { name: 'Last page' }).click();
     await expect(pageInput(page)).toHaveValue('12');
-    await expect(page.getByRole('button', { name: 'Next page' })).toHaveAttribute('aria-disabled', 'true');
+    await expect(page.getByRole('button', { name: 'Next page' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
     await expect(page.locator('pdfv-page[data-page-number="12"] canvas')).toBeAttached();
 
     await page.getByRole('button', { name: 'First page' }).click();
@@ -137,7 +143,9 @@ test.describe('single page mode', () => {
     await expect(page.locator('pdfv-page canvas')).toBeAttached();
   });
 
-  test('arrow keys turn pages; page keys scroll a tall page before turning it', async ({ page }) => {
+  test('arrow keys turn pages; page keys scroll a tall page before turning it', async ({
+    page,
+  }) => {
     await open(page, 'single');
     await documentRegion(page).focus();
     await page.keyboard.press('ArrowRight');
@@ -160,7 +168,11 @@ test.describe('single page mode', () => {
     await page.keyboard.press('PageUp');
     await expect(pageInput(page)).toHaveValue('1');
     await expect
-      .poll(() => documentRegion(page).evaluate((el) => el.scrollTop + el.clientHeight >= el.scrollHeight - 1))
+      .poll(() =>
+        documentRegion(page).evaluate(
+          (el) => el.scrollTop + el.clientHeight >= el.scrollHeight - 1,
+        ),
+      )
       .toBe(true);
   });
 

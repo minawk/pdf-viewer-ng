@@ -1,4 +1,11 @@
-import { afterRenderEffect, Component, computed, ElementRef, inject, viewChild } from '@angular/core';
+import {
+  afterRenderEffect,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  viewChild,
+} from '@angular/core';
 import { PDF_VIEWER_MESSAGES } from '../../core/messages';
 import { Icon } from '../../icon/icon';
 import { SearchStore } from '../search-store';

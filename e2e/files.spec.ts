@@ -17,7 +17,12 @@ async function stubPrinting(page: Page) {
     window.print = function () {
       const images = Array.from(document.images);
       window.top!.postMessage(
-        { pdfvPrinted: { images: images.length, sizes: images.map((i) => `${i.style.width} ${i.style.height}`) } },
+        {
+          pdfvPrinted: {
+            images: images.length,
+            sizes: images.map((i) => `${i.style.width} ${i.style.height}`),
+          },
+        },
         '*',
       );
       setTimeout(() => dispatchEvent(new Event('afterprint')), 10);
@@ -46,7 +51,9 @@ async function dropFile(page: Page, name: string, type: string, url: string) {
       transfer.items.add(new File([bytes], name, { type }));
       const target = document.querySelector('pdfv-document-view')!;
       const fire = (type: string) =>
-        target.dispatchEvent(new DragEvent(type, { dataTransfer: transfer, bubbles: true, cancelable: true }));
+        target.dispatchEvent(
+          new DragEvent(type, { dataTransfer: transfer, bubbles: true, cancelable: true }),
+        );
       fire('dragenter');
       fire('dragover');
       await new Promise((resolve) => setTimeout(resolve, 50));
@@ -79,12 +86,18 @@ test.describe('open', () => {
       page.waitForEvent('filechooser'),
       page.getByRole('button', { name: 'Open file' }).click(),
     ]);
-    await chooser.setFiles({ name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('hello') });
+    await chooser.setFiles({
+      name: 'notes.txt',
+      mimeType: 'text/plain',
+      buffer: Buffer.from('hello'),
+    });
     await expect(status(page)).toHaveText('Only PDF files can be opened.');
     await expect(pages(page)).toHaveCount(12);
   });
 
-  test('opens a PDF dropped on the viewer, showing a drop zone while dragging', async ({ page }) => {
+  test('opens a PDF dropped on the viewer, showing a drop zone while dragging', async ({
+    page,
+  }) => {
     await open(page);
     const overlayShown = await dropFile(page, 'dropped.pdf', 'application/pdf', 'samples/long.pdf');
     expect(overlayShown).toBe(true);
@@ -96,8 +109,14 @@ test.describe('open', () => {
     await page.goto('/');
     await page.getByLabel('Document', { exact: true }).selectOption('samples/invalid.pdf');
     await expect(page.getByRole('alert')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Open file' })).not.toHaveAttribute('aria-disabled', 'true');
-    await expect(page.getByRole('button', { name: 'Download' })).toHaveAttribute('aria-disabled', 'true');
+    await expect(page.getByRole('button', { name: 'Open file' })).not.toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+    await expect(page.getByRole('button', { name: 'Download' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
 });
 
@@ -131,7 +150,9 @@ test.describe('print', () => {
     await stubPrinting(page);
     await open(page);
     await page.getByRole('button', { name: 'Print' }).click();
-    const printed = (await page.waitForFunction(() => (window as unknown as { printed?: unknown }).printed)).jsonValue();
+    const printed = (
+      await page.waitForFunction(() => (window as unknown as { printed?: unknown }).printed)
+    ).jsonValue();
     const result = (await printed) as PrintedDocument;
     expect(result.images).toBe(12);
     expect(result.sizes[0]).toBe('612pt 792pt');
@@ -139,7 +160,10 @@ test.describe('print', () => {
     expect(result.sizes[8]).toBe('420pt 595pt'); // A5 page
     await expect(status(page)).toHaveText('Document ready to print.');
     await expect(page.locator('iframe')).toHaveCount(0);
-    await expect(page.getByRole('button', { name: 'Print' })).not.toHaveAttribute('aria-disabled', 'true');
+    await expect(page.getByRole('button', { name: 'Print' })).not.toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
 
   test('shows an accessible progress dialog, cancellable with Escape', async ({ page }) => {
@@ -159,6 +183,8 @@ test.describe('print', () => {
     await expect(dialog).toHaveCount(0);
     await expect(status(page)).toHaveText('Printing cancelled.');
     await expect(printButton).toBeFocused();
-    expect(await page.evaluate(() => (window as unknown as { printed?: unknown }).printed)).toBeUndefined();
+    expect(
+      await page.evaluate(() => (window as unknown as { printed?: unknown }).printed),
+    ).toBeUndefined();
   });
 });

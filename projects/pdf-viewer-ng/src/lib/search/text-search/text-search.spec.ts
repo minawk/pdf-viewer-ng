@@ -10,7 +10,9 @@ import {
 
 const defaults: SearchOptions = { matchCase: false, wholeWord: false };
 
-function page(...items: (string | { str: string; hasEOL?: boolean } | { type: string })[]): PageText {
+function page(
+  ...items: (string | { str: string; hasEOL?: boolean } | { type: string })[]
+): PageText {
   return buildPageText({
     items: items.map((item) => (typeof item === 'string' ? { str: item, hasEOL: false } : item)),
   } as never);
@@ -18,7 +20,9 @@ function page(...items: (string | { str: string; hasEOL?: boolean } | { type: st
 
 function search(text: PageText, query: string, options: Partial<SearchOptions> = {}) {
   const pattern = searchPattern(query, { ...defaults, ...options });
-  return pattern ? findMatches(text, pattern).map(({ start, end }) => text.text.slice(start, end)) : [];
+  return pattern
+    ? findMatches(text, pattern).map(({ start, end }) => text.text.slice(start, end))
+    : [];
 }
 
 describe('buildPageText', () => {
@@ -41,7 +45,10 @@ describe('normalizeForSearch', () => {
 });
 
 describe('search', () => {
-  const text = page({ str: 'Signals give Angular a precise picture.', hasEOL: true }, 'SIGNALS and signal-based state.');
+  const text = page(
+    { str: 'Signals give Angular a precise picture.', hasEOL: true },
+    'SIGNALS and signal-based state.',
+  );
 
   it('is case-insensitive by default', () => {
     expect(search(text, 'signals')).toEqual(['Signals', 'SIGNALS']);

@@ -3,17 +3,26 @@ import { expect, Page, test } from '@playwright/test';
 const zoomSelect = (page: Page) => page.getByRole('combobox', { name: 'Zoom level' });
 const documentRegion = (page: Page) => page.getByRole('region', { name: 'PDF document' });
 const status = (page: Page) => page.locator('pdfv-viewer [role="status"]');
-const selectedLabel = (page: Page) => zoomSelect(page).evaluate((el: HTMLSelectElement) => el.selectedOptions[0]?.text);
+const selectedLabel = (page: Page) =>
+  zoomSelect(page).evaluate((el: HTMLSelectElement) => el.selectedOptions[0]?.text);
 const pageWidth = (page: Page, n = 1) =>
-  page.locator(`pdfv-page[data-page-number="${n}"]`).evaluate((el) => el.getBoundingClientRect().width);
+  page
+    .locator(`pdfv-page[data-page-number="${n}"]`)
+    .evaluate((el) => el.getBoundingClientRect().width);
 
 /** Position of a viewport point inside the page under it, as fractions of the page size. */
 function pointInPage(page: Page, x: number, y: number) {
   return page.evaluate(
     ([x, y]) => {
-      const element = document.elementsFromPoint(x, y).find((e) => e.tagName === 'PDFV-PAGE') as HTMLElement;
+      const element = document
+        .elementsFromPoint(x, y)
+        .find((e) => e.tagName === 'PDFV-PAGE') as HTMLElement;
       const rect = element.getBoundingClientRect();
-      return { page: element.dataset['pageNumber'], x: (x - rect.left) / rect.width, y: (y - rect.top) / rect.height };
+      return {
+        page: element.dataset['pageNumber'],
+        x: (x - rect.left) / rect.width,
+        y: (y - rect.top) / rect.height,
+      };
     },
     [x, y],
   );
@@ -58,9 +67,15 @@ test('zoom menu applies presets and fit modes', async ({ page }) => {
 test('zoom in is disabled at the maximum, zoom out at the minimum', async ({ page }) => {
   await open(page);
   await zoomSelect(page).selectOption('4');
-  await expect(page.getByRole('button', { name: 'Zoom in' })).toHaveAttribute('aria-disabled', 'true');
+  await expect(page.getByRole('button', { name: 'Zoom in' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  );
   await zoomSelect(page).selectOption('0.1');
-  await expect(page.getByRole('button', { name: 'Zoom out' })).toHaveAttribute('aria-disabled', 'true');
+  await expect(page.getByRole('button', { name: 'Zoom out' })).toHaveAttribute(
+    'aria-disabled',
+    'true',
+  );
 });
 
 async function ctrlWheel(page: Page, deltaY: number) {
@@ -73,7 +88,9 @@ test('Ctrl + wheel keeps the point under the pointer in place', async ({ page })
   await open(page);
   // Wider than the viewport, so both axes can be preserved.
   await zoomSelect(page).selectOption('2');
-  await documentRegion(page).evaluate((el) => el.scrollTo({ left: 200, top: 600, behavior: 'instant' }));
+  await documentRegion(page).evaluate((el) =>
+    el.scrollTo({ left: 200, top: 600, behavior: 'instant' }),
+  );
   const box = (await documentRegion(page).boundingBox())!;
   const [x, y] = [box.x + 300, box.y + 250];
   await page.mouse.move(x, y);
@@ -122,7 +139,8 @@ test('two-finger pinch zooms on touch screens', async ({ page }) => {
   await documentRegion(page).evaluate(async (view) => {
     const rect = view.getBoundingClientRect();
     const [cx, cy] = [rect.left + 300, rect.top + 300];
-    const touch = (id: number, x: number) => new Touch({ identifier: id, target: view, clientX: x, clientY: cy });
+    const touch = (id: number, x: number) =>
+      new Touch({ identifier: id, target: view, clientX: x, clientY: cy });
     const send = (type: string, spread: number) =>
       view.dispatchEvent(
         new TouchEvent(type, {
@@ -147,10 +165,15 @@ test('fit to page follows the displayed page in single page mode', async ({ page
   await zoomSelect(page).selectOption('fit-page');
   await page.getByRole('textbox', { name: 'Page number' }).fill('5');
   await page.getByRole('textbox', { name: 'Page number' }).press('Enter');
-  const view = await documentRegion(page).evaluate((el) => ({ width: el.clientWidth, height: el.clientHeight }));
+  const view = await documentRegion(page).evaluate((el) => ({
+    width: el.clientWidth,
+    height: el.clientHeight,
+  }));
   await expect
     .poll(() => page.locator('pdfv-page').evaluate((el) => el.getBoundingClientRect().width))
-    .toBeGreaterThan(await page.locator('pdfv-page').evaluate((el) => el.getBoundingClientRect().height));
+    .toBeGreaterThan(
+      await page.locator('pdfv-page').evaluate((el) => el.getBoundingClientRect().height),
+    );
   const size = await page.locator('pdfv-page').evaluate((el) => el.getBoundingClientRect());
   expect(size.width).toBeLessThanOrEqual(view.width);
   expect(size.height).toBeLessThanOrEqual(view.height);

@@ -14,7 +14,13 @@
 </button>
 
 @if (isOpen()) {
-  <ul class="menu" role="menu" [id]="menuId" [attr.aria-label]="messages.moreTools" (keydown)="onMenuKeydown($event)">
+  <ul
+    class="menu"
+    role="menu"
+    [id]="menuId"
+    [attr.aria-label]="messages.moreTools"
+    (keydown)="onMenuKeydown($event)"
+  >
     @for (item of items(); track item.id) {
       <li role="none">
         <button

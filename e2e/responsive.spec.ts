@@ -25,7 +25,10 @@ test('narrow viewers move secondary tools into the "More tools" menu', async ({ 
   await expect(menu(page).getByRole('menuitemradio')).toHaveText([/^Select text/, 'Pan']);
   await expect(menu(page).getByRole('menuitemcheckbox')).toHaveText(['Highlight', 'Add text']);
   await expect(menu(page).getByRole('menuitem')).toHaveText(['Open file', 'Download', 'Print']);
-  await expect(menu(page).getByRole('menuitemradio', { name: 'Select text' })).toHaveAttribute('aria-checked', 'true');
+  await expect(menu(page).getByRole('menuitemradio', { name: 'Select text' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
 });
 
 test('the menu works with the keyboard', async ({ page }) => {

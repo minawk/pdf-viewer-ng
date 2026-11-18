@@ -156,7 +156,11 @@ function shouldMoveFocus(event: KeyboardEvent): boolean {
   if (target instanceof HTMLSelectElement) {
     return false;
   }
-  if (target instanceof HTMLInputElement && target.type !== 'button' && target.type !== 'checkbox') {
+  if (
+    target instanceof HTMLInputElement &&
+    target.type !== 'button' &&
+    target.type !== 'checkbox'
+  ) {
     const { selectionStart, selectionEnd, value } = target;
     if (selectionStart === null || selectionStart !== selectionEnd) {
       return false;

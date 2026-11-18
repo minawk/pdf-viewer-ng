@@ -28,7 +28,12 @@ function kindFromName(name: string | undefined): PdfLoadErrorKind {
 }
 
 function errorName(error: unknown): string | undefined {
-  if (typeof error === 'object' && error !== null && 'name' in error && typeof error.name === 'string') {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'name' in error &&
+    typeof error.name === 'string'
+  ) {
     return error.name;
   }
   return undefined;

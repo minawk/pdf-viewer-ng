@@ -47,8 +47,22 @@ function pageContent(pageNumber, total, [width, height]) {
   // Header band and page frame.
   ops.push('0.91 0.94 0.99 rg', `0 ${height - 40} ${width} 40 re f`);
   ops.push('0.04 0.34 0.82 rg', `${margin} ${height - 120} 6 48 re f`);
-  ops.push('BT', '/F2 9 Tf', '0.25 0.27 0.3 rg', `${margin} ${height - 26} Td`, `(${escapeText('pdf-viewer-ng sample document')}) Tj`, 'ET');
-  ops.push('BT', '/F2 22 Tf', '0.12 0.14 0.16 rg', `${margin + 16} ${height - 96} Td`, `(${escapeText(`Chapter ${pageNumber}`)}) Tj`, 'ET');
+  ops.push(
+    'BT',
+    '/F2 9 Tf',
+    '0.25 0.27 0.3 rg',
+    `${margin} ${height - 26} Td`,
+    `(${escapeText('pdf-viewer-ng sample document')}) Tj`,
+    'ET',
+  );
+  ops.push(
+    'BT',
+    '/F2 22 Tf',
+    '0.12 0.14 0.16 rg',
+    `${margin + 16} ${height - 96} Td`,
+    `(${escapeText(`Chapter ${pageNumber}`)}) Tj`,
+    'ET',
+  );
 
   let y = height - 150;
   ops.push('BT', '/F1 11 Tf', '14 TL', '0.12 0.14 0.16 rg', `${margin} ${y} Td`);
@@ -65,7 +79,14 @@ function pageContent(pageNumber, total, [width, height]) {
   ops.push('ET');
 
   // Footer with the page number.
-  ops.push('BT', '/F1 9 Tf', '0.34 0.38 0.42 rg', `${width / 2 - 24} 32 Td`, `(${escapeText(`Page ${pageNumber} of ${total}`)}) Tj`, 'ET');
+  ops.push(
+    'BT',
+    '/F1 9 Tf',
+    '0.34 0.38 0.42 rg',
+    `${width / 2 - 24} 32 Td`,
+    `(${escapeText(`Page ${pageNumber} of ${total}`)}) Tj`,
+    'ET',
+  );
   return ops.join('\n');
 }
 
@@ -75,13 +96,21 @@ function buildPdf(title, pageSizes) {
 
   const catalog = add(null);
   const pages = add(null);
-  const font = add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
-  const fontBold = add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
-  const info = add(`<< /Title (${escapeText(title)}) /Producer (pdf-viewer-ng sample generator) >>`);
+  const font = add(
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>',
+  );
+  const fontBold = add(
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>',
+  );
+  const info = add(
+    `<< /Title (${escapeText(title)}) /Producer (pdf-viewer-ng sample generator) >>`,
+  );
 
   const kids = pageSizes.map((size, index) => {
     const stream = pageContent(index + 1, pageSizes.length, size);
-    const content = add(`<< /Length ${Buffer.byteLength(stream, 'latin1')} >>\nstream\n${stream}\nendstream`);
+    const content = add(
+      `<< /Length ${Buffer.byteLength(stream, 'latin1')} >>\nstream\n${stream}\nendstream`,
+    );
     return add(
       `<< /Type /Page /Parent ${pages} 0 R /MediaBox [0 0 ${size[0]} ${size[1]}] ` +
         `/Resources << /Font << /F1 ${font} 0 R /F2 ${fontBold} 0 R >> >> /Contents ${content} 0 R >>`,
@@ -89,7 +118,8 @@ function buildPdf(title, pageSizes) {
   });
 
   objects[catalog - 1] = `<< /Type /Catalog /Pages ${pages} 0 R /Lang (en) >>`;
-  objects[pages - 1] = `<< /Type /Pages /Kids [${kids.map((k) => `${k} 0 R`).join(' ')}] /Count ${kids.length} >>`;
+  objects[pages - 1] =
+    `<< /Type /Pages /Kids [${kids.map((k) => `${k} 0 R`).join(' ')}] /Count ${kids.length} >>`;
 
   let pdf = '%PDF-1.7\n%\xE2\xE3\xCF\xD3\n';
   const offsets = [];
@@ -106,8 +136,13 @@ function buildPdf(title, pageSizes) {
 
 mkdirSync(outDir, { recursive: true });
 
-const mixed = Array.from({ length: 12 }, (_, i) => (i === 4 ? SIZES.landscape : i === 8 ? SIZES.a5 : SIZES.letter));
+const mixed = Array.from({ length: 12 }, (_, i) =>
+  i === 4 ? SIZES.landscape : i === 8 ? SIZES.a5 : SIZES.letter,
+);
 writeFileSync(join(outDir, 'sample.pdf'), buildPdf('pdf-viewer-ng sample', mixed));
-writeFileSync(join(outDir, 'long.pdf'), buildPdf('pdf-viewer-ng long sample', Array(300).fill(SIZES.letter)));
+writeFileSync(
+  join(outDir, 'long.pdf'),
+  buildPdf('pdf-viewer-ng long sample', Array(300).fill(SIZES.letter)),
+);
 writeFileSync(join(outDir, 'invalid.pdf'), 'This is not a PDF file.\n');
 console.log(`Sample PDFs written to ${outDir}`);

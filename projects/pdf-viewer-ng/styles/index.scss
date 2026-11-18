@@ -22,7 +22,15 @@
 /// @param {Map} $overrides - token overrides, keys without the `--pdfv-` prefix
 /// @param {String} $base - built-in palette the theme starts from
 @mixin theme($name, $overrides: (), $base: 'light') {
-  $tokens: map.merge(tokens.palette($base), map.merge($overrides, ('theme': string.unquote($name))));
+  $tokens: map.merge(
+    tokens.palette($base),
+    map.merge(
+      $overrides,
+      (
+        'theme': string.unquote($name),
+      )
+    )
+  );
 
   @layer #{tokens.$layer-order};
   @layer pdfv.theme {
@@ -42,10 +50,24 @@
   @layer #{tokens.$layer-order};
   @layer pdfv.theme {
     [data-pdfv-theme='auto'] {
-      @include tokens.declare(map.merge(tokens.$light, ('theme': auto)));
+      @include tokens.declare(
+        map.merge(
+          tokens.$light,
+          (
+            'theme': auto,
+          )
+        )
+      );
 
       @media (prefers-color-scheme: dark) {
-        @include tokens.declare(map.merge(tokens.$dark, ('theme': auto)));
+        @include tokens.declare(
+          map.merge(
+            tokens.$dark,
+            (
+              'theme': auto,
+            )
+          )
+        );
       }
     }
   }

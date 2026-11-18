@@ -55,7 +55,10 @@ export function buildPageText(content: Pick<PdfTextContent, 'items'>): PageText 
  * combining marks, so "resume" finds "résumé".
  * `map[i]` is the original offset of normalized character `i`; `map[length]` is the original length.
  */
-export function normalizeForSearch(text: string): { readonly text: string; readonly map: readonly number[] } {
+export function normalizeForSearch(text: string): {
+  readonly text: string;
+  readonly map: readonly number[];
+} {
   let normalized = '';
   const map: number[] = [];
   let offset = 0;

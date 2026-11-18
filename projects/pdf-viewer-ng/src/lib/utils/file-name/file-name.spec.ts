@@ -11,7 +11,9 @@ describe('resolveFileName', () => {
   });
 
   it('uses the last URL segment, decoded, without query or hash', () => {
-    expect(resolveFileName('https://example.com/files/My%20Report.pdf?v=2#page=3')).toBe('My Report.pdf');
+    expect(resolveFileName('https://example.com/files/My%20Report.pdf?v=2#page=3')).toBe(
+      'My Report.pdf',
+    );
     expect(resolveFileName('samples/sample.pdf')).toBe('sample.pdf');
     expect(resolveFileName(new URL('https://example.com/download/42'))).toBe('42.pdf');
   });

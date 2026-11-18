@@ -17,7 +17,13 @@ import { ZoomControl } from '../zoom-control/zoom-control';
 export const COMPACT_TOOLBAR_WIDTH = 640;
 
 /** Tools moved into the "More tools" menu in a compact toolbar. */
-const SECONDARY_TOOLS: ReadonlySet<PdfViewerTool> = new Set(['interaction', 'annotate', 'open', 'download', 'print']);
+const SECONDARY_TOOLS: ReadonlySet<PdfViewerTool> = new Set([
+  'interaction',
+  'annotate',
+  'open',
+  'download',
+  'print',
+]);
 
 interface ToolToggle {
   readonly tool: PdfInteractionTool;
@@ -84,7 +90,15 @@ export class Toolbar {
             action: (event) => this.toggleAnnotationTool(toggle.tool, event),
           }));
         case 'open':
-          return [{ id: 'open', label: this.messages.open, icon: 'open', role: 'menuitem', action: () => this.files.pick() }];
+          return [
+            {
+              id: 'open',
+              label: this.messages.open,
+              icon: 'open',
+              role: 'menuitem',
+              action: () => this.files.pick(),
+            },
+          ];
         case 'download':
           return [
             {
@@ -136,7 +150,10 @@ export class Toolbar {
    * else toggles the highlight tool. Text: toggles the text tool; activated from the keyboard,
    * it also adds a note in view right away, since there is no pointer to place it.
    */
-  protected toggleAnnotationTool(tool: PdfInteractionTool, event: MouseEvent | KeyboardEvent): void {
+  protected toggleAnnotationTool(
+    tool: PdfInteractionTool,
+    event: MouseEvent | KeyboardEvent,
+  ): void {
     if (tool === 'highlight' && this.annotations.highlightSelection()) {
       return;
     }

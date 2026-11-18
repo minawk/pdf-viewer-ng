@@ -2,6 +2,10 @@
 
 All notable changes to `@minawk/pdf-viewer-ng`. Versions follow [semantic versioning](https://semver.org).
 
+## 0.2.2 (2026-11-18)
+
+No change of features : prettify and format all files
+
 ## 0.2.1 (2026-11-18)
 
 No change to the library code: documentation and project only.

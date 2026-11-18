@@ -1,4 +1,11 @@
-import { chain, noop, Rule, SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
+import {
+  chain,
+  noop,
+  Rule,
+  SchematicContext,
+  SchematicsException,
+  Tree,
+} from '@angular-devkit/schematics';
 import {
   addDependency,
   addRootProvider,
@@ -23,7 +30,11 @@ interface AssetEntry {
 
 /** The worker is required; the other folders improve rendering (fonts, Asian scripts, images, colors). */
 export function pdfjsAssets(withOptionalFiles: boolean): AssetEntry[] {
-  const worker = { glob: 'pdf.worker.min.mjs', input: 'node_modules/pdfjs-dist/build', output: PDFJS_OUTPUT };
+  const worker = {
+    glob: 'pdf.worker.min.mjs',
+    input: 'node_modules/pdfjs-dist/build',
+    output: PDFJS_OUTPUT,
+  };
   if (!withOptionalFiles) {
     return [worker];
   }
@@ -46,7 +57,9 @@ export function ngAdd(ngAddOptions: NgAddOptions): Rule {
     const workspace = await readWorkspace(tree);
     const projectName =
       ngAddOptions.project ??
-      [...workspace.projects.entries()].find(([, project]) => project.extensions['projectType'] === 'application')?.[0];
+      [...workspace.projects.entries()].find(
+        ([, project]) => project.extensions['projectType'] === 'application',
+      )?.[0];
     const project = projectName ? workspace.projects.get(projectName) : undefined;
     if (!projectName || !project || project.extensions['projectType'] !== 'application') {
       throw new SchematicsException(
@@ -126,7 +139,10 @@ function addAssets(options: Record<string, unknown>, entries: readonly AssetEntr
 
 function addStylesheet(options: Record<string, unknown>, stylesheet: string): void {
   const styles = (Array.isArray(options['styles']) ? options['styles'] : []) as unknown[];
-  const exists = styles.some((style) => (typeof style === 'string' ? style : (style as { input?: string })?.input) === stylesheet);
+  const exists = styles.some(
+    (style) =>
+      (typeof style === 'string' ? style : (style as { input?: string })?.input) === stylesheet,
+  );
   if (!exists) {
     styles.push(stylesheet);
   }

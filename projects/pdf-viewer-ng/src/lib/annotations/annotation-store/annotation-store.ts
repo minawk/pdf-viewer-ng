@@ -1,4 +1,13 @@
-import { computed, DOCUMENT, effect, inject, Injectable, linkedSignal, signal, untracked } from '@angular/core';
+import {
+  computed,
+  DOCUMENT,
+  effect,
+  inject,
+  Injectable,
+  linkedSignal,
+  signal,
+  untracked,
+} from '@angular/core';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { PDF_VIEWER_MESSAGES } from '../../core/messages';
 import { ViewerStore } from '../../core/viewer-store/viewer-store';
@@ -109,7 +118,9 @@ export class AnnotationStore {
 
   update(id: string, changes: Partial<PdfAnnotation>): void {
     this.annotations.update((list) =>
-      list.map((annotation) => (annotation.id === id ? ({ ...annotation, ...changes } as PdfAnnotation) : annotation)),
+      list.map((annotation) =>
+        annotation.id === id ? ({ ...annotation, ...changes } as PdfAnnotation) : annotation,
+      ),
     );
   }
 
@@ -211,7 +222,9 @@ function collectTextRuns(
     }
   }
   for (const node of nodes) {
-    const pageElement = node.parentElement?.closest('pdfv-text-layer')?.closest<HTMLElement>('pdfv-page');
+    const pageElement = node.parentElement
+      ?.closest('pdfv-text-layer')
+      ?.closest<HTMLElement>('pdfv-page');
     const page = Number(pageElement?.dataset['pageNumber']);
     if (!page) {
       continue;

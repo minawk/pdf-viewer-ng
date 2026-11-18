@@ -27,7 +27,12 @@ function currentIsVisible(page: Page) {
     const view = document.querySelector('pdfv-document-view')!.getBoundingClientRect();
     if (!element) return false;
     const rect = element.getBoundingClientRect();
-    return rect.top >= view.top && rect.bottom <= view.bottom && rect.left >= view.left && rect.right <= view.right;
+    return (
+      rect.top >= view.top &&
+      rect.bottom <= view.bottom &&
+      rect.left >= view.left &&
+      rect.right <= view.right
+    );
   });
 }
 
@@ -92,7 +97,10 @@ test('match case and whole words options', async ({ page }) => {
   await expect(counter(page)).toHaveText(/of 12$/);
 
   await page.getByRole('button', { name: 'Whole words' }).click();
-  await expect(page.getByRole('button', { name: 'Whole words' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: 'Whole words' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   await expect(counter(page)).toHaveText('No results');
   await expect(status(page)).toHaveText('No results');
 

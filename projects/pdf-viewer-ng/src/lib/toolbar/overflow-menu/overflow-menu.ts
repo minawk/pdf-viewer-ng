@@ -59,7 +59,9 @@ export class OverflowMenu {
       }
     };
     document.addEventListener('pointerdown', closeOnOutsidePress, true);
-    inject(DestroyRef).onDestroy(() => document.removeEventListener('pointerdown', closeOnOutsidePress, true));
+    inject(DestroyRef).onDestroy(() =>
+      document.removeEventListener('pointerdown', closeOnOutsidePress, true),
+    );
 
     afterRenderEffect(() => {
       if (this.isOpen()) {

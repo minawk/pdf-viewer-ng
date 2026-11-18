@@ -70,7 +70,15 @@ describe('AnnotationStore', () => {
 
   it('does not save notes without text', async () => {
     const { store, first, settle } = await setup();
-    store.add({ id: 't1', type: 'text', page: 1, color: '#000000', text: '  ', fontSize: 12, rect: [0, 0, 10, 10] });
+    store.add({
+      id: 't1',
+      type: 'text',
+      page: 1,
+      color: '#000000',
+      text: '  ',
+      fontSize: 12,
+      rect: [0, 0, 10, 10],
+    });
     await settle();
     expect(first.annotationStorage.size).toBe(0);
     store.update('t1', { text: 'Done' });

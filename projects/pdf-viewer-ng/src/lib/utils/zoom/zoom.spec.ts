@@ -34,7 +34,9 @@ describe('resolveScale', () => {
   it('clamps numeric and fitted zooms to the bounds', () => {
     expect(resolveScale(100, page, container)).toBeCloseTo(MAX_ZOOM * PDF_TO_CSS_UNITS);
     expect(resolveScale(0.001, page, container)).toBeCloseTo(MIN_ZOOM * PDF_TO_CSS_UNITS);
-    expect(resolveScale('fit-width', { width: 10, height: 10 }, container)).toBeCloseTo(MAX_ZOOM * PDF_TO_CSS_UNITS);
+    expect(resolveScale('fit-width', { width: 10, height: 10 }, container)).toBeCloseTo(
+      MAX_ZOOM * PDF_TO_CSS_UNITS,
+    );
   });
 });
 
