@@ -2,10 +2,6 @@
   <pdfv-toolbar [tools]="resolvedTools()" />
 }
 
-<div class="viewport" role="region" tabindex="0" [attr.aria-label]="messages.documentLabel">
-  @if (!store.hasDocument()) {
-    <p class="empty">{{ messages.noDocument }}</p>
-  }
-</div>
+<pdfv-document-view />
 
 <div class="status" role="status">{{ store.announcement() }}</div>

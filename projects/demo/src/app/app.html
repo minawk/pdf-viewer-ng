@@ -1,15 +1,26 @@
 <header class="header">
   <h1 class="title">pdf-viewer-ng</h1>
-  <label class="field">
-    <span>Theme</span>
-    <select [value]="theme()" (change)="onThemeChange($event)">
-      @for (option of themes; track option.value) {
-        <option [value]="option.value">{{ option.label }}</option>
-      }
-    </select>
-  </label>
+  <div class="controls">
+    <div class="field">
+      <label for="document-select">Document</label>
+      <select id="document-select" [value]="src()" (change)="onDocumentChange($event)">
+        @for (option of documents; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+    <div class="field">
+      <label for="theme-select">Theme</label>
+      <select id="theme-select" [value]="theme()" (change)="onThemeChange($event)">
+        @for (option of themes; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+    <output class="event" aria-label="Last viewer event">{{ lastEvent() }}</output>
+  </div>
 </header>
 
 <main class="main">
-  <pdfv-viewer [theme]="theme()" />
+  <pdfv-viewer [src]="src()" [theme]="theme()" (loaded)="onLoaded($event)" (loadError)="onLoadError($event)" />
 </main>

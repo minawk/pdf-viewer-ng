@@ -1,0 +1,97 @@
+@use '../../../styles/mixins';
+
+:host {
+  position: relative;
+  display: block;
+  flex: 1 1 auto;
+  min-block-size: 0;
+  padding: var(--pdfv-page-gap);
+  overflow: auto;
+  background: var(--pdfv-color-canvas);
+  // Keeps the inner width constant whether or not a scrollbar is shown, so fit-to-width never oscillates.
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+
+  &:focus-visible {
+    @include mixins.focus-ring(-3px);
+  }
+
+  .state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--pdfv-space-3);
+    min-block-size: 100%;
+    text-align: center;
+  }
+
+  .state-text {
+    margin: 0;
+    color: var(--pdfv-color-on-surface-muted);
+
+    &.error {
+      color: var(--pdfv-color-on-surface);
+    }
+  }
+
+  .progress {
+    position: relative;
+    inline-size: min(16rem, 80%);
+    block-size: 0.25rem;
+    overflow: hidden;
+    background: var(--pdfv-color-border);
+    border-radius: 999px;
+
+    @media (forced-colors: active) {
+      border: 1px solid CanvasText;
+    }
+  }
+
+  .progress-value {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: var(--pdfv-color-primary);
+    border-radius: inherit;
+
+    @include mixins.motion-safe {
+      transition: inline-size var(--pdfv-transition-duration);
+    }
+
+    @media (forced-colors: active) {
+      background: Highlight;
+    }
+  }
+
+  .indeterminate .progress-value {
+    @include mixins.motion-safe {
+      animation: pdfv-indeterminate 1.2s ease-in-out infinite;
+    }
+  }
+
+  .retry {
+    min-block-size: var(--pdfv-control-size);
+    padding-inline: var(--pdfv-space-3);
+    color: var(--pdfv-color-on-primary);
+    font: inherit;
+    background: var(--pdfv-color-primary);
+    border: 1px solid transparent;
+    border-radius: var(--pdfv-radius-sm);
+    cursor: pointer;
+
+    &:focus-visible {
+      @include mixins.focus-ring;
+    }
+  }
+}
+
+@keyframes pdfv-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(340%);
+  }
+}

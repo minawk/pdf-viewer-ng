@@ -27,28 +27,6 @@
   border: 1px solid var(--pdfv-color-border);
   border-radius: var(--pdfv-radius);
 
-  .viewport {
-    position: relative;
-    flex: 1 1 auto;
-    min-block-size: 0;
-    overflow: auto;
-    background: var(--pdfv-color-canvas);
-    overscroll-behavior: contain;
-
-    &:focus-visible {
-      @include mixins.focus-ring(-3px);
-    }
-  }
-
-  .empty {
-    display: grid;
-    place-items: center;
-    block-size: 100%;
-    margin: 0;
-    padding: var(--pdfv-space-3);
-    color: var(--pdfv-color-on-surface-muted);
-  }
-
   .status {
     @include mixins.visually-hidden;
   }

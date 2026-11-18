@@ -2,7 +2,8 @@
  * Public API Surface of @minawk/pdf-viewer-ng
  */
 
-export { PdfViewer } from './lib/viewer/pdf-viewer';
+export { PdfViewer, type PdfLoadedEvent, type PdfLoadErrorEvent } from './lib/viewer/pdf-viewer';
+export { type PdfLoadErrorKind } from './lib/core/errors';
 
 export {
   DEFAULT_PDF_VIEWER_CONFIG,

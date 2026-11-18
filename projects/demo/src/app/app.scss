@@ -18,6 +18,19 @@
     font-size: 1.25rem;
   }
 
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+  }
+
+  .event {
+    min-inline-size: 10rem;
+    color: #57606a;
+    font-size: 0.875rem;
+  }
+
   .field {
     display: inline-flex;
     align-items: center;

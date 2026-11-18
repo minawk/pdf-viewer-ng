@@ -1,0 +1,983 @@
+%PDF-1.7
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R /Lang (en) >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R 21 0 R 23 0 R 25 0 R 27 0 R 29 0 R] /Count 12 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Title (pdf-viewer-ng sample) /Producer (pdf-viewer-ng sample generator) >>
+endobj
+6 0 obj
+<< /Length 1694 >>
+stream
+0.91 0.94 0.99 rg
+0 752 612 40 re f
+0.04 0.34 0.82 rg
+56 672 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 766 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 696 Td
+(Chapter 1) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 642 Td
+(A PDF viewer spends most of its time drawing pages. Rendering only the pages near the) Tj
+T*
+(visible area, and releasing the canvases of pages far away, keeps memory stable whatever) Tj
+T*
+(the number of pages.) Tj
+T*
+T*
+(Accessibility is part of the design from the first line: every control has an accessible) Tj
+T*
+(name, the toolbar follows the WAI-ARIA toolbar pattern, and status changes are announced) Tj
+T*
+(to screen reader users.) Tj
+T*
+T*
+(Themes are built on CSS custom properties. A theme is a set of tokens such as colors,) Tj
+T*
+(radius and spacing, so a product team can match the viewer to its design system without) Tj
+T*
+(overriding component styles.) Tj
+T*
+T*
+(Search finds every occurrence of a word in the document text layer. Matches are) Tj
+T*
+(highlighted on the page, and the next and previous buttons move between them while the) Tj
+T*
+(current match stays in view.) Tj
+T*
+T*
+(Annotations let readers add highlights and free text notes. They are stored in PDF) Tj
+T*
+(coordinates, so they stay in place at every zoom level, and they are embedded into the) Tj
+T*
+(file when it is downloaded.) Tj
+T*
+T*
+(Signals give Angular a precise picture of which parts of the screen depend on which) Tj
+T*
+(pieces of state. When a value changes, only the views that read it are refreshed, which) Tj
+T*
+(keeps rendering cheap even for large documents.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+282 32 Td
+(Page 1 of 12) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 1694 >>
+stream
+0.91 0.94 0.99 rg
+0 752 612 40 re f
+0.04 0.34 0.82 rg
+56 672 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 766 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 696 Td
+(Chapter 2) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 642 Td
+(Accessibility is part of the design from the first line: every control has an accessible) Tj
+T*
+(name, the toolbar follows the WAI-ARIA toolbar pattern, and status changes are announced) Tj
+T*
+(to screen reader users.) Tj
+T*
+T*
+(Themes are built on CSS custom properties. A theme is a set of tokens such as colors,) Tj
+T*
+(radius and spacing, so a product team can match the viewer to its design system without) Tj
+T*
+(overriding component styles.) Tj
+T*
+T*
+(Search finds every occurrence of a word in the document text layer. Matches are) Tj
+T*
+(highlighted on the page, and the next and previous buttons move between them while the) Tj
+T*
+(current match stays in view.) Tj
+T*
+T*
+(Annotations let readers add highlights and free text notes. They are stored in PDF) Tj
+T*
+(coordinates, so they stay in place at every zoom level, and they are embedded into the) Tj
+T*
+(file when it is downloaded.) Tj
+T*
+T*
+(Signals give Angular a precise picture of which parts of the screen depend on which) Tj
+T*
+(pieces of state. When a value changes, only the views that read it are refreshed, which) Tj
+T*
+(keeps rendering cheap even for large documents.) Tj
+T*
+T*
+(A PDF viewer spends most of its time drawing pages. Rendering only the pages near the) Tj
+T*
+(visible area, and releasing the canvases of pages far away, keeps memory stable whatever) Tj
+T*
+(the number of pages.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+282 32 Td
+(Page 2 of 12) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 1694 >>
+stream
+0.91 0.94 0.99 rg
+0 752 612 40 re f
+0.04 0.34 0.82 rg
+56 672 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 766 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 696 Td
+(Chapter 3) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 642 Td
+(Themes are built on CSS custom properties. A theme is a set of tokens such as colors,) Tj
+T*
+(radius and spacing, so a product team can match the viewer to its design system without) Tj
+T*
+(overriding component styles.) Tj
+T*
+T*
+(Search finds every occurrence of a word in the document text layer. Matches are) Tj
+T*
+(highlighted on the page, and the next and previous buttons move between them while the) Tj
+T*
+(current match stays in view.) Tj
+T*
+T*
+(Annotations let readers add highlights and free text notes. They are stored in PDF) Tj
+T*
+(coordinates, so they stay in place at every zoom level, and they are embedded into the) Tj
+T*
+(file when it is downloaded.) Tj
+T*
+T*
+(Signals give Angular a precise picture of which parts of the screen depend on which) Tj
+T*
+(pieces of state. When a value changes, only the views that read it are refreshed, which) Tj
+T*
+(keeps rendering cheap even for large documents.) Tj
+T*
+T*
+(A PDF viewer spends most of its time drawing pages. Rendering only the pages near the) Tj
+T*
+(visible area, and releasing the canvases of pages far away, keeps memory stable whatever) Tj
+T*
+(the number of pages.) Tj
+T*
+T*
+(Accessibility is part of the design from the first line: every control has an accessible) Tj
+T*
+(name, the toolbar follows the WAI-ARIA toolbar pattern, and status changes are announced) Tj
+T*
+(to screen reader users.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+282 32 Td
+(Page 3 of 12) Tj
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 1694 >>
+stream
+0.91 0.94 0.99 rg
+0 752 612 40 re f
+0.04 0.34 0.82 rg
+56 672 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 766 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 696 Td
+(Chapter 4) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 642 Td
+(Search finds every occurrence of a word in the document text layer. Matches are) Tj
+T*
+(highlighted on the page, and the next and previous buttons move between them while the) Tj
+T*
+(current match stays in view.) Tj
+T*
+T*
+(Annotations let readers add highlights and free text notes. They are stored in PDF) Tj
+T*
+(coordinates, so they stay in place at every zoom level, and they are embedded into the) Tj
+T*
+(file when it is downloaded.) Tj
+T*
+T*
+(Signals give Angular a precise picture of which parts of the screen depend on which) Tj
+T*
+(pieces of state. When a value changes, only the views that read it are refreshed, which) Tj
+T*
+(keeps rendering cheap even for large documents.) Tj
+T*
+T*
+(A PDF viewer spends most of its time drawing pages. Rendering only the pages near the) Tj
+T*
+(visible area, and releasing the canvases of pages far away, keeps memory stable whatever) Tj
+T*
+(the number of pages.) Tj
+T*
+T*
+(Accessibility is part of the design from the first line: every control has an accessible) Tj
+T*
+(name, the toolbar follows the WAI-ARIA toolbar pattern, and status changes are announced) Tj
+T*
+(to screen reader users.) Tj
+T*
+T*
+(Themes are built on CSS custom properties. A theme is a set of tokens such as colors,) Tj
+T*
+(radius and spacing, so a product team can match the viewer to its design system without) Tj
+T*
+(overriding component styles.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+282 32 Td
+(Page 4 of 12) Tj
+ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 1646 >>
+stream
+0.91 0.94 0.99 rg
+0 572 792 40 re f
+0.04 0.34 0.82 rg
+56 492 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 586 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 516 Td
+(Chapter 5) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 462 Td
+(Annotations let readers add highlights and free text notes. They are stored in PDF coordinates, so they stay in place at) Tj
+T*
+(every zoom level, and they are embedded into the file when it is downloaded.) Tj
+T*
+T*
+(Signals give Angular a precise picture of which parts of the screen depend on which pieces of state. When a value) Tj
+T*
+(changes, only the views that read it are refreshed, which keeps rendering cheap even for large documents.) Tj
+T*
+T*
+(A PDF viewer spends most of its time drawing pages. Rendering only the pages near the visible area, and releasing the) Tj
+T*
+(canvases of pages far away, keeps memory stable whatever the number of pages.) Tj
+T*
+T*
+(Accessibility is part of the design from the first line: every control has an accessible name, the toolbar follows the) Tj
+T*
+(WAI-ARIA toolbar pattern, and status changes are announced to screen reader users.) Tj
+T*
+T*
+(Themes are built on CSS custom properties. A theme is a set of tokens such as colors, radius and spacing, so a product) Tj
+T*
+(team can match the viewer to its design system without overriding component styles.) Tj
+T*
+T*
+(Search finds every occurrence of a word in the document text layer. Matches are highlighted on the page, and the next and) Tj
+T*
+(previous buttons move between them while the current match stays in view.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+372 32 Td
+(Page 5 of 12) Tj
+ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 612] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 1694 >>
+stream
+0.91 0.94 0.99 rg
+0 752 612 40 re f
+0.04 0.34 0.82 rg
+56 672 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 766 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 696 Td
+(Chapter 6) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 642 Td
+(Signals give Angular a precise picture of which parts of the screen depend on which) Tj
+T*
+(pieces of state. When a value changes, only the views that read it are refreshed, which) Tj
+T*
+(keeps rendering cheap even for large documents.) Tj
+T*
+T*
+(A PDF viewer spends most of its time drawing pages. Rendering only the pages near the) Tj
+T*
+(visible area, and releasing the canvases of pages far away, keeps memory stable whatever) Tj
+T*
+(the number of pages.) Tj
+T*
+T*
+(Accessibility is part of the design from the first line: every control has an accessible) Tj
+T*
+(name, the toolbar follows the WAI-ARIA toolbar pattern, and status changes are announced) Tj
+T*
+(to screen reader users.) Tj
+T*
+T*
+(Themes are built on CSS custom properties. A theme is a set of tokens such as colors,) Tj
+T*
+(radius and spacing, so a product team can match the viewer to its design system without) Tj
+T*
+(overriding component styles.) Tj
+T*
+T*
+(Search finds every occurrence of a word in the document text layer. Matches are) Tj
+T*
+(highlighted on the page, and the next and previous buttons move between them while the) Tj
+T*
+(current match stays in view.) Tj
+T*
+T*
+(Annotations let readers add highlights and free text notes. They are stored in PDF) Tj
+T*
+(coordinates, so they stay in place at every zoom level, and they are embedded into the) Tj
+T*
+(file when it is downloaded.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+282 32 Td
+(Page 6 of 12) Tj
+ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 1694 >>
+stream
+0.91 0.94 0.99 rg
+0 752 612 40 re f
+0.04 0.34 0.82 rg
+56 672 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 766 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 696 Td
+(Chapter 7) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 642 Td
+(A PDF viewer spends most of its time drawing pages. Rendering only the pages near the) Tj
+T*
+(visible area, and releasing the canvases of pages far away, keeps memory stable whatever) Tj
+T*
+(the number of pages.) Tj
+T*
+T*
+(Accessibility is part of the design from the first line: every control has an accessible) Tj
+T*
+(name, the toolbar follows the WAI-ARIA toolbar pattern, and status changes are announced) Tj
+T*
+(to screen reader users.) Tj
+T*
+T*
+(Themes are built on CSS custom properties. A theme is a set of tokens such as colors,) Tj
+T*
+(radius and spacing, so a product team can match the viewer to its design system without) Tj
+T*
+(overriding component styles.) Tj
+T*
+T*
+(Search finds every occurrence of a word in the document text layer. Matches are) Tj
+T*
+(highlighted on the page, and the next and previous buttons move between them while the) Tj
+T*
+(current match stays in view.) Tj
+T*
+T*
+(Annotations let readers add highlights and free text notes. They are stored in PDF) Tj
+T*
+(coordinates, so they stay in place at every zoom level, and they are embedded into the) Tj
+T*
+(file when it is downloaded.) Tj
+T*
+T*
+(Signals give Angular a precise picture of which parts of the screen depend on which) Tj
+T*
+(pieces of state. When a value changes, only the views that read it are refreshed, which) Tj
+T*
+(keeps rendering cheap even for large documents.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+282 32 Td
+(Page 7 of 12) Tj
+ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 18 0 R >>
+endobj
+20 0 obj
+<< /Length 1694 >>
+stream
+0.91 0.94 0.99 rg
+0 752 612 40 re f
+0.04 0.34 0.82 rg
+56 672 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 766 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 696 Td
+(Chapter 8) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 642 Td
+(Accessibility is part of the design from the first line: every control has an accessible) Tj
+T*
+(name, the toolbar follows the WAI-ARIA toolbar pattern, and status changes are announced) Tj
+T*
+(to screen reader users.) Tj
+T*
+T*
+(Themes are built on CSS custom properties. A theme is a set of tokens such as colors,) Tj
+T*
+(radius and spacing, so a product team can match the viewer to its design system without) Tj
+T*
+(overriding component styles.) Tj
+T*
+T*
+(Search finds every occurrence of a word in the document text layer. Matches are) Tj
+T*
+(highlighted on the page, and the next and previous buttons move between them while the) Tj
+T*
+(current match stays in view.) Tj
+T*
+T*
+(Annotations let readers add highlights and free text notes. They are stored in PDF) Tj
+T*
+(coordinates, so they stay in place at every zoom level, and they are embedded into the) Tj
+T*
+(file when it is downloaded.) Tj
+T*
+T*
+(Signals give Angular a precise picture of which parts of the screen depend on which) Tj
+T*
+(pieces of state. When a value changes, only the views that read it are refreshed, which) Tj
+T*
+(keeps rendering cheap even for large documents.) Tj
+T*
+T*
+(A PDF viewer spends most of its time drawing pages. Rendering only the pages near the) Tj
+T*
+(visible area, and releasing the canvases of pages far away, keeps memory stable whatever) Tj
+T*
+(the number of pages.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+282 32 Td
+(Page 8 of 12) Tj
+ET
+endstream
+endobj
+21 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 20 0 R >>
+endobj
+22 0 obj
+<< /Length 1513 >>
+stream
+0.91 0.94 0.99 rg
+0 555 420 40 re f
+0.04 0.34 0.82 rg
+56 475 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 569 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 499 Td
+(Chapter 9) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 445 Td
+(Themes are built on CSS custom properties. A theme is a) Tj
+T*
+(set of tokens such as colors, radius and spacing, so a) Tj
+T*
+(product team can match the viewer to its design system) Tj
+T*
+(without overriding component styles.) Tj
+T*
+T*
+(Search finds every occurrence of a word in the document) Tj
+T*
+(text layer. Matches are highlighted on the page, and) Tj
+T*
+(the next and previous buttons move between them while) Tj
+T*
+(the current match stays in view.) Tj
+T*
+T*
+(Annotations let readers add highlights and free text) Tj
+T*
+(notes. They are stored in PDF coordinates, so they stay) Tj
+T*
+(in place at every zoom level, and they are embedded) Tj
+T*
+(into the file when it is downloaded.) Tj
+T*
+T*
+(Signals give Angular a precise picture of which parts) Tj
+T*
+(of the screen depend on which pieces of state. When a) Tj
+T*
+(value changes, only the views that read it are) Tj
+T*
+(refreshed, which keeps rendering cheap even for large) Tj
+T*
+(documents.) Tj
+T*
+T*
+(A PDF viewer spends most of its time drawing pages.) Tj
+T*
+(Rendering only the pages near the visible area, and) Tj
+T*
+(releasing the canvases of pages far away, keeps memory) Tj
+T*
+(stable whatever the number of pages.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+186 32 Td
+(Page 9 of 12) Tj
+ET
+endstream
+endobj
+23 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 420 595] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 22 0 R >>
+endobj
+24 0 obj
+<< /Length 1696 >>
+stream
+0.91 0.94 0.99 rg
+0 752 612 40 re f
+0.04 0.34 0.82 rg
+56 672 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 766 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 696 Td
+(Chapter 10) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 642 Td
+(Search finds every occurrence of a word in the document text layer. Matches are) Tj
+T*
+(highlighted on the page, and the next and previous buttons move between them while the) Tj
+T*
+(current match stays in view.) Tj
+T*
+T*
+(Annotations let readers add highlights and free text notes. They are stored in PDF) Tj
+T*
+(coordinates, so they stay in place at every zoom level, and they are embedded into the) Tj
+T*
+(file when it is downloaded.) Tj
+T*
+T*
+(Signals give Angular a precise picture of which parts of the screen depend on which) Tj
+T*
+(pieces of state. When a value changes, only the views that read it are refreshed, which) Tj
+T*
+(keeps rendering cheap even for large documents.) Tj
+T*
+T*
+(A PDF viewer spends most of its time drawing pages. Rendering only the pages near the) Tj
+T*
+(visible area, and releasing the canvases of pages far away, keeps memory stable whatever) Tj
+T*
+(the number of pages.) Tj
+T*
+T*
+(Accessibility is part of the design from the first line: every control has an accessible) Tj
+T*
+(name, the toolbar follows the WAI-ARIA toolbar pattern, and status changes are announced) Tj
+T*
+(to screen reader users.) Tj
+T*
+T*
+(Themes are built on CSS custom properties. A theme is a set of tokens such as colors,) Tj
+T*
+(radius and spacing, so a product team can match the viewer to its design system without) Tj
+T*
+(overriding component styles.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+282 32 Td
+(Page 10 of 12) Tj
+ET
+endstream
+endobj
+25 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 24 0 R >>
+endobj
+26 0 obj
+<< /Length 1696 >>
+stream
+0.91 0.94 0.99 rg
+0 752 612 40 re f
+0.04 0.34 0.82 rg
+56 672 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 766 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 696 Td
+(Chapter 11) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 642 Td
+(Annotations let readers add highlights and free text notes. They are stored in PDF) Tj
+T*
+(coordinates, so they stay in place at every zoom level, and they are embedded into the) Tj
+T*
+(file when it is downloaded.) Tj
+T*
+T*
+(Signals give Angular a precise picture of which parts of the screen depend on which) Tj
+T*
+(pieces of state. When a value changes, only the views that read it are refreshed, which) Tj
+T*
+(keeps rendering cheap even for large documents.) Tj
+T*
+T*
+(A PDF viewer spends most of its time drawing pages. Rendering only the pages near the) Tj
+T*
+(visible area, and releasing the canvases of pages far away, keeps memory stable whatever) Tj
+T*
+(the number of pages.) Tj
+T*
+T*
+(Accessibility is part of the design from the first line: every control has an accessible) Tj
+T*
+(name, the toolbar follows the WAI-ARIA toolbar pattern, and status changes are announced) Tj
+T*
+(to screen reader users.) Tj
+T*
+T*
+(Themes are built on CSS custom properties. A theme is a set of tokens such as colors,) Tj
+T*
+(radius and spacing, so a product team can match the viewer to its design system without) Tj
+T*
+(overriding component styles.) Tj
+T*
+T*
+(Search finds every occurrence of a word in the document text layer. Matches are) Tj
+T*
+(highlighted on the page, and the next and previous buttons move between them while the) Tj
+T*
+(current match stays in view.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+282 32 Td
+(Page 11 of 12) Tj
+ET
+endstream
+endobj
+27 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 26 0 R >>
+endobj
+28 0 obj
+<< /Length 1696 >>
+stream
+0.91 0.94 0.99 rg
+0 752 612 40 re f
+0.04 0.34 0.82 rg
+56 672 6 48 re f
+BT
+/F2 9 Tf
+0.25 0.27 0.3 rg
+56 766 Td
+(pdf-viewer-ng sample document) Tj
+ET
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+72 696 Td
+(Chapter 12) Tj
+ET
+BT
+/F1 11 Tf
+14 TL
+0.12 0.14 0.16 rg
+56 642 Td
+(Signals give Angular a precise picture of which parts of the screen depend on which) Tj
+T*
+(pieces of state. When a value changes, only the views that read it are refreshed, which) Tj
+T*
+(keeps rendering cheap even for large documents.) Tj
+T*
+T*
+(A PDF viewer spends most of its time drawing pages. Rendering only the pages near the) Tj
+T*
+(visible area, and releasing the canvases of pages far away, keeps memory stable whatever) Tj
+T*
+(the number of pages.) Tj
+T*
+T*
+(Accessibility is part of the design from the first line: every control has an accessible) Tj
+T*
+(name, the toolbar follows the WAI-ARIA toolbar pattern, and status changes are announced) Tj
+T*
+(to screen reader users.) Tj
+T*
+T*
+(Themes are built on CSS custom properties. A theme is a set of tokens such as colors,) Tj
+T*
+(radius and spacing, so a product team can match the viewer to its design system without) Tj
+T*
+(overriding component styles.) Tj
+T*
+T*
+(Search finds every occurrence of a word in the document text layer. Matches are) Tj
+T*
+(highlighted on the page, and the next and previous buttons move between them while the) Tj
+T*
+(current match stays in view.) Tj
+T*
+T*
+(Annotations let readers add highlights and free text notes. They are stored in PDF) Tj
+T*
+(coordinates, so they stay in place at every zoom level, and they are embedded into the) Tj
+T*
+(file when it is downloaded.) Tj
+T*
+T*
+ET
+BT
+/F1 9 Tf
+0.34 0.38 0.42 rg
+282 32 Td
+(Page 12 of 12) Tj
+ET
+endstream
+endobj
+29 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 28 0 R >>
+endobj
+xref
+0 30
+0000000000 65535 f 
+0000000015 00000 n 
+0000000075 00000 n 
+0000000209 00000 n 
+0000000306 00000 n 
+0000000408 00000 n 
+0000000502 00000 n 
+0000002248 00000 n 
+0000002384 00000 n 
+0000004130 00000 n 
+0000004266 00000 n 
+0000006013 00000 n 
+0000006151 00000 n 
+0000007898 00000 n 
+0000008036 00000 n 
+0000009735 00000 n 
+0000009873 00000 n 
+0000011620 00000 n 
+0000011758 00000 n 
+0000013505 00000 n 
+0000013643 00000 n 
+0000015390 00000 n 
+0000015528 00000 n 
+0000017094 00000 n 
+0000017232 00000 n 
+0000018981 00000 n 
+0000019119 00000 n 
+0000020868 00000 n 
+0000021006 00000 n 
+0000022755 00000 n 
+trailer
+<< /Size 30 /Root 1 0 R /Info 5 0 R >>
+startxref
+22893
+%%EOF

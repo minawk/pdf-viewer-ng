@@ -1,0 +1,36 @@
+@switch (store.status()) {
+  @case ('ready') {
+    @for (pageNumber of pageNumbers(); track pageNumber) {
+      <pdfv-page [pageNumber]="pageNumber" />
+    }
+  }
+  @case ('loading') {
+    <div class="state">
+      <p class="state-text" aria-hidden="true">{{ messages.loading }}</p>
+      <div
+        class="progress"
+        role="progressbar"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-label]="messages.loading"
+        [attr.aria-valuenow]="progressPercent()"
+        [class.indeterminate]="progressPercent() === null"
+      >
+        <span class="progress-value" [style.inline-size.%]="progressPercent() ?? 30"></span>
+      </div>
+    </div>
+  }
+  @case ('error') {
+    <div class="state" role="alert">
+      <p class="state-text error">{{ errorMessage() }}</p>
+      @if (canRetry()) {
+        <button type="button" class="retry" (click)="store.reload()">{{ messages.retry }}</button>
+      }
+    </div>
+  }
+  @default {
+    <div class="state">
+      <p class="state-text">{{ messages.noDocument }}</p>
+    </div>
+  }
+}

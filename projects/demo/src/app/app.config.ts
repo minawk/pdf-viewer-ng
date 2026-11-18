@@ -4,6 +4,9 @@ import { providePdfViewer } from '@minawk/pdf-viewer-ng';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    providePdfViewer({ workerSrc: 'assets/pdfjs/pdf.worker.min.mjs' }),
+    providePdfViewer({
+      workerSrc: 'assets/pdfjs/pdf.worker.min.mjs',
+      assetsUrl: 'assets/pdfjs/',
+    }),
   ],
 };

@@ -8,6 +8,13 @@ export interface PdfViewerConfig {
    * `{ "glob": "pdf.worker.min.mjs", "input": "node_modules/pdfjs-dist/build", "output": "assets/pdfjs" }`
    */
   readonly workerSrc: string;
+  /**
+   * Optional base URL of the pdf.js data folders (`cmaps/`, `standard_fonts/`, `wasm/`, `iccs/`),
+   * copied from `node_modules/pdfjs-dist`. They improve rendering of PDFs with CJK text,
+   * non-embedded standard fonts, JPEG 2000/JBIG2 images and ICC color profiles.
+   * `null` disables them; pdf.js then falls back to system fonts.
+   */
+  readonly assetsUrl: string | null;
   /** Theme used when the viewer's `theme` input is not set. */
   readonly theme: PdfViewerTheme;
   /** Toolbar items used when the viewer's `tools` input is not set. */
@@ -18,6 +25,7 @@ export interface PdfViewerConfig {
 
 export const DEFAULT_PDF_VIEWER_CONFIG: PdfViewerConfig = {
   workerSrc: 'assets/pdfjs/pdf.worker.min.mjs',
+  assetsUrl: null,
   theme: 'light',
   tools: DEFAULT_TOOLS,
   maxPixelRatio: 2,

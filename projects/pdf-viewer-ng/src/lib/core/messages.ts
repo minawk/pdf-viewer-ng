@@ -1,4 +1,5 @@
 import { EnvironmentProviders, InjectionToken, makeEnvironmentProviders } from '@angular/core';
+import { PdfLoadErrorKind } from './errors';
 
 /** Every user-facing string of the viewer, including accessible names. Override for i18n. */
 export interface PdfViewerMessages {
@@ -6,6 +7,12 @@ export interface PdfViewerMessages {
   readonly toolbarLabel: string;
   readonly documentLabel: string;
   readonly noDocument: string;
+  readonly loading: string;
+  readonly documentLoaded: (pageCount: number) => string;
+  readonly loadErrors: Readonly<Record<PdfLoadErrorKind, string>>;
+  readonly retry: string;
+  readonly pageLabel: (page: number, total: number) => string;
+  readonly pageRenderError: string;
 
   readonly pagerGroup: string;
   readonly firstPage: string;
@@ -42,6 +49,17 @@ export const DEFAULT_PDF_VIEWER_MESSAGES: PdfViewerMessages = {
   toolbarLabel: 'PDF viewer toolbar',
   documentLabel: 'PDF document',
   noDocument: 'No document loaded.',
+  loading: 'Loading document…',
+  documentLoaded: (pageCount) => `Document loaded, ${pageCount} ${pageCount === 1 ? 'page' : 'pages'}.`,
+  loadErrors: {
+    invalid: 'This file is not a valid PDF document.',
+    missing: 'The document could not be found or downloaded.',
+    password: 'This document is password-protected and cannot be opened.',
+    unknown: 'The document could not be opened.',
+  },
+  retry: 'Try again',
+  pageLabel: (page, total) => `Page ${page} of ${total}`,
+  pageRenderError: 'This page could not be displayed.',
 
   pagerGroup: 'Pages',
   firstPage: 'First page',
