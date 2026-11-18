@@ -1,0 +1,31 @@
+@use '../../../../styles/mixins';
+
+// Above the text layer (by DOM order): a press on a link follows it. The layer itself lets the
+// pointer through, so the text around links stays selectable.
+:host {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  .link {
+    position: absolute;
+    border-radius: 2px;
+    pointer-events: auto;
+
+    &:hover {
+      background: color-mix(in srgb, var(--pdfv-color-primary) 14%, transparent);
+    }
+
+    &:focus-visible {
+      @include mixins.focus-ring(1px);
+
+      background: color-mix(in srgb, var(--pdfv-color-primary) 14%, transparent);
+    }
+
+    @media (forced-colors: active) {
+      &:hover {
+        outline: 1px solid LinkText;
+      }
+    }
+  }
+}

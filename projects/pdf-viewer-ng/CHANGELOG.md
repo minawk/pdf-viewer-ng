@@ -2,6 +2,15 @@
 
 All notable changes to `@minawk/pdf-viewer-ng`. Versions follow [semantic versioning](https://semver.org).
 
+## 0.3.0 (2026-11-18)
+
+### Added
+
+- Clickable links of the document: web links open in a new tab, email and phone links open the
+  system application, links to another place of the document (pages and named destinations) go
+  there. Only safe protocols are kept; `javascript:` links are ignored. Links are reachable with Tab
+  and named after the text under them. Two new messages: `externalLink` and `documentLink`.
+
 ## 0.2.3 (2026-11-18)
 
 ### Fixed

@@ -1,0 +1,154 @@
+%PDF-1.7
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R /Lang (en) /Dests << /chapter-3 [8 0 R /XYZ 0 792 null] >> >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 7 0 R 8 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Title (pdf-viewer-ng links sample) /Producer (pdf-viewer-ng sample generator) >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 16 0 R /Annots [9 0 R 10 0 R 11 0 R 12 0 R 13 0 R] >>
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 17 0 R /Annots [14 0 R] >>
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 18 0 R /Annots [15 0 R] >>
+endobj
+9 0 obj
+<< /Type /Annot /Subtype /Link /Rect [56.0 617.0 224.5 630.8] /Border [0 0 0] /A << /S /GoTo /D [7 0 R /XYZ 0 792 null] >> >>
+endobj
+10 0 obj
+<< /Type /Annot /Subtype /Link /Rect [56.0 593.0 305.6 606.8] /Border [0 0 0] /Dest /chapter-3 >>
+endobj
+11 0 obj
+<< /Type /Annot /Subtype /Link /Rect [56.0 547.0 162.1 560.8] /Border [0 0 0] /A << /S /URI /URI (https://github.com/minawk/pdf-viewer-ng) >> >>
+endobj
+12 0 obj
+<< /Type /Annot /Subtype /Link /Rect [56.0 523.0 218.2 536.8] /Border [0 0 0] /A << /S /URI /URI (mailto:hello@example.com) >> >>
+endobj
+13 0 obj
+<< /Type /Annot /Subtype /Link /Rect [56.0 499.0 243.2 512.8] /Border [0 0 0] /A << /S /URI /URI (javascript:alert\(1\)) >> >>
+endobj
+14 0 obj
+<< /Type /Annot /Subtype /Link /Rect [56.0 657.0 180.8 670.8] /Border [0 0 0] /A << /S /GoTo /D [6 0 R /XYZ 0 792 null] >> >>
+endobj
+15 0 obj
+<< /Type /Annot /Subtype /Link /Rect [56.0 657.0 180.8 670.8] /Border [0 0 0] /A << /S /GoTo /D [6 0 R /XYZ 0 792 null] >> >>
+endobj
+16 0 obj
+<< /Length 502 >>
+stream
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+56 700 Td
+(Links) Tj
+ET
+BT
+/F2 13 Tf
+0.12 0.14 0.16 rg
+56 650 Td
+(Contents) Tj
+ET
+BT
+/F1 12 Tf
+0.12 0.14 0.16 rg
+56 620 Td
+(Chapter 2: a link to a page) Tj
+ET
+BT
+/F1 12 Tf
+0.12 0.14 0.16 rg
+56 596 Td
+(Chapter 3: a link to a named destination) Tj
+ET
+BT
+/F1 12 Tf
+0.12 0.14 0.16 rg
+56 550 Td
+(Project on GitHub) Tj
+ET
+BT
+/F1 12 Tf
+0.12 0.14 0.16 rg
+56 526 Td
+(Write to hello@example.com) Tj
+ET
+BT
+/F1 12 Tf
+0.12 0.14 0.16 rg
+56 502 Td
+(An unsafe script link, ignored) Tj
+ET
+endstream
+endobj
+17 0 obj
+<< /Length 128 >>
+stream
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+56 700 Td
+(Chapter 2) Tj
+ET
+BT
+/F1 12 Tf
+0.12 0.14 0.16 rg
+56 660 Td
+(Back to the contents) Tj
+ET
+endstream
+endobj
+18 0 obj
+<< /Length 128 >>
+stream
+BT
+/F2 22 Tf
+0.12 0.14 0.16 rg
+56 700 Td
+(Chapter 3) Tj
+ET
+BT
+/F1 12 Tf
+0.12 0.14 0.16 rg
+56 660 Td
+(Back to the contents) Tj
+ET
+endstream
+endobj
+xref
+0 19
+0000000000 65535 f 
+0000000015 00000 n 
+0000000123 00000 n 
+0000000192 00000 n 
+0000000289 00000 n 
+0000000391 00000 n 
+0000000491 00000 n 
+0000000672 00000 n 
+0000000826 00000 n 
+0000000980 00000 n 
+0000001121 00000 n 
+0000001235 00000 n 
+0000001396 00000 n 
+0000001542 00000 n 
+0000001685 00000 n 
+0000001827 00000 n 
+0000001969 00000 n 
+0000002523 00000 n 
+0000002703 00000 n 
+trailer
+<< /Size 19 /Root 1 0 R /Info 5 0 R >>
+startxref
+2883
+%%EOF

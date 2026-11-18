@@ -6,6 +6,7 @@
     [matches]="matches()"
     [selectedMatch]="selectedMatch()"
   />
+  <pdfv-link-layer [page]="page" />
   <pdfv-annotation-layer [page]="page" [scale]="scale()" />
 }
 @if (renderFailed()) {

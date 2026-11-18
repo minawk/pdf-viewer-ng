@@ -3,7 +3,7 @@
 A lightweight, accessible PDF viewer for Angular 22, built entirely on signals.
 
 - **View**: continuous or single page mode, pagination, zoom (presets, fit to width or page, Ctrl + wheel, pinch), pan tool.
-- **Read**: text selection and copy, search with match case and whole words.
+- **Read**: text selection and copy, search with match case and whole words, clickable links (web, email, and links to other pages of the document).
 - **Files**: open (file picker, drag and drop), download, print.
 - **Edit**: highlights and free text notes, saved into the downloaded PDF as standard annotations, and printed.
 - **Themes**: light, dark, high contrast, material, auto, and your own, from CSS variables or a Sass mixin.
@@ -236,6 +236,15 @@ when the user asks for it.
 
 In continuous mode, the text of pages far from the visible area is not in the page yet (as in every
 pdf.js based viewer): use search, or navigate, to reach it.
+
+## Links
+
+Links of the document are clickable, and reachable with Tab:
+
+- web links open in a new tab (`rel="noopener noreferrer"`); email and phone links open the mail or phone application;
+- links to another place of the document (tables of contents, cross-references) go to that page;
+- only safe protocols are kept (http, https, ftp, mailto, tel): `javascript:` and other links are ignored;
+- each link is named after the text under it, for screen readers ("Project on GitHub (opens in a new tab)").
 
 ## Other notes
 

@@ -1,0 +1,26 @@
+@for (link of links(); track link.id) {
+  @if (link.url) {
+    <a
+      class="link"
+      [href]="link.url"
+      [attr.target]="link.newTab ? '_blank' : null"
+      [attr.rel]="link.newTab ? 'noopener noreferrer' : null"
+      [attr.aria-label]="link.label"
+      [style.left.%]="link.box.left"
+      [style.top.%]="link.box.top"
+      [style.width.%]="link.box.right - link.box.left"
+      [style.height.%]="link.box.bottom - link.box.top"
+    ></a>
+  } @else {
+    <a
+      class="link"
+      href="#"
+      [attr.aria-label]="link.label"
+      [style.left.%]="link.box.left"
+      [style.top.%]="link.box.top"
+      [style.width.%]="link.box.right - link.box.left"
+      [style.height.%]="link.box.bottom - link.box.top"
+      (click)="follow(link, $event)"
+    ></a>
+  }
+}

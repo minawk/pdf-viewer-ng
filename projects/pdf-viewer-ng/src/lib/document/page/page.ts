@@ -19,6 +19,7 @@ import { canvasPixelRatio, Size } from '../../utils/zoom/zoom';
 import { SearchStore } from '../../search/search-store';
 import { DocumentView } from '../document-view/document-view';
 import { AnnotationLayer } from '../../annotations/annotation-layer/annotation-layer';
+import { LinkLayer } from '../link-layer/link-layer';
 import { TextLayer } from '../text-layer/text-layer';
 
 /** Delay before re-rendering a page that already shows a (stretched) canvas, e.g. while zooming or resizing. */
@@ -35,7 +36,7 @@ interface PageSize extends Size {
  */
 @Component({
   selector: 'pdfv-page',
-  imports: [TextLayer, AnnotationLayer],
+  imports: [TextLayer, LinkLayer, AnnotationLayer],
   templateUrl: './page.html',
   styleUrl: './page.scss',
   host: {

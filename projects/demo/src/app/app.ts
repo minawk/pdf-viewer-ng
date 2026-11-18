@@ -34,6 +34,7 @@ export class App {
   protected readonly documents: readonly Option<string>[] = [
     { value: 'samples/sample.pdf', label: 'Sample (12 pages, mixed sizes)' },
     { value: 'samples/long.pdf', label: 'Long document (300 pages)' },
+    { value: 'samples/links.pdf', label: 'Links (in the document, web, email)' },
     { value: 'samples/invalid.pdf', label: 'Invalid file' },
     { value: 'samples/missing.pdf', label: 'Missing file (404)' },
   ];

@@ -16,6 +16,10 @@ export interface PdfViewerMessages {
   readonly retry: string;
   readonly pageLabel: (page: number, total: number) => string;
   readonly pageRenderError: string;
+  /** Accessible name of a link of the document that opens in a new tab. */
+  readonly externalLink: (label: string) => string;
+  /** Accessible name of a link to another place of the document, when no text is under it. */
+  readonly documentLink: string;
 
   readonly pagerGroup: string;
   readonly firstPage: string;
@@ -108,6 +112,8 @@ export const DEFAULT_PDF_VIEWER_MESSAGES: PdfViewerMessages = {
   retry: 'Try again',
   pageLabel: (page, total) => `Page ${page} of ${total}`,
   pageRenderError: 'This page could not be displayed.',
+  externalLink: (label) => `${label} (opens in a new tab)`,
+  documentLink: 'Link to another part of the document',
 
   pagerGroup: 'Pages',
   firstPage: 'First page',

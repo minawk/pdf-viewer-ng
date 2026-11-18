@@ -121,6 +121,11 @@ function buildPdf(title, pageSizes) {
   objects[pages - 1] =
     `<< /Type /Pages /Kids [${kids.map((k) => `${k} 0 R`).join(' ')}] /Count ${kids.length} >>`;
 
+  return writePdf(objects, catalog, info);
+}
+
+/** Serializes numbered objects into a PDF file, with its cross-reference table. */
+function writePdf(objects, catalog, info) {
   let pdf = '%PDF-1.7\n%\xE2\xE3\xCF\xD3\n';
   const offsets = [];
   objects.forEach((body, index) => {
@@ -134,6 +139,92 @@ function buildPdf(title, pageSizes) {
   return Buffer.from(pdf, 'latin1');
 }
 
+/** A line of text, and the rectangle it covers (Helvetica is about 0.5 em per character). */
+function textLine(text, x, y, size, bold = false) {
+  return {
+    ops: [
+      'BT',
+      `/${bold ? 'F2' : 'F1'} ${size} Tf`,
+      '0.12 0.14 0.16 rg',
+      `${x} ${y} Td`,
+      `(${escapeText(text)}) Tj`,
+      'ET',
+    ],
+    rect: [x, y - size * 0.25, x + text.length * size * 0.52, y + size * 0.9],
+  };
+}
+
+/**
+ * A document with links: internal (to a page, and to a named destination), external (web, email)
+ * and an unsafe one (`javascript:`) that viewers must ignore.
+ */
+function buildLinksPdf() {
+  const objects = [];
+  const add = (body) => objects.push(body) && objects.length;
+  const catalog = add(null);
+  const pages = add(null);
+  const font = add(
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>',
+  );
+  const fontBold = add(
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>',
+  );
+  const info = add(
+    '<< /Title (pdf-viewer-ng links sample) /Producer (pdf-viewer-ng sample generator) >>',
+  );
+  const pageRefs = [add(null), add(null), add(null)];
+  const top = (page) => `[${pageRefs[page]} 0 R /XYZ 0 792 null]`;
+
+  const link = (rect, action) =>
+    add(
+      `<< /Type /Annot /Subtype /Link /Rect [${rect.map((n) => n.toFixed(1)).join(' ')}] /Border [0 0 0] ${action} >>`,
+    );
+  const uri = (url) => `/A << /S /URI /URI (${escapeText(url)}) >>`;
+
+  const lines = [
+    textLine('Links', 56, 700, 22, true),
+    textLine('Contents', 56, 650, 13, true),
+    textLine('Chapter 2: a link to a page', 56, 620, 12),
+    textLine('Chapter 3: a link to a named destination', 56, 596, 12),
+    textLine('Project on GitHub', 56, 550, 12),
+    textLine('Write to hello@example.com', 56, 526, 12),
+    textLine('An unsafe script link, ignored', 56, 502, 12),
+  ];
+  const firstPageLinks = [
+    link(lines[2].rect, `/A << /S /GoTo /D ${top(1)} >>`),
+    link(lines[3].rect, '/Dest /chapter-3'),
+    link(lines[4].rect, uri('https://github.com/minawk/pdf-viewer-ng')),
+    link(lines[5].rect, uri('mailto:hello@example.com')),
+    link(lines[6].rect, uri('javascript:alert(1)')),
+  ];
+
+  const pageSpecs = [
+    { lines, links: firstPageLinks },
+    ...[2, 3].map((chapter) => {
+      const heading = textLine(`Chapter ${chapter}`, 56, 700, 22, true);
+      const back = textLine('Back to the contents', 56, 660, 12);
+      return { lines: [heading, back], links: [link(back.rect, `/A << /S /GoTo /D ${top(0)} >>`)] };
+    }),
+  ];
+
+  pageSpecs.forEach((spec, index) => {
+    const stream = spec.lines.flatMap((line) => line.ops).join('\n');
+    const content = add(
+      `<< /Length ${Buffer.byteLength(stream, 'latin1')} >>\nstream\n${stream}\nendstream`,
+    );
+    objects[pageRefs[index] - 1] =
+      `<< /Type /Page /Parent ${pages} 0 R /MediaBox [0 0 612 792] ` +
+      `/Resources << /Font << /F1 ${font} 0 R /F2 ${fontBold} 0 R >> >> /Contents ${content} 0 R ` +
+      `/Annots [${spec.links.map((ref) => `${ref} 0 R`).join(' ')}] >>`;
+  });
+
+  objects[catalog - 1] =
+    `<< /Type /Catalog /Pages ${pages} 0 R /Lang (en) /Dests << /chapter-3 ${top(2)} >> >>`;
+  objects[pages - 1] =
+    `<< /Type /Pages /Kids [${pageRefs.map((ref) => `${ref} 0 R`).join(' ')}] /Count 3 >>`;
+  return writePdf(objects, catalog, info);
+}
+
 mkdirSync(outDir, { recursive: true });
 
 const mixed = Array.from({ length: 12 }, (_, i) =>
@@ -144,5 +235,6 @@ writeFileSync(
   join(outDir, 'long.pdf'),
   buildPdf('pdf-viewer-ng long sample', Array(300).fill(SIZES.letter)),
 );
+writeFileSync(join(outDir, 'links.pdf'), buildLinksPdf());
 writeFileSync(join(outDir, 'invalid.pdf'), 'This is not a PDF file.\n');
 console.log(`Sample PDFs written to ${outDir}`);
