@@ -1,0 +1,12 @@
+:host {
+  display: inline-flex;
+  inline-size: var(--pdfv-icon-size);
+  block-size: var(--pdfv-icon-size);
+  flex: none;
+
+  svg {
+    inline-size: 100%;
+    block-size: 100%;
+    fill: currentColor;
+  }
+}

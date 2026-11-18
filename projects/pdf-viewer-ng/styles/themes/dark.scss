@@ -1,0 +1,4 @@
+// Ready-to-use stylesheet: add it to the `styles` array of angular.json.
+@use '../index' as pdfv;
+
+@include pdfv.builtin-theme('dark');

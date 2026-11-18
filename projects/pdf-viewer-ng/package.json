@@ -1,12 +1,41 @@
 {
   "name": "@minawk/pdf-viewer-ng",
   "version": "0.0.1",
+  "description": "Lightweight, accessible, signal-based PDF viewer for Angular: pagination, zoom, search, text selection, print, download and annotations.",
+  "keywords": [
+    "angular",
+    "pdf",
+    "pdf-viewer",
+    "pdfjs",
+    "signals",
+    "accessibility",
+    "annotations"
+  ],
+  "author": "minawk",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minawk/pdf-viewer-ng.git"
+  },
+  "homepage": "https://github.com/minawk/pdf-viewer-ng#readme",
+  "bugs": {
+    "url": "https://github.com/minawk/pdf-viewer-ng/issues"
+  },
   "peerDependencies": {
     "@angular/common": "^22.2.0",
-    "@angular/core": "^22.2.0"
+    "@angular/core": "^22.2.0",
+    "pdfjs-dist": "^6.5.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
+  },
+  "exports": {
+    "./styles": {
+      "sass": "./styles/index.scss"
+    },
+    "./styles/themes/*": {
+      "sass": "./styles/themes/*.scss"
+    }
   },
   "sideEffects": false
 }

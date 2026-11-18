@@ -1,0 +1,60 @@
+// Public Sass API of @minawk/pdf-viewer-ng.
+//
+//   @use '@minawk/pdf-viewer-ng/styles' as pdfv;
+//
+//   @include pdfv.all-themes();                  // light, dark, high-contrast, material, auto
+//   @include pdfv.builtin-theme('dark');         // a single built-in theme
+//   @include pdfv.theme('ocean', (               // a custom theme, used with theme="ocean"
+//     'color-primary': #006782,
+//     'color-toolbar': #e7f4f8,
+//   ), $base: 'light');
+//
+// Using this module emits no CSS by itself; only the mixins do.
+@use 'sass:map';
+@use 'sass:string';
+@use 'tokens';
+
+@forward 'tokens' show palette, declare, $light, $dark, $high-contrast, $material;
+@forward 'mixins' show screen, visually-hidden, focus-ring, motion-safe, $breakpoints;
+
+/// Defines a theme usable with `<pdfv-viewer theme="$name">`.
+/// @param {String} $name - theme name (value of the `theme` input)
+/// @param {Map} $overrides - token overrides, keys without the `--pdfv-` prefix
+/// @param {String} $base - built-in palette the theme starts from
+@mixin theme($name, $overrides: (), $base: 'light') {
+  $tokens: map.merge(tokens.palette($base), map.merge($overrides, ('theme': string.unquote($name))));
+
+  @layer #{tokens.$layer-order};
+  @layer pdfv.theme {
+    [data-pdfv-theme='#{$name}'] {
+      @include tokens.declare($tokens);
+    }
+  }
+}
+
+/// Emits one of the built-in themes: light, dark, high-contrast or material.
+@mixin builtin-theme($name) {
+  @include theme($name, (), $name);
+}
+
+/// `theme="auto"`: light, or dark when the OS prefers a dark color scheme.
+@mixin auto-theme {
+  @layer #{tokens.$layer-order};
+  @layer pdfv.theme {
+    [data-pdfv-theme='auto'] {
+      @include tokens.declare(map.merge(tokens.$light, ('theme': auto)));
+
+      @media (prefers-color-scheme: dark) {
+        @include tokens.declare(map.merge(tokens.$dark, ('theme': auto)));
+      }
+    }
+  }
+}
+
+/// Emits every built-in theme plus `auto`.
+@mixin all-themes {
+  @each $name in ('light', 'dark', 'high-contrast', 'material') {
+    @include builtin-theme($name);
+  }
+  @include auto-theme();
+}

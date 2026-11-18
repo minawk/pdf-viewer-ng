@@ -4,7 +4,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "@minawk/pdf-viewer-ng": ["./dist/minawk/pdf-viewer-ng"]
+      "@minawk/pdf-viewer-ng": ["./projects/pdf-viewer-ng/src/public-api.ts"]
     },
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,

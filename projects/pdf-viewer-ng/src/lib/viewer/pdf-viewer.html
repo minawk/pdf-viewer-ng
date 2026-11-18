@@ -1,0 +1,11 @@
+@if (resolvedTools().length > 0) {
+  <pdfv-toolbar [tools]="resolvedTools()" />
+}
+
+<div class="viewport" role="region" tabindex="0" [attr.aria-label]="messages.documentLabel">
+  @if (!store.hasDocument()) {
+    <p class="empty">{{ messages.noDocument }}</p>
+  }
+</div>
+
+<div class="status" role="status">{{ store.announcement() }}</div>

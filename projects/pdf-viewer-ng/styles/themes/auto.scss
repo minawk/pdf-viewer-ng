@@ -1,0 +1,4 @@
+// Ready-to-use stylesheet for theme="auto" (follows prefers-color-scheme).
+@use '../index' as pdfv;
+
+@include pdfv.auto-theme();

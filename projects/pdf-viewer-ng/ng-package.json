@@ -3,5 +3,12 @@
   "dest": "../../dist/minawk/pdf-viewer-ng",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "assets": [
+    {
+      "input": "styles",
+      "glob": "**/*.scss",
+      "output": "styles"
+    }
+  ]
 }

@@ -1,0 +1,55 @@
+@use '../../../styles/tokens';
+@use '../../../styles/mixins';
+
+// Declares the layer order, then the built-in light defaults in the lowest layer:
+// themes (pdfv.theme layer) and un-layered author overrides always win.
+@layer #{tokens.$layer-order};
+
+@layer pdfv.base {
+  :host {
+    @include tokens.declare(tokens.$light);
+  }
+}
+
+:host {
+  container: pdfv / inline-size;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  min-block-size: 20rem;
+  overflow: hidden;
+  color: var(--pdfv-color-on-surface);
+  font-family: var(--pdfv-font-family);
+  font-size: var(--pdfv-font-size);
+  line-height: var(--pdfv-line-height);
+  background: var(--pdfv-color-surface);
+  border: 1px solid var(--pdfv-color-border);
+  border-radius: var(--pdfv-radius);
+
+  .viewport {
+    position: relative;
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: auto;
+    background: var(--pdfv-color-canvas);
+    overscroll-behavior: contain;
+
+    &:focus-visible {
+      @include mixins.focus-ring(-3px);
+    }
+  }
+
+  .empty {
+    display: grid;
+    place-items: center;
+    block-size: 100%;
+    margin: 0;
+    padding: var(--pdfv-space-3);
+    color: var(--pdfv-color-on-surface-muted);
+  }
+
+  .status {
+    @include mixins.visually-hidden;
+  }
+}

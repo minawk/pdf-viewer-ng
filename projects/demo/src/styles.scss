@@ -1,1 +1,29 @@
-/* You can add global styles to this file, and also import other style files */
+// In an application, use: @use '@minawk/pdf-viewer-ng/styles' as pdfv;
+// The demo compiles the library from source, hence the include path.
+@use 'pdf-viewer-ng/styles' as pdfv;
+
+// Every built-in theme: light, dark, high-contrast, material and auto.
+@include pdfv.all-themes();
+
+// A custom theme, selected with <pdfv-viewer theme="ocean" />.
+@include pdfv.theme(
+  'ocean',
+  (
+    'color-primary': #006782,
+    'color-focus': #006782,
+    'color-toolbar': #e3f2f7,
+    'color-canvas': #cfe6ee,
+    'color-selected': #b8e3f2,
+    'color-on-selected': #001f29,
+    'radius': 12px,
+  ),
+  $base: 'light'
+);
+
+html,
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #1f2328;
+  background: #ffffff;
+}

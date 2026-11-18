@@ -1,0 +1,4 @@
+// Ready-to-use stylesheet with every built-in theme (light, dark, high-contrast, material, auto).
+@use '../index' as pdfv;
+
+@include pdfv.all-themes();
