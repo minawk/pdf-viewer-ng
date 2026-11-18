@@ -51,7 +51,7 @@ describe('PdfViewer', () => {
   it('disables document actions while no document is loaded', async () => {
     const { host } = await create();
     const download = host.querySelector('button[aria-label="Download"]') as HTMLButtonElement;
-    expect(download.disabled).toBe(true);
+    expect(download.getAttribute('aria-disabled')).toBe('true');
   });
 
   it('renders only the requested tools, and no toolbar for an empty list', async () => {

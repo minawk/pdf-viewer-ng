@@ -30,6 +30,16 @@ for (const theme of themes) {
   });
 }
 
+test('single page mode has no axe violations, on the last page', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Page mode').selectOption('single');
+  await waitForFirstPage(page);
+  await page.getByRole('button', { name: 'Last page' }).click();
+  await expect(page.locator('pdfv-page')).toHaveAttribute('data-page-number', '12');
+  const results = await axe(page).analyze();
+  expect(results.violations).toEqual([]);
+});
+
 test('error state has no axe violations', async ({ page }) => {
   await page.goto('/');
   await page.getByLabel('Document', { exact: true }).selectOption('samples/missing.pdf');
@@ -58,7 +68,8 @@ test('applies theme tokens through the cascade layers', async ({ page }) => {
 test('toolbar is a single tab stop, followed by the document region', async ({ page }) => {
   await page.goto('/');
   await waitForFirstPage(page);
-  await page.getByLabel('Theme', { exact: true }).focus();
+  // The last demo control before the viewer.
+  await page.getByRole('button', { name: 'Go to page 5' }).focus();
   await page.keyboard.press('Tab');
   // On page 1, "first" and "previous" are disabled: the page number field is the first enabled item.
   await expect(page.getByRole('textbox', { name: 'Page number' })).toBeFocused();

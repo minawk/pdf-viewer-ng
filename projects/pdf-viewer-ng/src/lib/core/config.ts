@@ -1,5 +1,5 @@
 import { EnvironmentProviders, InjectionToken, makeEnvironmentProviders } from '@angular/core';
-import { DEFAULT_TOOLS, PdfViewerTheme, PdfViewerTool } from './types';
+import { DEFAULT_TOOLS, PdfPageMode, PdfViewerTheme, PdfViewerTool } from './types';
 
 export interface PdfViewerConfig {
   /**
@@ -19,6 +19,8 @@ export interface PdfViewerConfig {
   readonly theme: PdfViewerTheme;
   /** Toolbar items used when the viewer's `tools` input is not set. */
   readonly tools: readonly PdfViewerTool[];
+  /** Page layout used when the viewer's `pageMode` input is not set. */
+  readonly pageMode: PdfPageMode;
   /** Upper bound for the canvas pixel ratio, to limit memory use on high-DPI screens. */
   readonly maxPixelRatio: number;
 }
@@ -28,6 +30,7 @@ export const DEFAULT_PDF_VIEWER_CONFIG: PdfViewerConfig = {
   assetsUrl: null,
   theme: 'light',
   tools: DEFAULT_TOOLS,
+  pageMode: 'continuous',
   maxPixelRatio: 2,
 };
 

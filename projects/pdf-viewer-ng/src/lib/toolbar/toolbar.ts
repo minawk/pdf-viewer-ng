@@ -4,6 +4,7 @@ import { PdfInteractionTool, PdfViewerTool } from '../core/types';
 import { ViewerStore } from '../core/viewer-store';
 import { Icon } from '../icon/icon';
 import { PdfvIconName } from '../icon/icons';
+import { Pager } from './pager';
 import { RovingToolbar, ToolbarItem } from './roving-toolbar';
 
 interface ToolToggle {
@@ -14,7 +15,7 @@ interface ToolToggle {
 
 @Component({
   selector: 'pdfv-toolbar',
-  imports: [Icon, ToolbarItem],
+  imports: [Icon, Pager, ToolbarItem],
   templateUrl: './toolbar.html',
   styleUrl: './toolbar.scss',
   hostDirectives: [RovingToolbar],

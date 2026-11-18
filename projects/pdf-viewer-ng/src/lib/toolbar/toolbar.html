@@ -1,33 +1,7 @@
 @for (tool of tools(); track $index) {
   @switch (tool) {
     @case ('pager') {
-      <div class="group" role="group" [attr.aria-label]="messages.pagerGroup">
-        <button type="button" class="button" pdfvToolbarItem [disabled]="!store.canGoPrevious()" [attr.aria-label]="messages.firstPage">
-          <pdfv-icon name="first-page" />
-        </button>
-        <button type="button" class="button" pdfvToolbarItem [disabled]="!store.canGoPrevious()" [attr.aria-label]="messages.previousPage">
-          <pdfv-icon name="chevron-left" />
-        </button>
-        <span class="pager">
-          <input
-            class="page-input"
-            type="text"
-            inputmode="numeric"
-            autocomplete="off"
-            pdfvToolbarItem
-            [disabled]="!store.hasDocument()"
-            [attr.aria-label]="messages.pageNumber"
-            [value]="store.hasDocument() ? store.currentPage() : ''"
-          />
-          <span class="page-total">{{ messages.pageTotal(store.pageCount()) }}</span>
-        </span>
-        <button type="button" class="button" pdfvToolbarItem [disabled]="!store.canGoNext()" [attr.aria-label]="messages.nextPage">
-          <pdfv-icon name="chevron-right" />
-        </button>
-        <button type="button" class="button" pdfvToolbarItem [disabled]="!store.canGoNext()" [attr.aria-label]="messages.lastPage">
-          <pdfv-icon name="last-page" />
-        </button>
-      </div>
+      <pdfv-pager />
     }
     @case ('zoom') {
       <div class="group" role="group" [attr.aria-label]="messages.zoomGroup">

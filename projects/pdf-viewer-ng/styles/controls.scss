@@ -1,0 +1,77 @@
+// Internal control styles shared by the viewer components (not part of the public Sass API).
+@use 'mixins';
+
+$disabled: ':disabled, [aria-disabled="true"]';
+$enabled: ':not(:disabled):not([aria-disabled="true"])';
+
+/// Square icon button of the toolbar.
+@mixin icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--pdfv-control-size);
+  block-size: var(--pdfv-control-size);
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--pdfv-radius-sm);
+  cursor: pointer;
+
+  @include mixins.motion-safe {
+    transition: background-color var(--pdfv-transition-duration);
+  }
+
+  &:hover#{$enabled} {
+    background: var(--pdfv-color-state-hover);
+  }
+
+  &:active#{$enabled} {
+    background: var(--pdfv-color-state-pressed);
+  }
+
+  &[aria-pressed='true']#{$enabled} {
+    color: var(--pdfv-color-on-selected);
+    background: var(--pdfv-color-selected);
+    border-color: var(--pdfv-color-primary);
+  }
+
+  &:is(#{$disabled}) {
+    color: var(--pdfv-color-disabled);
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    @include mixins.focus-ring(1px);
+  }
+
+  @media (forced-colors: active) {
+    &[aria-pressed='true'] {
+      outline: 2px solid Highlight;
+    }
+
+    &:is(#{$disabled}) {
+      color: GrayText;
+    }
+  }
+}
+
+/// Text field or select of the toolbar.
+@mixin field {
+  block-size: calc(var(--pdfv-control-size) - var(--pdfv-space-1));
+  color: var(--pdfv-color-on-surface);
+  font: inherit;
+  background: var(--pdfv-color-surface);
+  border: 1px solid var(--pdfv-color-border-strong);
+  border-radius: var(--pdfv-radius-sm);
+
+  &:focus-visible {
+    @include mixins.focus-ring(1px);
+  }
+
+  &:disabled {
+    color: var(--pdfv-color-disabled);
+    border-color: var(--pdfv-color-border);
+  }
+}

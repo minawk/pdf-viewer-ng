@@ -6,7 +6,7 @@ test.describe('document loading and rendering', () => {
     await expect(page.locator('pdfv-page')).toHaveCount(12, { timeout: 15_000 });
     await expect(page.locator('pdfv-page').first().locator('canvas')).toBeAttached();
     await expect(page.locator('pdfv-viewer [role="status"]')).toHaveText('Document loaded, 12 pages.');
-    await expect(page.locator('output')).toHaveText('loaded: 12 pages');
+    await expect(page.locator('output')).toContainText('loaded: 12 pages');
     await expect(page.getByRole('group', { name: 'Page 1 of 12' })).toBeVisible();
   });
 
@@ -40,7 +40,7 @@ test.describe('document loading and rendering', () => {
     await page.getByLabel('Document', { exact: true }).selectOption('samples/invalid.pdf');
     await expect(page.getByRole('alert')).toHaveText('This file is not a valid PDF document.');
     await expect(page.getByRole('alert').getByRole('button')).toHaveCount(0);
-    await expect(page.locator('output')).toHaveText('loadError: invalid');
+    await expect(page.locator('output')).toContainText('loadError: invalid');
   });
 
   test('offers a retry when the file cannot be downloaded', async ({ page }) => {

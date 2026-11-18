@@ -8,14 +8,32 @@ import {
   PLATFORM_ID,
   resource,
   signal,
+  untracked,
 } from '@angular/core';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { DEFAULT_PAGE_SIZE, resolveScale, Size } from '../utils/zoom';
 import { classifyLoadError, PdfLoadErrorKind } from './errors';
 import { PdfEngine } from './pdf-engine';
-import { PdfInteractionTool, PdfSource, PdfZoom } from './types';
+import { PDF_VIEWER_CONFIG } from './config';
+import { PDF_VIEWER_MESSAGES } from './messages';
+import { PdfInteractionTool, PdfPageMode, PdfSource, PdfZoom } from './types';
 
 export type DocumentStatus = 'idle' | 'loading' | 'ready' | 'error';
+
+/** Viewer inputs the store depends on, as reactive getters. */
+export interface ViewerInputs {
+  readonly src: () => PdfSource | null | undefined;
+  readonly pageMode: () => PdfPageMode | undefined;
+}
+
+/** Which edge of the target page to bring into view. */
+export type ScrollPosition = 'start' | 'end';
+
+/** A navigation the document view must perform. A new object every time, so repeats are honored. */
+export interface ScrollRequest {
+  readonly page: number;
+  readonly position: ScrollPosition;
+}
 
 /** Above this page count, page sizes are measured lazily instead of prefetched. */
 const PREFETCH_SIZES_MAX_PAGES = 1000;
@@ -27,15 +45,17 @@ const PREFETCH_SIZES_MAX_PAGES = 1000;
 @Injectable()
 export class ViewerStore {
   private readonly engine = inject(PdfEngine);
+  private readonly config = inject(PDF_VIEWER_CONFIG);
+  private readonly messages = inject(PDF_VIEWER_MESSAGES);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  /** Reactive getters of the viewer inputs, see `connect()`. */
+  private readonly inputs = signal<ViewerInputs>({ src: () => null, pageMode: () => undefined });
 
   // ---- Source & document ---------------------------------------------------------------
 
-  /** Reactive getter of the viewer's `src` input, see `bindSource()`. */
-  private readonly sourceBinding = signal<() => PdfSource | null | undefined>(() => null);
-
   /** Current source: follows the `src` input, and can be replaced from inside the viewer. */
-  readonly source = linkedSignal<PdfSource | null>(() => this.sourceBinding()() ?? null);
+  readonly source = linkedSignal<PdfSource | null>(() => this.inputs().src() ?? null);
 
   /** Download progress of the document being loaded (0..1), `null` when unknown. */
   readonly loadProgress = signal<number | null>(null);
@@ -79,15 +99,28 @@ export class ViewerStore {
   readonly pageCount = computed(() => this.document()?.numPages ?? 0);
   readonly hasDocument = computed(() => this.pageCount() > 0);
 
-  // ---- Navigation, zoom & tools --------------------------------------------------------
+  // ---- Navigation ----------------------------------------------------------------------
 
-  /** 1-based current page; back to 1 whenever a new document is loaded. */
+  readonly pageMode = computed<PdfPageMode>(() => this.inputs().pageMode() ?? this.config.pageMode);
+
+  /** Page requested before its document was ready, e.g. `[page]="5"` set along with `src`. */
+  private readonly pendingPage = signal<number | null>(null);
+
+  /**
+   * 1-based current page. Each new document opens at the pending page if one was requested,
+   * at page 1 otherwise.
+   */
   readonly currentPage = linkedSignal<PDFDocumentProxy | null, number>({
     source: this.document,
-    computation: () => 1,
+    computation: (pdf) => (pdf ? clampPage(untracked(this.pendingPage) ?? 1, pdf.numPages) : 1),
   });
   readonly canGoPrevious = computed(() => this.hasDocument() && this.currentPage() > 1);
   readonly canGoNext = computed(() => this.hasDocument() && this.currentPage() < this.pageCount());
+
+  /** Latest navigation for the document view to scroll to. */
+  readonly scrollRequest = signal<ScrollRequest | null>(null);
+
+  // ---- Zoom & tools --------------------------------------------------------------------
 
   readonly zoom = signal<PdfZoom>('fit-width');
   readonly tool = signal<PdfInteractionTool>('select');
@@ -96,17 +129,17 @@ export class ViewerStore {
   /** Inner size of the scrollable document area, in CSS pixels. */
   readonly containerSize = signal<Size>({ width: 0, height: 0 });
 
-  private readonly firstPage = resource({
+  private readonly firstPageResource = resource({
     params: () => this.document() ?? undefined,
     loader: ({ params }) => params.getPage(1),
   });
 
   /** Size of the first page in PDF points: placeholder size of pages not loaded yet, and fit-zoom reference. */
   readonly referenceSize = computed<Size>(() => {
-    if (!this.firstPage.hasValue()) {
+    if (!this.firstPageResource.hasValue()) {
       return DEFAULT_PAGE_SIZE;
     }
-    const { width, height } = this.firstPage.value().getViewport({ scale: 1 });
+    const { width, height } = this.firstPageResource.value().getViewport({ scale: 1 });
     return { width, height };
   });
 
@@ -144,18 +177,64 @@ export class ViewerStore {
   readonly announcement = signal('');
 
   constructor() {
-    // Free the worker-side resources of every document once it is replaced or the viewer is destroyed.
     effect((onCleanup) => {
       const pdf = this.document();
-      if (pdf) {
-        onCleanup(() => void pdf.loadingTask.destroy());
+      if (!pdf) {
+        return;
       }
+      untracked(() => {
+        // Resolve the opening page (consuming the pending one) and bring it into view.
+        const page = this.currentPage();
+        this.pendingPage.set(null);
+        if (page > 1) {
+          this.scrollRequest.set({ page, position: 'start' });
+        }
+      });
+      // Free the worker-side resources of every document once it is replaced or the viewer is destroyed.
+      onCleanup(() => void pdf.loadingTask.destroy());
     });
   }
 
-  /** Connects the viewer's `src` input to the store, without an effect. */
-  bindSource(source: () => PdfSource | null | undefined): void {
-    this.sourceBinding.set(source);
+  /** Connects the viewer inputs to the store, without effects. */
+  connect(inputs: ViewerInputs): void {
+    this.inputs.set(inputs);
+  }
+
+  /**
+   * Navigates to a page (clamped to the document) and announces it. Before the document
+   * is ready, the page is remembered and the document opens there.
+   */
+  goToPage(page: number, position: ScrollPosition = 'start'): void {
+    const pdf = this.document();
+    if (!pdf) {
+      this.pendingPage.set(page);
+      return;
+    }
+    const target = clampPage(page, pdf.numPages);
+    this.currentPage.set(target);
+    this.scrollRequest.set({ page: target, position });
+    this.announce(this.messages.pageLabel(target, pdf.numPages));
+  }
+
+  firstPage(): void {
+    this.goToPage(1);
+  }
+
+  previousPage(position: ScrollPosition = 'start'): void {
+    this.goToPage(this.currentPage() - 1, position);
+  }
+
+  nextPage(): void {
+    this.goToPage(this.currentPage() + 1);
+  }
+
+  lastPage(): void {
+    this.goToPage(this.pageCount());
+  }
+
+  /** Records the page the user scrolled to: no scrolling, no announcement. */
+  setVisiblePage(page: number): void {
+    this.currentPage.set(clampPage(page, this.pageCount()));
   }
 
   /** Loads the current source again, e.g. after a network error. */
@@ -167,7 +246,16 @@ export class ViewerStore {
     this.tool.set(tool);
   }
 
+  /** Updates the live region. A repeated message is altered invisibly so it is announced again. */
   announce(message: string): void {
-    this.announcement.set(message);
+    const current = this.announcement();
+    this.announcement.set(current === message ? `${message}\u00a0` : message);
   }
+}
+
+function clampPage(page: number, pageCount: number): number {
+  if (!Number.isFinite(page)) {
+    return 1;
+  }
+  return Math.min(Math.max(1, Math.trunc(page)), Math.max(1, pageCount));
 }

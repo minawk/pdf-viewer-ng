@@ -1,5 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { PdfLoadedEvent, PdfLoadErrorEvent, PdfViewer, PdfViewerTheme } from '@minawk/pdf-viewer-ng';
+import {
+  PdfLoadedEvent,
+  PdfLoadErrorEvent,
+  PdfPageMode,
+  PdfViewer,
+  PdfViewerTheme,
+} from '@minawk/pdf-viewer-ng';
 
 interface Option<T> {
   readonly value: T;
@@ -29,12 +35,24 @@ export class App {
     { value: 'samples/missing.pdf', label: 'Missing file (404)' },
   ];
 
+  protected readonly pageModes: readonly Option<PdfPageMode>[] = [
+    { value: 'continuous', label: 'Continuous (scroll)' },
+    { value: 'single', label: 'Single page' },
+  ];
+
   protected readonly theme = signal<PdfViewerTheme>('light');
   protected readonly src = signal(this.documents[0].value);
+  protected readonly pageMode = signal<PdfPageMode>('continuous');
+  /** Two-way bound to the viewer: follows scrolling and pager navigation, and drives the viewer. */
+  protected readonly page = signal(1);
   protected readonly lastEvent = signal('');
 
   protected onThemeChange(event: Event): void {
     this.theme.set((event.target as HTMLSelectElement).value);
+  }
+
+  protected onPageModeChange(event: Event): void {
+    this.pageMode.set((event.target as HTMLSelectElement).value as PdfPageMode);
   }
 
   protected onDocumentChange(event: Event): void {

@@ -1,0 +1,60 @@
+<button
+  type="button"
+  class="button"
+  pdfvToolbarItem
+  [disabled]="!store.canGoPrevious()"
+  [attr.aria-label]="messages.firstPage"
+  (click)="store.firstPage()"
+>
+  <pdfv-icon name="first-page" />
+</button>
+<button
+  type="button"
+  class="button"
+  pdfvToolbarItem
+  [disabled]="!store.canGoPrevious()"
+  [attr.aria-label]="messages.previousPage"
+  (click)="store.previousPage()"
+>
+  <pdfv-icon name="chevron-left" />
+</button>
+<span class="pager">
+  <input
+    #input
+    class="page-input"
+    type="text"
+    inputmode="numeric"
+    autocomplete="off"
+    enterkeyhint="go"
+    pdfvToolbarItem
+    [disabled]="!store.hasDocument()"
+    [attr.aria-label]="messages.pageNumber"
+    [attr.aria-describedby]="totalId"
+    [value]="store.hasDocument() ? store.currentPage() : ''"
+    (focus)="input.select()"
+    (change)="commit(input)"
+    (keydown.enter)="commit(input); input.select()"
+    (keydown.escape)="revert(input)"
+  />
+  <span class="page-total" [id]="totalId">{{ messages.pageTotal(store.pageCount()) }}</span>
+</span>
+<button
+  type="button"
+  class="button"
+  pdfvToolbarItem
+  [disabled]="!store.canGoNext()"
+  [attr.aria-label]="messages.nextPage"
+  (click)="store.nextPage()"
+>
+  <pdfv-icon name="chevron-right" />
+</button>
+<button
+  type="button"
+  class="button"
+  pdfvToolbarItem
+  [disabled]="!store.canGoNext()"
+  [attr.aria-label]="messages.lastPage"
+  (click)="store.lastPage()"
+>
+  <pdfv-icon name="last-page" />
+</button>

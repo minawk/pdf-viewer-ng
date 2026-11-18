@@ -25,6 +25,22 @@
     gap: 0.5rem 1rem;
   }
 
+  .action {
+    min-block-size: 2.25rem;
+    padding-inline: 0.75rem;
+    font: inherit;
+    color: #ffffff;
+    background: #0b57d0;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid #0b57d0;
+      outline-offset: 2px;
+    }
+  }
+
   .event {
     min-inline-size: 10rem;
     color: #57606a;

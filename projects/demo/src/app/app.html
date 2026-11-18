@@ -17,10 +17,26 @@
         }
       </select>
     </div>
-    <output class="event" aria-label="Last viewer event">{{ lastEvent() }}</output>
+    <div class="field">
+      <label for="page-mode-select">Page mode</label>
+      <select id="page-mode-select" [value]="pageMode()" (change)="onPageModeChange($event)">
+        @for (option of pageModes; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+    <button type="button" class="action" (click)="page.set(5)">Go to page 5</button>
+    <output class="event" aria-label="Viewer state">page {{ page() }} · {{ lastEvent() }}</output>
   </div>
 </header>
 
 <main class="main">
-  <pdfv-viewer [src]="src()" [theme]="theme()" (loaded)="onLoaded($event)" (loadError)="onLoadError($event)" />
+  <pdfv-viewer
+    [src]="src()"
+    [theme]="theme()"
+    [pageMode]="pageMode()"
+    [(page)]="page"
+    (loaded)="onLoaded($event)"
+    (loadError)="onLoadError($event)"
+  />
 </main>

@@ -16,6 +16,12 @@
     @include mixins.focus-ring(-3px);
   }
 
+  // One page per view: centered vertically when it is shorter than the viewport.
+  &[data-page-mode='single'] {
+    display: grid;
+    align-content: safe center;
+  }
+
   .state {
     display: flex;
     flex-direction: column;

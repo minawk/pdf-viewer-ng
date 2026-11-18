@@ -7,6 +7,7 @@ import {
   inject,
   input,
   isDevMode,
+  model,
   output,
   untracked,
 } from '@angular/core';
@@ -14,7 +15,7 @@ import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { PDF_VIEWER_CONFIG } from '../core/config';
 import { PdfLoadErrorKind } from '../core/errors';
 import { PDF_VIEWER_MESSAGES } from '../core/messages';
-import { PdfSource, PdfViewerTheme, PdfViewerTool } from '../core/types';
+import { PdfPageMode, PdfSource, PdfViewerTheme, PdfViewerTool } from '../core/types';
 import { ViewerStore } from '../core/viewer-store';
 import { DocumentView } from '../document/document-view';
 import { Toolbar } from '../toolbar/toolbar';
@@ -53,6 +54,10 @@ export class PdfViewer {
   readonly theme = input<PdfViewerTheme | undefined>(undefined);
   /** Toolbar items, in display order. Pass an empty array to hide the toolbar. */
   readonly tools = input<readonly PdfViewerTool[] | undefined>(undefined);
+  /** `continuous` (all pages, scrolling) or `single` (one page per view). Defaults to the `providePdfViewer()` value. */
+  readonly pageMode = input<PdfPageMode | undefined>(undefined);
+  /** Current page, 1-based. Supports two-way binding: `[(page)]`. */
+  readonly page = model(1);
 
   /** Emitted each time a document has been opened. */
   readonly loaded = output<PdfLoadedEvent>();
@@ -63,11 +68,37 @@ export class PdfViewer {
   protected readonly resolvedTools = computed(() => this.tools() ?? this.config.tools);
 
   constructor() {
-    this.store.bindSource(this.src);
+    this.store.connect({ src: this.src, pageMode: this.pageMode });
+    this.syncPage();
     this.notifyDocumentChanges();
     if (isDevMode()) {
       this.warnOnMissingTheme();
     }
+  }
+
+  /** Two-way synchronization between the `page` model and the store. */
+  private syncPage(): void {
+    // Parent -> viewer: navigate when the bound page changes.
+    effect(() => {
+      const page = this.page();
+      untracked(() => {
+        if (!this.store.document() || page !== this.store.currentPage()) {
+          this.store.goToPage(page);
+        }
+      });
+    });
+    // Viewer -> parent: report navigation and scrolling, once a document is shown.
+    effect(() => {
+      if (!this.store.document()) {
+        return;
+      }
+      const page = this.store.currentPage();
+      untracked(() => {
+        if (page !== this.page()) {
+          this.page.set(page);
+        }
+      });
+    });
   }
 
   /** Bridges document state to outputs and to the screen reader live region. */

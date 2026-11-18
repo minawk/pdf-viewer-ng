@@ -22,6 +22,13 @@ export type PdfViewerTool =
 /** Pointer interaction mode over the document. */
 export type PdfInteractionTool = 'select' | 'pan' | 'highlight' | 'text';
 
+/**
+ * How pages are laid out:
+ * - `continuous`: every page in one scrollable view; the current page follows scrolling.
+ * - `single`: one page per view; the pager and keyboard move between pages.
+ */
+export type PdfPageMode = 'continuous' | 'single';
+
 /** Zoom level: a preset mode or an explicit scale factor (1 = 100%). */
 export type PdfZoom = 'fit-width' | 'fit-page' | 'actual' | number;
 

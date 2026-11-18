@@ -36,7 +36,7 @@ describe('RovingToolbar', () => {
     expect(el('a').tabIndex).toBe(0);
     expect(el('b').tabIndex).toBe(-1);
     expect(el('d').tabIndex).toBe(-1);
-    expect(el('b').hasAttribute('disabled')).toBe(true);
+    expect(el('b').getAttribute('aria-disabled')).toBe('true');
   });
 
   it('moves focus with the arrow keys, skipping disabled items and wrapping', async () => {

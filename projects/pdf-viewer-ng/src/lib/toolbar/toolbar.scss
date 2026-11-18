@@ -1,4 +1,5 @@
 @use '../../../styles/mixins';
+@use '../../../styles/controls';
 
 :host {
   display: flex;
@@ -31,90 +32,12 @@
   }
 
   .button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    inline-size: var(--pdfv-control-size);
-    block-size: var(--pdfv-control-size);
-    padding: 0;
-    color: inherit;
-    font: inherit;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: var(--pdfv-radius-sm);
-    cursor: pointer;
-
-    @include mixins.motion-safe {
-      transition: background-color var(--pdfv-transition-duration);
-    }
-
-    &:hover:not(:disabled) {
-      background: var(--pdfv-color-state-hover);
-    }
-
-    &:active:not(:disabled) {
-      background: var(--pdfv-color-state-pressed);
-    }
-
-    &[aria-pressed='true']:not(:disabled) {
-      color: var(--pdfv-color-on-selected);
-      background: var(--pdfv-color-selected);
-      border-color: var(--pdfv-color-primary);
-    }
-
-    &:disabled {
-      color: var(--pdfv-color-disabled);
-      cursor: not-allowed;
-    }
-
-    &:focus-visible {
-      @include mixins.focus-ring(1px);
-    }
-
-    @media (forced-colors: active) {
-      &[aria-pressed='true'] {
-        outline: 2px solid Highlight;
-      }
-    }
-  }
-
-  .pager {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--pdfv-space-2);
-    padding-inline: var(--pdfv-space-1);
-  }
-
-  .page-input,
-  .zoom-select {
-    block-size: calc(var(--pdfv-control-size) - var(--pdfv-space-1));
-    color: var(--pdfv-color-on-surface);
-    font: inherit;
-    background: var(--pdfv-color-surface);
-    border: 1px solid var(--pdfv-color-border-strong);
-    border-radius: var(--pdfv-radius-sm);
-
-    &:focus-visible {
-      @include mixins.focus-ring(1px);
-    }
-
-    &:disabled {
-      color: var(--pdfv-color-disabled);
-      border-color: var(--pdfv-color-border);
-    }
-  }
-
-  .page-input {
-    inline-size: 3.5em;
-    text-align: center;
+    @include controls.icon-button;
   }
 
   .zoom-select {
+    @include controls.field;
+
     padding-inline: var(--pdfv-space-2);
-  }
-
-  .page-total {
-    color: var(--pdfv-color-on-surface-muted);
-    white-space: nowrap;
   }
 }

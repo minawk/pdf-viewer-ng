@@ -1,5 +1,4 @@
 import {
-  afterNextRender,
   afterRenderEffect,
   Component,
   computed,
@@ -75,11 +74,12 @@ export class Page {
    * the first page size until then.
    */
   private readonly size = linkedSignal<
-    { pdf: unknown; page: PDFPageProxy | null; known: Size | undefined; reference: Size },
+    { pdf: unknown; pageNumber: number; page: PDFPageProxy | null; known: Size | undefined; reference: Size },
     PageSize
   >({
     source: () => ({
       pdf: this.store.document(),
+      pageNumber: this.pageNumber(),
       page: this.page(),
       known: this.store.pageSizes()?.[this.pageNumber() - 1],
       reference: this.store.referenceSize(),
@@ -92,7 +92,11 @@ export class Page {
         const { width, height } = source.page.getViewport({ scale: 1 });
         return { width, height, exact: true };
       }
-      if (previous?.value.exact && previous.source.pdf === source.pdf) {
+      const samePage =
+        previous !== undefined &&
+        previous.source.pdf === source.pdf &&
+        previous.source.pageNumber === source.pageNumber;
+      if (previous?.value.exact && samePage) {
         return previous.value;
       }
       return { ...source.reference, exact: false };
@@ -108,7 +112,8 @@ export class Page {
   private canvas: HTMLCanvasElement | null = null;
 
   constructor() {
-    afterNextRender(() => this.documentView.observe(this.host, this.pageNumber()));
+    // Re-registers when the page number changes (single page mode reuses this component).
+    afterRenderEffect(() => this.documentView.observe(this.host, this.pageNumber()));
     inject(DestroyRef).onDestroy(() => {
       this.documentView.unobserve(this.host);
       this.releaseCanvas();
@@ -118,6 +123,7 @@ export class Page {
       const page = this.page();
       const scale = this.store.scale();
       if (!page || !this.near()) {
+        // Also reached when the page number changes: the previous page is never shown stretched.
         this.releaseCanvas();
         return;
       }
@@ -127,8 +133,9 @@ export class Page {
       const timer = setTimeout(
         () => {
           task = this.render(page, scale);
+          this.renderFailed.set(false);
           task.promise.then(
-            () => !cancelled && this.renderFailed.set(false),
+            () => undefined,
             (error: unknown) => {
               if (!cancelled && (error as { name?: string })?.name !== 'RenderingCancelledException') {
                 this.renderFailed.set(true);

@@ -2,7 +2,7 @@ import { ApplicationRef, PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { PDF_TO_CSS_UNITS } from '../utils/zoom';
 import { OpenDocumentOptions, PdfEngine } from './pdf-engine';
-import { PdfSource } from './types';
+import { PdfPageMode, PdfSource } from './types';
 import { ViewerStore } from './viewer-store';
 
 function fakePdf(numPages: number, landscapePages: number[] = []) {
@@ -17,6 +17,10 @@ function fakePdf(numPages: number, landscapePages: number[] = []) {
       }),
     loadingTask: { destroy: vi.fn(() => Promise.resolve()) },
   };
+}
+
+function connect(store: ViewerStore, src: () => PdfSource | null, pageMode: () => PdfPageMode | undefined = () => undefined) {
+  store.connect({ src, pageMode });
 }
 
 describe('ViewerStore', () => {
@@ -47,7 +51,7 @@ describe('ViewerStore', () => {
   it('loads the bound source and prefetches page sizes', async () => {
     const { store, settle } = setup();
     open.mockResolvedValue(fakePdf(3, [2]));
-    store.bindSource(() => 'a.pdf');
+    connect(store, () => 'a.pdf');
     expect(store.status()).toBe('loading');
 
     await settle();
@@ -66,7 +70,7 @@ describe('ViewerStore', () => {
     const { store, settle } = setup();
     const first = fakePdf(5);
     open.mockResolvedValueOnce(first).mockResolvedValueOnce(fakePdf(2));
-    store.bindSource(() => 'a.pdf');
+    connect(store, () => 'a.pdf');
     await settle();
     store.currentPage.set(4);
 
@@ -80,7 +84,7 @@ describe('ViewerStore', () => {
   it('classifies load errors and can retry', async () => {
     const { store, settle } = setup();
     open.mockRejectedValueOnce(Object.assign(new Error('bad'), { name: 'InvalidPDFException' }));
-    store.bindSource(() => 'bad.pdf');
+    connect(store, () => 'bad.pdf');
     await settle();
     expect(store.status()).toBe('error');
     expect(store.loadErrorKind()).toBe('invalid');
@@ -95,7 +99,7 @@ describe('ViewerStore', () => {
   it('computes the render scale from the zoom and the container', async () => {
     const { store, settle } = setup();
     open.mockResolvedValue(fakePdf(1));
-    store.bindSource(() => 'a.pdf');
+    connect(store, () => 'a.pdf');
     await settle();
 
     store.containerSize.set({ width: 1232, height: 900 });
@@ -104,9 +108,85 @@ describe('ViewerStore', () => {
     expect(store.scale()).toBeCloseTo(1.5 * PDF_TO_CSS_UNITS);
   });
 
+  describe('navigation', () => {
+    it('navigates within bounds, requests a scroll and announces the page', async () => {
+      const { store, settle } = setup();
+      open.mockResolvedValue(fakePdf(10));
+      connect(store, () => 'a.pdf');
+      await settle();
+
+      store.goToPage(4);
+      expect(store.currentPage()).toBe(4);
+      expect(store.scrollRequest()).toEqual({ page: 4, position: 'start' });
+      expect(store.announcement()).toBe('Page 4 of 10');
+
+      store.goToPage(99);
+      expect(store.currentPage()).toBe(10);
+      store.goToPage(-3);
+      expect(store.currentPage()).toBe(1);
+
+      store.lastPage();
+      expect(store.canGoNext()).toBe(false);
+      store.previousPage('end');
+      expect(store.scrollRequest()).toEqual({ page: 9, position: 'end' });
+    });
+
+    it('requests a new scroll for a repeated navigation, and re-announces it', async () => {
+      const { store, settle } = setup();
+      open.mockResolvedValue(fakePdf(10));
+      connect(store, () => 'a.pdf');
+      await settle();
+
+      store.goToPage(3);
+      const first = store.scrollRequest();
+      const firstAnnouncement = store.announcement();
+      store.goToPage(3);
+      expect(store.scrollRequest()).not.toBe(first);
+      expect(store.announcement()).not.toBe(firstAnnouncement);
+      expect(store.announcement().trim()).toBe('Page 3 of 10');
+    });
+
+    it('opens a document at a page requested before it was ready', async () => {
+      const { store, settle } = setup();
+      open.mockResolvedValue(fakePdf(10));
+      connect(store, () => 'a.pdf');
+      store.goToPage(7);
+      await settle();
+      expect(store.currentPage()).toBe(7);
+      expect(store.scrollRequest()).toEqual({ page: 7, position: 'start' });
+
+      // The pending page is consumed: the next document opens at page 1.
+      open.mockResolvedValue(fakePdf(3));
+      store.source.set('b.pdf');
+      await settle();
+      expect(store.currentPage()).toBe(1);
+    });
+
+    it('records scrolled pages without scrolling or announcing', async () => {
+      const { store, settle } = setup();
+      open.mockResolvedValue(fakePdf(10));
+      connect(store, () => 'a.pdf');
+      await settle();
+      store.setVisiblePage(6);
+      expect(store.currentPage()).toBe(6);
+      expect(store.scrollRequest()).toBeNull();
+      expect(store.announcement()).not.toContain('Page 6');
+    });
+
+    it('takes the page mode from the input, else from the configuration', () => {
+      const { store } = setup();
+      let mode: PdfPageMode | undefined;
+      connect(store, () => null, () => mode);
+      expect(store.pageMode()).toBe('continuous');
+      mode = 'single';
+      connect(store, () => null, () => mode);
+      expect(store.pageMode()).toBe('single');
+    });
+  });
+
   it('never loads on the server', async () => {
     const { store, settle } = setup('server');
-    store.bindSource(() => 'a.pdf');
+    connect(store, () => 'a.pdf');
     await settle();
     expect(open).not.toHaveBeenCalled();
     expect(store.status()).toBe('idle');

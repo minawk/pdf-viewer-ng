@@ -1,6 +1,7 @@
 @switch (store.status()) {
   @case ('ready') {
-    @for (pageNumber of pageNumbers(); track pageNumber) {
+    <!-- Tracked by position: in single page mode, one page component is reused for every page. -->
+    @for (pageNumber of renderedPages(); track $index) {
       <pdfv-page [pageNumber]="pageNumber" />
     }
   }

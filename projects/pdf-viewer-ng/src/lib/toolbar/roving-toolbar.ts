@@ -97,17 +97,25 @@ export class RovingToolbar {
   }
 }
 
-/** Marks a focusable control (button, input, select) as an item of the enclosing toolbar. */
+/**
+ * Marks a focusable control (button, input, select) as an item of the enclosing toolbar.
+ *
+ * Disabled buttons use `aria-disabled` rather than `disabled`: they stay focusable, so pressing
+ * "Next page" on the second to last page does not drop focus to the document body when the
+ * button becomes disabled. Their clicks are blocked. Text fields and selects use `disabled`.
+ */
 @Directive({
   selector: '[pdfvToolbarItem]',
   host: {
     '[attr.tabindex]': 'tabIndex()',
-    '[attr.disabled]': "disabled() ? '' : null",
+    '[attr.disabled]': "disabled() && !isButton ? '' : null",
+    '[attr.aria-disabled]': "isButton && disabled() ? 'true' : null",
   },
 })
 export class ToolbarItem {
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly element = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  protected readonly isButton = this.element instanceof HTMLButtonElement;
 
   private readonly toolbar = inject(RovingToolbar);
   protected readonly tabIndex: Signal<number> = computed(() =>
@@ -117,6 +125,19 @@ export class ToolbarItem {
   constructor() {
     this.toolbar.register(this);
     inject(DestroyRef).onDestroy(() => this.toolbar.unregister(this));
+    if (this.isButton) {
+      // Capture listeners on the target run before the template's (click) handlers.
+      this.element.addEventListener(
+        'click',
+        (event) => {
+          if (this.disabled()) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        },
+        { capture: true },
+      );
+    }
   }
 }
 

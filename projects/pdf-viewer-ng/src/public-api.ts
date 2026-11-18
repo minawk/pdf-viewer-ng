@@ -20,6 +20,7 @@ export {
 export {
   DEFAULT_TOOLS,
   type PdfInteractionTool,
+  type PdfPageMode,
   type PdfSource,
   type PdfViewerBuiltinTheme,
   type PdfViewerTheme,
