@@ -56,17 +56,31 @@
       </button>
     }
     @case ('open') {
-      <button type="button" class="button" pdfvToolbarItem disabled [attr.aria-label]="messages.open">
+      <button type="button" class="button" pdfvToolbarItem [attr.aria-label]="messages.open" (click)="files.pick()">
         <pdfv-icon name="open" />
       </button>
     }
     @case ('download') {
-      <button type="button" class="button" pdfvToolbarItem [disabled]="!store.hasDocument()" [attr.aria-label]="messages.download">
+      <button
+        type="button"
+        class="button"
+        pdfvToolbarItem
+        [disabled]="!store.hasDocument()"
+        [attr.aria-label]="messages.download"
+        (click)="files.download()"
+      >
         <pdfv-icon name="download" />
       </button>
     }
     @case ('print') {
-      <button type="button" class="button" pdfvToolbarItem [disabled]="!store.hasDocument()" [attr.aria-label]="messages.print">
+      <button
+        type="button"
+        class="button"
+        pdfvToolbarItem
+        [disabled]="!store.hasDocument() || printer.progress() !== null"
+        [attr.aria-label]="messages.print"
+        (click)="printer.print()"
+      >
         <pdfv-icon name="print" />
       </button>
     }

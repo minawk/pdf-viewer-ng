@@ -122,7 +122,7 @@ test.describe('continuous mode', () => {
     await page.getByLabel('Document', { exact: true }).selectOption('samples/long.pdf');
     await expect(page.locator('pdfv-page')).toHaveCount(300, { timeout: 15_000 });
     await expect(pageInput(page)).toHaveValue('1');
-    await expect(page.getByText('of 300')).toBeVisible();
+    await expect(page.locator('pdfv-pager .page-total')).toHaveText('of 300');
   });
 });
 

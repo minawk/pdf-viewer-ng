@@ -58,6 +58,16 @@ export interface PdfViewerMessages {
   readonly open: string;
   readonly download: string;
   readonly print: string;
+
+  readonly dropFile: string;
+  readonly notAPdf: string;
+  readonly downloadFailed: string;
+  readonly printPreparing: string;
+  readonly printProgress: (done: number, total: number) => string;
+  readonly printCancel: string;
+  readonly printReady: string;
+  readonly printCancelled: string;
+  readonly printFailed: string;
 }
 
 export const DEFAULT_PDF_VIEWER_MESSAGES: PdfViewerMessages = {
@@ -118,6 +128,16 @@ export const DEFAULT_PDF_VIEWER_MESSAGES: PdfViewerMessages = {
   open: 'Open file',
   download: 'Download',
   print: 'Print',
+
+  dropFile: 'Drop a PDF file to open it',
+  notAPdf: 'Only PDF files can be opened.',
+  downloadFailed: 'The document could not be downloaded.',
+  printPreparing: 'Preparing document for printing…',
+  printProgress: (done, total) => `${done} of ${total} pages`,
+  printCancel: 'Cancel',
+  printReady: 'Document ready to print.',
+  printCancelled: 'Printing cancelled.',
+  printFailed: 'The document could not be printed.',
 };
 
 export const PDF_VIEWER_MESSAGES = new InjectionToken<PdfViewerMessages>('PDF_VIEWER_MESSAGES', {

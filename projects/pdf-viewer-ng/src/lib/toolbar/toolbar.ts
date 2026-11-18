@@ -2,6 +2,8 @@ import { Component, inject, input } from '@angular/core';
 import { PDF_VIEWER_MESSAGES } from '../core/messages';
 import { PdfInteractionTool, PdfViewerTool } from '../core/types';
 import { ViewerStore } from '../core/viewer-store';
+import { FileActions } from '../features/file-actions';
+import { PrintService } from '../features/print';
 import { SearchStore } from '../search/search-store';
 import { Icon } from '../icon/icon';
 import { PdfvIconName } from '../icon/icons';
@@ -28,6 +30,8 @@ export class Toolbar {
 
   protected readonly store = inject(ViewerStore);
   protected readonly search = inject(SearchStore);
+  protected readonly files = inject(FileActions);
+  protected readonly printer = inject(PrintService);
   protected readonly messages = inject(PDF_VIEWER_MESSAGES);
 
   protected readonly interactionTools: readonly ToolToggle[] = [

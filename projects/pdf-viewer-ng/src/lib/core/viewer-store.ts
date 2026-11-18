@@ -23,6 +23,7 @@ import {
   stepZoom,
   zoomPercent,
 } from '../utils/zoom';
+import { resolveFileName } from '../utils/file-name';
 import { classifyLoadError, PdfLoadErrorKind } from './errors';
 import { PdfEngine } from './pdf-engine';
 import { PDF_VIEWER_CONFIG } from './config';
@@ -36,6 +37,7 @@ export interface ViewerInputs {
   readonly src: () => PdfSource | null | undefined;
   readonly pageMode: () => PdfPageMode | undefined;
   readonly zoom: () => PdfZoom | undefined;
+  readonly fileName?: () => string | undefined;
 }
 
 /**
@@ -120,6 +122,9 @@ export class ViewerStore {
   readonly loadErrorKind = computed<PdfLoadErrorKind | null>(() =>
     this.status() === 'error' ? classifyLoadError(this.loadError()) : null,
   );
+
+  /** Name used when downloading: the `fileName` input, the opened file's name, or the URL's. */
+  readonly fileName = computed(() => resolveFileName(this.source(), this.inputs().fileName?.()));
 
   readonly pageCount = computed(() => this.document()?.numPages ?? 0);
   readonly hasDocument = computed(() => this.pageCount() > 0);

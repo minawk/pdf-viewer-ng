@@ -25,6 +25,8 @@ export interface PdfViewerConfig {
   readonly zoom: PdfZoom;
   /** Upper bound for the canvas pixel ratio, to limit memory use on high-DPI screens. */
   readonly maxPixelRatio: number;
+  /** Resolution of printed pages, in dots per inch: higher is sharper, but slower and heavier. */
+  readonly printResolution: number;
 }
 
 export const DEFAULT_PDF_VIEWER_CONFIG: PdfViewerConfig = {
@@ -35,6 +37,7 @@ export const DEFAULT_PDF_VIEWER_CONFIG: PdfViewerConfig = {
   pageMode: 'continuous',
   zoom: 'fit-width',
   maxPixelRatio: 2,
+  printResolution: 150,
 };
 
 export const PDF_VIEWER_CONFIG = new InjectionToken<PdfViewerConfig>('PDF_VIEWER_CONFIG', {

@@ -9,8 +9,10 @@ import {
   isDevMode,
   model,
   output,
+  signal,
   untracked,
 } from '@angular/core';
+import { outputFromObservable } from '@angular/core/rxjs-interop';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { PDF_VIEWER_CONFIG } from '../core/config';
 import { PdfLoadErrorKind } from '../core/errors';
@@ -18,6 +20,9 @@ import { PDF_VIEWER_MESSAGES } from '../core/messages';
 import { PdfPageMode, PdfSource, PdfViewerTheme, PdfViewerTool, PdfZoom } from '../core/types';
 import { ViewerStore } from '../core/viewer-store';
 import { DocumentView } from '../document/document-view';
+import { FileActions } from '../features/file-actions';
+import { PrintService } from '../features/print';
+import { PrintDialog } from '../features/print-dialog';
 import { SearchBar } from '../search/search-bar';
 import { SearchStore } from '../search/search-store';
 import { Toolbar } from '../toolbar/toolbar';
@@ -35,15 +40,19 @@ export interface PdfLoadErrorEvent {
 
 @Component({
   selector: 'pdfv-viewer',
-  imports: [Toolbar, DocumentView, SearchBar],
+  imports: [Toolbar, DocumentView, SearchBar, PrintDialog],
   templateUrl: './pdf-viewer.html',
   styleUrl: './pdf-viewer.scss',
-  providers: [ViewerStore, SearchStore],
+  providers: [ViewerStore, SearchStore, FileActions, PrintService],
   host: {
     role: 'group',
     '[attr.aria-label]': 'messages.viewerLabel',
     '[attr.data-pdfv-theme]': 'resolvedTheme()',
     '(keydown)': 'onKeydown($event)',
+    '(dragenter)': 'onDragEnter($event)',
+    '(dragover)': 'onDragOver($event)',
+    '(dragleave)': 'onDragLeave()',
+    '(drop)': 'onDrop($event)',
   },
 })
 export class PdfViewer {
@@ -51,9 +60,13 @@ export class PdfViewer {
   protected readonly messages = inject(PDF_VIEWER_MESSAGES);
   protected readonly store = inject(ViewerStore);
   protected readonly search = inject(SearchStore);
+  protected readonly files = inject(FileActions);
+  protected readonly printer = inject(PrintService);
 
   /** The PDF to display: a URL, binary data, or a `Blob`/`File`. */
   readonly src = input<PdfSource | null | undefined>(undefined);
+  /** Name of the downloaded file. Defaults to the opened file's name or the last segment of the URL. */
+  readonly fileName = input<string | undefined>(undefined);
   /** Theme name: a built-in theme or a custom one. Defaults to the `providePdfViewer()` theme. */
   readonly theme = input<PdfViewerTheme | undefined>(undefined);
   /** Toolbar items, in display order. Pass an empty array to hide the toolbar. */
@@ -72,12 +85,22 @@ export class PdfViewer {
   readonly loaded = output<PdfLoadedEvent>();
   /** Emitted when a document cannot be opened. */
   readonly loadError = output<PdfLoadErrorEvent>();
+  /** Emitted with each local file opened from the toolbar or by drag and drop. */
+  readonly fileOpened = outputFromObservable(this.files.opened$);
+  /** Emitted after the document was downloaded. */
+  readonly downloaded = outputFromObservable(this.files.downloaded$);
+
+  /** A file is being dragged over the viewer. */
+  protected readonly dragging = signal(false);
+  private dragDepth = 0;
 
   protected readonly resolvedTheme = computed(() => this.theme() ?? this.config.theme);
   protected readonly resolvedTools = computed(() => this.tools() ?? this.config.tools);
+  /** Dropping files is available along with the "open" tool. */
+  private readonly canOpenFiles = computed(() => this.resolvedTools().includes('open'));
 
   constructor() {
-    this.store.connect({ src: this.src, pageMode: this.pageMode, zoom: this.zoom });
+    this.store.connect({ src: this.src, pageMode: this.pageMode, zoom: this.zoom, fileName: this.fileName });
     this.syncPage();
     this.syncZoom();
     this.notifyDocumentChanges();
@@ -109,6 +132,61 @@ export class PdfViewer {
         }
       });
     });
+  }
+
+  /** Shows the file picker and opens the chosen PDF in the viewer. */
+  openFile(): void {
+    this.files.pick();
+  }
+
+  /** Downloads the document, with its edits. */
+  download(): Promise<void> {
+    return this.files.download();
+  }
+
+  /** Prints the whole document. */
+  print(): Promise<void> {
+    return this.printer.print();
+  }
+
+  // ---- Drag and drop ---------------------------------------------------------------------
+
+  protected onDragEnter(event: DragEvent): void {
+    if (this.acceptsDrag(event)) {
+      this.dragDepth++;
+      this.dragging.set(true);
+    }
+  }
+
+  protected onDragOver(event: DragEvent): void {
+    if (this.acceptsDrag(event)) {
+      event.preventDefault(); // allows the drop
+      event.dataTransfer!.dropEffect = 'copy';
+    }
+  }
+
+  protected onDragLeave(): void {
+    // Enter/leave fire for every child element crossed: only the outermost leave counts.
+    if (this.dragDepth > 0 && --this.dragDepth === 0) {
+      this.dragging.set(false);
+    }
+  }
+
+  protected onDrop(event: DragEvent): void {
+    if (!this.acceptsDrag(event)) {
+      return;
+    }
+    event.preventDefault();
+    this.dragDepth = 0;
+    this.dragging.set(false);
+    const file = event.dataTransfer?.files[0];
+    if (file) {
+      this.files.open(file);
+    }
+  }
+
+  private acceptsDrag(event: DragEvent): boolean {
+    return this.canOpenFiles() && !!event.dataTransfer?.types.includes('Files');
   }
 
   /** Viewer -> parent: the store's zoom follows the `zoom` model by itself (linked signal). */

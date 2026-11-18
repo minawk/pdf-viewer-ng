@@ -35,6 +35,27 @@
     min-block-size: 0;
   }
 
+  .drop-overlay {
+    position: absolute;
+    inset: var(--pdfv-space-2);
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    background: color-mix(in srgb, var(--pdfv-color-surface) 85%, transparent);
+    border: 2px dashed var(--pdfv-color-primary);
+    border-radius: var(--pdfv-radius);
+  }
+
+  .drop-text {
+    margin: 0;
+    padding: var(--pdfv-space-2) var(--pdfv-space-3);
+    color: var(--pdfv-color-on-surface);
+    font-weight: 600;
+    background: var(--pdfv-color-surface);
+    border-radius: var(--pdfv-radius-sm);
+  }
+
   .status {
     @include mixins.visually-hidden;
   }

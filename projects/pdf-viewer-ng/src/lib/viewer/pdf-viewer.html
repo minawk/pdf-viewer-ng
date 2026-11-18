@@ -7,6 +7,16 @@
   @if (search.isOpen()) {
     <pdfv-search-bar />
   }
+  @if (dragging()) {
+    <!-- Mouse only: the "Open file" button is the accessible way to open a file. -->
+    <div class="drop-overlay" aria-hidden="true">
+      <p class="drop-text">{{ messages.dropFile }}</p>
+    </div>
+  }
 </div>
+
+@if (printer.progress()) {
+  <pdfv-print-dialog />
+}
 
 <div class="status" role="status">{{ store.announcement() }}</div>

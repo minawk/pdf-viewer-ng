@@ -1,0 +1,18 @@
+<dialog #dialog class="dialog" [attr.aria-labelledby]="titleId" (cancel)="onCancel($event)">
+  <h2 class="title" [id]="titleId">{{ messages.printPreparing }}</h2>
+  <div
+    class="progress"
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    [attr.aria-labelledby]="titleId"
+    [attr.aria-valuenow]="percent()"
+    [attr.aria-valuetext]="progressText()"
+  >
+    <span class="progress-value" [style.inline-size.%]="percent()"></span>
+  </div>
+  <p class="text" aria-hidden="true">{{ progressText() }}</p>
+  <div class="actions">
+    <button type="button" class="cancel" (click)="printer.cancel()">{{ messages.printCancel }}</button>
+  </div>
+</dialog>

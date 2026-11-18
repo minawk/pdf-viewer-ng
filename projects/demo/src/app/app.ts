@@ -1,5 +1,6 @@
 import { Component, computed, signal } from '@angular/core';
 import {
+  PdfDownloadEvent,
   PdfLoadedEvent,
   PdfLoadErrorEvent,
   PdfPageMode,
@@ -68,6 +69,14 @@ export class App {
 
   protected onLoaded(event: PdfLoadedEvent): void {
     this.lastEvent.set(`loaded: ${event.pageCount} pages`);
+  }
+
+  protected onFileOpened(file: File): void {
+    this.lastEvent.set(`fileOpened: ${file.name}`);
+  }
+
+  protected onDownloaded(event: PdfDownloadEvent): void {
+    this.lastEvent.set(`downloaded: ${event.fileName} (${Math.round(event.size / 1024)} kB)`);
   }
 
   protected onLoadError(event: PdfLoadErrorEvent): void {

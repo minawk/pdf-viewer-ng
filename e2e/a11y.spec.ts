@@ -56,6 +56,18 @@ test('search panel with results has no axe violations', async ({ page }) => {
   }
 });
 
+test('print progress dialog has no axe violations', async ({ page }) => {
+  await page.addInitScript(() => (window.print = () => undefined));
+  await page.goto('/');
+  await page.getByLabel('Document', { exact: true }).selectOption('samples/long.pdf');
+  await waitForFirstPage(page);
+  await page.getByRole('button', { name: 'Print' }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  const results = await axe(page).analyze();
+  expect(results.violations).toEqual([]);
+  await page.keyboard.press('Escape');
+});
+
 test('error state has no axe violations', async ({ page }) => {
   await page.goto('/');
   await page.getByLabel('Document', { exact: true }).selectOption('samples/missing.pdf');

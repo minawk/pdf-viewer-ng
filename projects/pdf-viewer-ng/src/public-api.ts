@@ -4,6 +4,7 @@
 
 export { PdfViewer, type PdfLoadedEvent, type PdfLoadErrorEvent } from './lib/viewer/pdf-viewer';
 export { type PdfLoadErrorKind } from './lib/core/errors';
+export { type PdfDownloadEvent } from './lib/features/file-actions';
 
 export {
   DEFAULT_PDF_VIEWER_CONFIG,
