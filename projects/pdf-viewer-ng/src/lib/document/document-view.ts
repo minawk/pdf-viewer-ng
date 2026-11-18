@@ -257,11 +257,38 @@ export class DocumentView {
     if (!element) {
       return;
     }
+    if (position === 'nearest') {
+      const { scrollTop, clientHeight } = this.host;
+      const visible =
+        element.offsetTop < scrollTop + clientHeight && element.offsetTop + element.offsetHeight > scrollTop;
+      if (visible) {
+        return;
+      }
+    }
     const top =
       position === 'end'
         ? element.offsetTop + element.offsetHeight + PAGE_GAP - this.host.clientHeight
         : element.offsetTop - PAGE_GAP;
     this.setScroll(this.host.scrollLeft, top);
+    this.anchor = this.readAnchor();
+  }
+
+  /**
+   * Scrolls the least needed to show an element of a page (e.g. a search result), centered
+   * in each direction where it is out of view.
+   */
+  reveal(element: HTMLElement): void {
+    const view = this.host.getBoundingClientRect();
+    const rect = element.getBoundingClientRect();
+    const top = rect.top - view.top - this.host.clientTop;
+    const left = rect.left - view.left - this.host.clientLeft;
+    const { clientWidth, clientHeight, scrollLeft, scrollTop } = this.host;
+    const outVertically = top < 0 || top + rect.height > clientHeight;
+    const outHorizontally = left < 0 || left + rect.width > clientWidth;
+    this.setScroll(
+      outHorizontally ? scrollLeft + left - (clientWidth - rect.width) / 2 : scrollLeft,
+      outVertically ? scrollTop + top - (clientHeight - rect.height) / 2 : scrollTop,
+    );
     this.anchor = this.readAnchor();
   }
 

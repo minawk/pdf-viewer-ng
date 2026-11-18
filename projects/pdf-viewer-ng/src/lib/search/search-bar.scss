@@ -1,0 +1,82 @@
+@use '../../../styles/mixins';
+@use '../../../styles/controls';
+
+// Floating panel over the top of the document area: no layout shift when it opens.
+:host {
+  position: absolute;
+  inset-block-start: var(--pdfv-space-2);
+  inset-inline: var(--pdfv-space-2);
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pdfv-space-1) var(--pdfv-space-2);
+  padding: var(--pdfv-space-1) var(--pdfv-space-2);
+  color: var(--pdfv-color-on-toolbar);
+  background: var(--pdfv-color-toolbar);
+  border: 1px solid var(--pdfv-color-border);
+  border-radius: var(--pdfv-radius);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 18%);
+
+  @include mixins.screen(sm) {
+    inset-inline-start: auto;
+    flex-wrap: nowrap;
+    max-inline-size: calc(100% - 2 * var(--pdfv-space-2));
+  }
+
+  @media (forced-colors: active) {
+    border-color: CanvasText;
+  }
+
+  .field {
+    position: relative;
+    display: flex;
+    flex: 1 1 12rem;
+    align-items: center;
+    min-inline-size: 0;
+  }
+
+  .field-icon {
+    position: absolute;
+    inset-inline-start: var(--pdfv-space-2);
+    color: var(--pdfv-color-on-surface-muted);
+    pointer-events: none;
+  }
+
+  .input {
+    @include controls.field;
+
+    inline-size: 100%;
+    min-inline-size: 0;
+    padding-inline: calc(var(--pdfv-icon-size) + var(--pdfv-space-3)) 5.5rem;
+
+    @include mixins.screen(sm) {
+      inline-size: 16rem;
+    }
+
+    &::placeholder {
+      // Placeholders must also meet the 4.5:1 text contrast.
+      color: var(--pdfv-color-on-surface-muted);
+      opacity: 1;
+    }
+  }
+
+  .count {
+    position: absolute;
+    inset-inline-end: var(--pdfv-space-2);
+    color: var(--pdfv-color-on-surface-muted);
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: var(--pdfv-space-1);
+  }
+
+  .button {
+    @include controls.icon-button;
+  }
+}

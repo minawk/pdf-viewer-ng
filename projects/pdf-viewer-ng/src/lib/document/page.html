@@ -1,6 +1,6 @@
 <div class="canvas-host" #canvasHost></div>
 @if (near() && page(); as page) {
-  <pdfv-text-layer [page]="page" [scale]="scale()" />
+  <pdfv-text-layer [page]="page" [scale]="scale()" [matches]="matches()" [selectedMatch]="selectedMatch()" />
 }
 @if (renderFailed()) {
   <p class="error">{{ errorText }}</p>

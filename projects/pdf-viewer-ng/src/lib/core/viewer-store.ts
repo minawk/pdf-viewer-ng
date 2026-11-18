@@ -38,8 +38,17 @@ export interface ViewerInputs {
   readonly zoom: () => PdfZoom | undefined;
 }
 
-/** Which edge of the target page to bring into view. */
-export type ScrollPosition = 'start' | 'end';
+/**
+ * Which part of the target page to bring into view: its top, its bottom, or (`nearest`)
+ * no scrolling at all when it is already visible.
+ */
+export type ScrollPosition = 'start' | 'end' | 'nearest';
+
+export interface GoToPageOptions {
+  readonly position?: ScrollPosition;
+  /** Announce "Page n of N" (default), or not when the caller announces something better. */
+  readonly announce?: boolean;
+}
 
 /** A navigation the document view must perform. A new object every time, so repeats are honored. */
 export interface ScrollRequest {
@@ -141,7 +150,6 @@ export class ViewerStore {
   /** Zoom setting: follows the `zoom` input, and changes with the toolbar, keyboard, wheel and pinch. */
   readonly zoom = linkedSignal<PdfZoom>(() => this.inputs().zoom() ?? this.config.zoom);
   readonly tool = signal<PdfInteractionTool>('select');
-  readonly searchOpen = signal(false);
 
   /** Inner size of the scrollable document area, in CSS pixels. */
   readonly containerSize = signal<Size>({ width: 0, height: 0 });
@@ -267,7 +275,7 @@ export class ViewerStore {
    * Navigates to a page (clamped to the document) and announces it. Before the document
    * is ready, the page is remembered and the document opens there.
    */
-  goToPage(page: number, position: ScrollPosition = 'start'): void {
+  goToPage(page: number, { position = 'start', announce = true }: GoToPageOptions = {}): void {
     const pdf = this.document();
     if (!pdf) {
       this.pendingPage.set(page);
@@ -276,7 +284,9 @@ export class ViewerStore {
     const target = clampPage(page, pdf.numPages);
     this.currentPage.set(target);
     this.scrollRequest.set({ page: target, position });
-    this.announce(this.messages.pageLabel(target, pdf.numPages));
+    if (announce) {
+      this.announce(this.messages.pageLabel(target, pdf.numPages));
+    }
   }
 
   firstPage(): void {
@@ -284,7 +294,7 @@ export class ViewerStore {
   }
 
   previousPage(position: ScrollPosition = 'start'): void {
-    this.goToPage(this.currentPage() - 1, position);
+    this.goToPage(this.currentPage() - 1, { position });
   }
 
   nextPage(): void {

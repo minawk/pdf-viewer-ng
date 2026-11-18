@@ -5,13 +5,22 @@ import {
   ElementRef,
   inject,
   input,
+  signal,
   untracked,
   ViewEncapsulation,
 } from '@angular/core';
 import type { PDFPageProxy, TextLayer as PdfJsTextLayer } from 'pdfjs-dist';
 import { PdfEngine } from '../core/pdf-engine';
 import { ViewerStore } from '../core/viewer-store';
+import { SearchStore } from '../search/search-store';
+import { buildPageText, matchItemRanges, PageText, TextMatch } from '../search/text-search';
+import { DocumentView } from './document-view';
 import { TextSelection } from './text-selection';
+
+interface RenderedLayer {
+  readonly layer: PdfJsTextLayer;
+  readonly text: PageText;
+}
 
 /** Delay before re-measuring text runs after a zoom: the layer itself follows the zoom instantly via CSS. */
 const UPDATE_DELAY_MS = 150;
@@ -37,13 +46,22 @@ const UPDATE_DELAY_MS = 150;
 export class TextLayer {
   readonly page = input.required<PDFPageProxy>();
   readonly scale = input.required<number>();
+  /** Search matches to highlight on this page. */
+  readonly matches = input<readonly TextMatch[] | undefined>(undefined);
+  /** Index in `matches` of the current search result, -1 when it is on another page. */
+  readonly selectedMatch = input(-1);
 
   private readonly engine = inject(PdfEngine);
   private readonly store = inject(ViewerStore);
   private readonly selection = inject(TextSelection);
+  private readonly search = inject(SearchStore);
+  private readonly documentView = inject(DocumentView);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
   private textLayer: PdfJsTextLayer | null = null;
+  private readonly rendered = signal<RenderedLayer | null>(null);
+  /** Text runs currently split into highlight elements. */
+  private readonly highlightedItems = new Set<number>();
   private normalizeUnicode: ((text: string) => string) | null = null;
 
   constructor() {
@@ -65,6 +83,29 @@ export class TextLayer {
         cancelled = true;
         layer?.cancel();
         this.textLayer = null;
+        this.highlightedItems.clear();
+        this.rendered.set(null);
+      });
+    });
+
+    // Search highlights, and scrolling to the current result once it is highlighted.
+    afterRenderEffect(() => {
+      const rendered = this.rendered();
+      const matches = this.matches() ?? [];
+      const selected = this.selectedMatch();
+      const reveal = this.search.pendingReveal();
+      if (!rendered) {
+        return;
+      }
+      untracked(() => {
+        this.highlight(rendered, matches, selected);
+        if (reveal && reveal.page === this.page().pageNumber && reveal.index === selected) {
+          const element = this.host.querySelector<HTMLElement>('.highlight.selected');
+          if (element) {
+            this.documentView.reveal(element);
+            this.search.pendingReveal.set(null);
+          }
+        }
       });
     });
 
@@ -114,11 +155,56 @@ export class TextLayer {
       endOfContent.className = 'endOfContent';
       this.host.append(endOfContent);
       this.textLayer = layer;
+      this.rendered.set({ layer, text: buildPageText(content) });
     } catch (error) {
       // Cancelled when the page leaves the visible area: expected. Other failures only cost selection.
       if (!isCancelled() && (error as { name?: string })?.name !== 'AbortException') {
         console.warn('[pdf-viewer-ng] Text layer failed for page', page.pageNumber, error);
       }
+    }
+  }
+
+  /**
+   * Wraps the matched parts of text runs in highlight elements (as the pdf.js viewer does):
+   * they inherit the run's position and scaling, so they stay aligned at every zoom level.
+   */
+  private highlight({ layer, text }: RenderedLayer, matches: readonly TextMatch[], selected: number): void {
+    const runs = layer.textDivs;
+    const strings = layer.textContentItemsStr;
+    for (const item of this.highlightedItems) {
+      runs[item].textContent = strings[item];
+    }
+    this.highlightedItems.clear();
+
+    const rangesByItem = new Map<number, { start: number; end: number; selected: boolean }[]>();
+    matches.forEach((match, index) => {
+      for (const range of matchItemRanges(text, match)) {
+        const ranges = rangesByItem.get(range.item) ?? [];
+        ranges.push({ start: range.start, end: range.end, selected: index === selected });
+        rangesByItem.set(range.item, ranges);
+      }
+    });
+
+    const document = this.host.ownerDocument;
+    for (const [item, ranges] of rangesByItem) {
+      const value = strings[item];
+      const fragment = document.createDocumentFragment();
+      let offset = 0;
+      for (const range of ranges.sort((a, b) => a.start - b.start)) {
+        if (range.start > offset) {
+          fragment.append(value.slice(offset, range.start));
+        }
+        const mark = document.createElement('span');
+        mark.className = range.selected ? 'highlight selected' : 'highlight';
+        mark.textContent = value.slice(range.start, range.end);
+        fragment.append(mark);
+        offset = range.end;
+      }
+      if (offset < value.length) {
+        fragment.append(value.slice(offset));
+      }
+      runs[item].replaceChildren(fragment);
+      this.highlightedItems.add(item);
     }
   }
 

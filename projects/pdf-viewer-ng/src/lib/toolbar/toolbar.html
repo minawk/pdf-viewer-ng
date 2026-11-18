@@ -41,7 +41,17 @@
       </div>
     }
     @case ('search') {
-      <button type="button" class="button" pdfvToolbarItem [disabled]="!store.hasDocument()" [attr.aria-label]="messages.search">
+      <button
+        type="button"
+        class="button"
+        pdfvToolbarItem
+        data-pdfv-search-toggle
+        [disabled]="!store.hasDocument()"
+        [attr.aria-label]="messages.search"
+        [attr.aria-expanded]="search.isOpen()"
+        [attr.aria-controls]="search.isOpen() ? search.panelId : null"
+        (click)="toggleSearch()"
+      >
         <pdfv-icon name="search" />
       </button>
     }

@@ -2,6 +2,11 @@
   <pdfv-toolbar [tools]="resolvedTools()" />
 }
 
-<pdfv-document-view />
+<div class="body">
+  <pdfv-document-view />
+  @if (search.isOpen()) {
+    <pdfv-search-bar />
+  }
+</div>
 
 <div class="status" role="status">{{ store.announcement() }}</div>

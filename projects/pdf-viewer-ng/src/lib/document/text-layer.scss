@@ -31,7 +31,7 @@ pdfv-text-layer {
   }
 
   > :not(.markedContent),
-  .markedContent span:not(.markedContent) {
+  .markedContent span:not(.markedContent, .highlight) {
     z-index: 1;
     font-size: calc(var(--text-scale-factor) * var(--font-height));
     transform: rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv));
@@ -87,5 +87,30 @@ pdfv-document-view.pan pdfv-text-layer {
   br {
     cursor: inherit;
     user-select: none;
+  }
+}
+
+// Search results, wrapped inside text runs by TextLayer.highlight().
+pdfv-text-layer .highlight {
+  position: static;
+  margin: -1px;
+  padding: 1px;
+  background: var(--pdfv-color-search-match);
+  border-radius: 3px;
+
+  // The current result is also outlined: never conveyed by color alone (WCAG 1.4.1).
+  &.selected {
+    background: var(--pdfv-color-search-current);
+    outline: 2px solid var(--pdfv-color-primary);
+    outline-offset: 1px;
+  }
+
+  @media (forced-colors: active) {
+    background: transparent;
+    outline: 1px solid CanvasText;
+
+    &.selected {
+      outline: 3px solid Highlight;
+    }
   }
 }

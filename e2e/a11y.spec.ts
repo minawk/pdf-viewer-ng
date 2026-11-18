@@ -43,6 +43,19 @@ test('single page mode has no axe violations, on the last page', async ({ page }
   expect(results.violations).toEqual([]);
 });
 
+test('search panel with results has no axe violations', async ({ page }) => {
+  await page.goto('/');
+  await waitForFirstPage(page);
+  await page.getByRole('button', { name: 'Search', exact: true }).click();
+  await page.getByRole('searchbox', { name: 'Search in document' }).fill('signals');
+  await expect(page.locator('pdfv-text-layer .highlight.selected')).toBeVisible();
+  for (const theme of ['light', 'dark', 'high-contrast']) {
+    await page.getByLabel('Theme', { exact: true }).selectOption(theme);
+    const results = await axe(page).analyze();
+    expect(results.violations, theme).toEqual([]);
+  }
+});
+
 test('error state has no axe violations', async ({ page }) => {
   await page.goto('/');
   await page.getByLabel('Document', { exact: true }).selectOption('samples/missing.pdf');

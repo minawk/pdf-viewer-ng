@@ -16,6 +16,7 @@ import { PDF_VIEWER_CONFIG } from '../core/config';
 import { PDF_VIEWER_MESSAGES } from '../core/messages';
 import { ViewerStore } from '../core/viewer-store';
 import { canvasPixelRatio, Size } from '../utils/zoom';
+import { SearchStore } from '../search/search-store';
 import { DocumentView } from './document-view';
 import { TextLayer } from './text-layer';
 
@@ -72,6 +73,14 @@ export class Page {
   });
 
   protected readonly scale = computed(() => this.store.scale());
+
+  private readonly search = inject(SearchStore);
+  /** Search matches on this page, and the index of the current one (-1 when elsewhere). */
+  protected readonly matches = computed(() => this.search.pageMatches().get(this.pageNumber()));
+  protected readonly selectedMatch = computed(() => {
+    const current = this.search.current();
+    return current?.page === this.pageNumber() ? current.index : -1;
+  });
 
   protected readonly page = computed<PDFPageProxy | null>(() =>
     this.pageResource.hasValue() ? this.pageResource.value() : null,

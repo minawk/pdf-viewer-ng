@@ -18,6 +18,8 @@ import { PDF_VIEWER_MESSAGES } from '../core/messages';
 import { PdfPageMode, PdfSource, PdfViewerTheme, PdfViewerTool, PdfZoom } from '../core/types';
 import { ViewerStore } from '../core/viewer-store';
 import { DocumentView } from '../document/document-view';
+import { SearchBar } from '../search/search-bar';
+import { SearchStore } from '../search/search-store';
 import { Toolbar } from '../toolbar/toolbar';
 
 export interface PdfLoadedEvent {
@@ -33,10 +35,10 @@ export interface PdfLoadErrorEvent {
 
 @Component({
   selector: 'pdfv-viewer',
-  imports: [Toolbar, DocumentView],
+  imports: [Toolbar, DocumentView, SearchBar],
   templateUrl: './pdf-viewer.html',
   styleUrl: './pdf-viewer.scss',
-  providers: [ViewerStore],
+  providers: [ViewerStore, SearchStore],
   host: {
     role: 'group',
     '[attr.aria-label]': 'messages.viewerLabel',
@@ -48,6 +50,7 @@ export class PdfViewer {
   private readonly config = inject(PDF_VIEWER_CONFIG);
   protected readonly messages = inject(PDF_VIEWER_MESSAGES);
   protected readonly store = inject(ViewerStore);
+  protected readonly search = inject(SearchStore);
 
   /** The PDF to display: a URL, binary data, or a `Blob`/`File`. */
   readonly src = input<PdfSource | null | undefined>(undefined);
@@ -120,12 +123,35 @@ export class PdfViewer {
     });
   }
 
-  /** Zoom shortcuts, wherever the focus is inside the viewer: Ctrl/Cmd + `+`, `-`, `0`. */
+  /**
+   * Shortcuts, wherever the focus is inside the viewer:
+   * Ctrl/Cmd + F (search), F3 / Ctrl/Cmd + G (next result, with Shift: previous),
+   * Ctrl/Cmd + `+`, `-`, `0` (zoom).
+   */
   protected onKeydown(event: KeyboardEvent): void {
-    if (!(event.ctrlKey || event.metaKey) || event.altKey || !this.store.hasDocument()) {
+    if (event.altKey || !this.store.hasDocument()) {
+      return;
+    }
+    const modifier = event.ctrlKey || event.metaKey;
+    if (event.key === 'F3' || (modifier && event.key.toLowerCase() === 'g')) {
+      if (this.search.isOpen()) {
+        event.preventDefault();
+        if (event.shiftKey) {
+          this.search.previous();
+        } else {
+          this.search.next();
+        }
+      }
+      return;
+    }
+    if (!modifier) {
       return;
     }
     switch (event.key) {
+      case 'f':
+      case 'F':
+        this.search.open(); // instead of the browser find bar, which cannot see unrendered pages
+        break;
       case '+':
       case '=':
         this.store.zoomIn();

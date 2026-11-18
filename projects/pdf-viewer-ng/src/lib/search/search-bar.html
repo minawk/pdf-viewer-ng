@@ -1,0 +1,61 @@
+<div class="field">
+  <pdfv-icon class="field-icon" name="search" />
+  <input
+    #input
+    class="input"
+    type="search"
+    enterkeyhint="search"
+    autocomplete="off"
+    spellcheck="false"
+    [attr.aria-label]="messages.searchLabel"
+    [attr.aria-describedby]="countId"
+    [placeholder]="messages.searchPlaceholder"
+    [value]="search.query()"
+    (input)="search.query.set(input.value)"
+    (keydown.enter)="onEnter($event, false)"
+    (keydown.shift.enter)="onEnter($event, true)"
+  />
+  <span class="count" [id]="countId">{{ countText() }}</span>
+</div>
+
+<div class="actions">
+  <button
+    type="button"
+    class="button"
+    [attr.aria-label]="messages.matchCase"
+    [attr.aria-pressed]="search.matchCase()"
+    (click)="search.matchCase.set(!search.matchCase())"
+  >
+    <pdfv-icon name="match-case" />
+  </button>
+  <button
+    type="button"
+    class="button"
+    [attr.aria-label]="messages.wholeWord"
+    [attr.aria-pressed]="search.wholeWord()"
+    (click)="search.wholeWord.set(!search.wholeWord())"
+  >
+    <pdfv-icon name="whole-word" />
+  </button>
+  <button
+    type="button"
+    class="button"
+    [attr.aria-label]="messages.previousResult"
+    [attr.aria-disabled]="search.total() === 0"
+    (click)="search.previous()"
+  >
+    <pdfv-icon name="chevron-up" />
+  </button>
+  <button
+    type="button"
+    class="button"
+    [attr.aria-label]="messages.nextResult"
+    [attr.aria-disabled]="search.total() === 0"
+    (click)="search.next()"
+  >
+    <pdfv-icon name="chevron-down" />
+  </button>
+  <button type="button" class="button" [attr.aria-label]="messages.closeSearch" (click)="close()">
+    <pdfv-icon name="close" />
+  </button>
+</div>

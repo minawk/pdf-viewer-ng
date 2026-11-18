@@ -41,6 +41,20 @@ export interface PdfViewerMessages {
   readonly textTool: string;
 
   readonly search: string;
+  readonly searchLabel: string;
+  readonly searchPlaceholder: string;
+  readonly matchCase: string;
+  readonly wholeWord: string;
+  readonly previousResult: string;
+  readonly nextResult: string;
+  readonly closeSearch: string;
+  readonly searching: string;
+  readonly noResults: string;
+  /** Visible result counter, e.g. "3 of 12". */
+  readonly searchCount: (position: number, total: number) => string;
+  /** Announced when moving between results, e.g. "Result 3 of 12". */
+  readonly searchResult: (position: number, total: number) => string;
+  readonly searchResults: (total: number) => string;
   readonly open: string;
   readonly download: string;
   readonly print: string;
@@ -89,6 +103,18 @@ export const DEFAULT_PDF_VIEWER_MESSAGES: PdfViewerMessages = {
   textTool: 'Add text',
 
   search: 'Search',
+  searchLabel: 'Search in document',
+  searchPlaceholder: 'Search',
+  matchCase: 'Match case',
+  wholeWord: 'Whole words',
+  previousResult: 'Previous result',
+  nextResult: 'Next result',
+  closeSearch: 'Close search',
+  searching: 'Searching…',
+  noResults: 'No results',
+  searchCount: (position, total) => `${position} of ${total}`,
+  searchResult: (position, total) => `Result ${position} of ${total}`,
+  searchResults: (total) => (total === 1 ? '1 result' : `${total} results`),
   open: 'Open file',
   download: 'Download',
   print: 'Print',

@@ -27,6 +27,14 @@
   border: 1px solid var(--pdfv-color-border);
   border-radius: var(--pdfv-radius);
 
+  .body {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-block-size: 0;
+  }
+
   .status {
     @include mixins.visually-hidden;
   }
