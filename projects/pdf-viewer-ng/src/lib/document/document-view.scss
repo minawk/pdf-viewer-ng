@@ -16,6 +16,18 @@
     @include mixins.focus-ring(-3px);
   }
 
+  // Native page pinch-zoom is replaced by the viewer's own (see gestures.ts).
+  touch-action: pan-x pan-y;
+
+  &.pan {
+    cursor: grab;
+    user-select: none;
+
+    &.panning {
+      cursor: grabbing;
+    }
+  }
+
   // One page per view: centered vertically when it is shorter than the viewport.
   &[data-page-mode='single'] {
     display: grid;

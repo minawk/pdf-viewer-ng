@@ -15,7 +15,7 @@ import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { PDF_VIEWER_CONFIG } from '../core/config';
 import { PdfLoadErrorKind } from '../core/errors';
 import { PDF_VIEWER_MESSAGES } from '../core/messages';
-import { PdfPageMode, PdfSource, PdfViewerTheme, PdfViewerTool } from '../core/types';
+import { PdfPageMode, PdfSource, PdfViewerTheme, PdfViewerTool, PdfZoom } from '../core/types';
 import { ViewerStore } from '../core/viewer-store';
 import { DocumentView } from '../document/document-view';
 import { Toolbar } from '../toolbar/toolbar';
@@ -41,6 +41,7 @@ export interface PdfLoadErrorEvent {
     role: 'group',
     '[attr.aria-label]': 'messages.viewerLabel',
     '[attr.data-pdfv-theme]': 'resolvedTheme()',
+    '(keydown)': 'onKeydown($event)',
   },
 })
 export class PdfViewer {
@@ -58,6 +59,11 @@ export class PdfViewer {
   readonly pageMode = input<PdfPageMode | undefined>(undefined);
   /** Current page, 1-based. Supports two-way binding: `[(page)]`. */
   readonly page = model(1);
+  /**
+   * Zoom: `'fit-width'`, `'fit-page'` or a factor of the actual size (1 = 100%).
+   * Defaults to the `providePdfViewer()` value. Supports two-way binding: `[(zoom)]`.
+   */
+  readonly zoom = model<PdfZoom | undefined>(undefined);
 
   /** Emitted each time a document has been opened. */
   readonly loaded = output<PdfLoadedEvent>();
@@ -68,8 +74,9 @@ export class PdfViewer {
   protected readonly resolvedTools = computed(() => this.tools() ?? this.config.tools);
 
   constructor() {
-    this.store.connect({ src: this.src, pageMode: this.pageMode });
+    this.store.connect({ src: this.src, pageMode: this.pageMode, zoom: this.zoom });
     this.syncPage();
+    this.syncZoom();
     this.notifyDocumentChanges();
     if (isDevMode()) {
       this.warnOnMissingTheme();
@@ -99,6 +106,41 @@ export class PdfViewer {
         }
       });
     });
+  }
+
+  /** Viewer -> parent: the store's zoom follows the `zoom` model by itself (linked signal). */
+  private syncZoom(): void {
+    effect(() => {
+      const zoom = this.store.zoom();
+      untracked(() => {
+        if (zoom !== this.zoom()) {
+          this.zoom.set(zoom);
+        }
+      });
+    });
+  }
+
+  /** Zoom shortcuts, wherever the focus is inside the viewer: Ctrl/Cmd + `+`, `-`, `0`. */
+  protected onKeydown(event: KeyboardEvent): void {
+    if (!(event.ctrlKey || event.metaKey) || event.altKey || !this.store.hasDocument()) {
+      return;
+    }
+    switch (event.key) {
+      case '+':
+      case '=':
+        this.store.zoomIn();
+        break;
+      case '-':
+      case '_':
+        this.store.zoomOut();
+        break;
+      case '0':
+        this.store.setZoom(this.config.zoom);
+        break;
+      default:
+        return;
+    }
+    event.preventDefault(); // instead of the browser page zoom
   }
 
   /** Bridges document state to outputs and to the screen reader live region. */

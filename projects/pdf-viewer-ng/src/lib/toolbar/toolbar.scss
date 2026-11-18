@@ -34,10 +34,4 @@
   .button {
     @include controls.icon-button;
   }
-
-  .zoom-select {
-    @include controls.field;
-
-    padding-inline: var(--pdfv-space-2);
-  }
 }

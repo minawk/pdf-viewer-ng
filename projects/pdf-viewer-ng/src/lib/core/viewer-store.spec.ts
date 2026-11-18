@@ -2,7 +2,7 @@ import { ApplicationRef, PLATFORM_ID } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { PDF_TO_CSS_UNITS } from '../utils/zoom';
 import { OpenDocumentOptions, PdfEngine } from './pdf-engine';
-import { PdfPageMode, PdfSource } from './types';
+import { PdfPageMode, PdfSource, PdfZoom } from './types';
 import { ViewerStore } from './viewer-store';
 
 function fakePdf(numPages: number, landscapePages: number[] = []) {
@@ -19,8 +19,13 @@ function fakePdf(numPages: number, landscapePages: number[] = []) {
   };
 }
 
-function connect(store: ViewerStore, src: () => PdfSource | null, pageMode: () => PdfPageMode | undefined = () => undefined) {
-  store.connect({ src, pageMode });
+function connect(
+  store: ViewerStore,
+  src: () => PdfSource | null,
+  pageMode: () => PdfPageMode | undefined = () => undefined,
+  zoom: () => PdfZoom | undefined = () => undefined,
+) {
+  store.connect({ src, pageMode, zoom });
 }
 
 describe('ViewerStore', () => {
@@ -181,6 +186,83 @@ describe('ViewerStore', () => {
       mode = 'single';
       connect(store, () => null, () => mode);
       expect(store.pageMode()).toBe('single');
+    });
+  });
+
+  describe('zoom', () => {
+    async function ready(pages = 3, landscapePages: number[] = []) {
+      const context = setup();
+      open.mockResolvedValue(fakePdf(pages, landscapePages));
+      return context;
+    }
+
+    it('follows the zoom input, then the configuration default', async () => {
+      const { store, settle } = await ready();
+      let zoom: PdfZoom | undefined;
+      connect(store, () => 'a.pdf', () => undefined, () => zoom);
+      await settle();
+      expect(store.zoom()).toBe('fit-width');
+      zoom = 1.5;
+      connect(store, () => 'a.pdf', () => undefined, () => zoom);
+      expect(store.zoom()).toBe(1.5);
+      expect(store.effectiveZoom()).toBeCloseTo(1.5);
+    });
+
+    it('steps through preset levels from the effective zoom, within bounds', async () => {
+      const { store, settle } = await ready();
+      connect(store, () => 'a.pdf');
+      await settle();
+      store.containerSize.set({ width: 1232, height: 900 }); // fit-width: 2 css px/pt = 150%
+      expect(store.effectiveZoom()).toBeCloseTo(1.5);
+
+      store.zoomIn();
+      expect(store.zoom()).toBe(2);
+      expect(store.announcement()).toBe('Zoom: 200%');
+      store.zoomOut();
+      store.zoomOut();
+      expect(store.zoom()).toBe(1.25);
+
+      store.setZoom(4);
+      expect(store.canZoomIn()).toBe(false);
+      store.setZoom(99);
+      expect(store.zoom()).toBe(4);
+      store.setZoom(0.1);
+      expect(store.canZoomOut()).toBe(false);
+    });
+
+    it('announces fit modes by name', async () => {
+      const { store, settle } = await ready();
+      connect(store, () => 'a.pdf');
+      await settle();
+      store.setZoom('fit-page');
+      expect(store.announcement()).toBe('Zoom: Fit to page');
+    });
+
+    it('zooms continuously by a factor, without announcing', async () => {
+      const { store, settle } = await ready();
+      connect(store, () => 'a.pdf');
+      await settle();
+      store.setZoom(1);
+      store.announce('');
+      store.zoomBy(1.1);
+      expect(store.zoom()).toBeCloseTo(1.1);
+      expect(store.announcement()).toBe('');
+      store.zoomBy(100);
+      expect(store.zoom()).toBe(4);
+    });
+
+    it('fits the first page in continuous mode, the displayed page in single mode', async () => {
+      const { store, settle } = await ready(3, [2]);
+      let mode: PdfPageMode = 'continuous';
+      connect(store, () => 'a.pdf', () => mode);
+      await settle();
+      store.containerSize.set({ width: 832, height: 2000 });
+      store.goToPage(2);
+      expect(store.scale()).toBeCloseTo(800 / 600); // first page: 600 pt wide
+
+      mode = 'single';
+      connect(store, () => 'a.pdf', () => mode);
+      expect(store.scale()).toBeCloseTo(1); // landscape page 2: 800 pt wide
     });
   });
 

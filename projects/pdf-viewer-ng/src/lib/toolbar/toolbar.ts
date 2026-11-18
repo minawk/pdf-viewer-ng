@@ -6,6 +6,7 @@ import { Icon } from '../icon/icon';
 import { PdfvIconName } from '../icon/icons';
 import { Pager } from './pager';
 import { RovingToolbar, ToolbarItem } from './roving-toolbar';
+import { ZoomControl } from './zoom-control';
 
 interface ToolToggle {
   readonly tool: PdfInteractionTool;
@@ -15,7 +16,7 @@ interface ToolToggle {
 
 @Component({
   selector: 'pdfv-toolbar',
-  imports: [Icon, Pager, ToolbarItem],
+  imports: [Icon, Pager, ToolbarItem, ZoomControl],
   templateUrl: './toolbar.html',
   styleUrl: './toolbar.scss',
   hostDirectives: [RovingToolbar],
@@ -26,8 +27,6 @@ export class Toolbar {
 
   protected readonly store = inject(ViewerStore);
   protected readonly messages = inject(PDF_VIEWER_MESSAGES);
-
-  protected readonly zoomPresets = [0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4] as const;
 
   protected readonly interactionTools: readonly ToolToggle[] = [
     { tool: 'select', icon: 'pointer', label: this.messages.selectTool },

@@ -26,7 +26,7 @@
       </select>
     </div>
     <button type="button" class="action" (click)="page.set(5)">Go to page 5</button>
-    <output class="event" aria-label="Viewer state">page {{ page() }} · {{ lastEvent() }}</output>
+    <output class="event" aria-label="Viewer state">page {{ page() }} · zoom {{ zoomLabel() }} · {{ lastEvent() }}</output>
   </div>
 </header>
 
@@ -36,6 +36,7 @@
     [theme]="theme()"
     [pageMode]="pageMode()"
     [(page)]="page"
+    [(zoom)]="zoom"
     (loaded)="onLoaded($event)"
     (loadError)="onLoadError($event)"
   />

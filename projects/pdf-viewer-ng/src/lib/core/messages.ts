@@ -28,7 +28,9 @@ export interface PdfViewerMessages {
   readonly zoomLevel: string;
   readonly fitWidth: string;
   readonly fitPage: string;
-  readonly actualSize: string;
+  readonly zoomPercent: (percent: number) => string;
+  /** Announced after a zoom change made with the toolbar or the keyboard. */
+  readonly zoomChanged: (level: string) => string;
 
   readonly interactionGroup: string;
   readonly selectTool: string;
@@ -75,7 +77,8 @@ export const DEFAULT_PDF_VIEWER_MESSAGES: PdfViewerMessages = {
   zoomLevel: 'Zoom level',
   fitWidth: 'Fit to width',
   fitPage: 'Fit to page',
-  actualSize: 'Actual size',
+  zoomPercent: (percent) => `${percent}%`,
+  zoomChanged: (level) => `Zoom: ${level}`,
 
   interactionGroup: 'Interaction mode',
   selectTool: 'Select text',

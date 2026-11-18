@@ -12,13 +12,20 @@ import {
 import { PDF_VIEWER_MESSAGES } from '../core/messages';
 import { ScrollPosition, ViewerStore } from '../core/viewer-store';
 import { PAGE_GAP } from '../utils/zoom';
+import { attachGestures, ViewportPoint } from './gestures';
 import { Page } from './page';
 
-/** Scroll position expressed relative to a page, so it survives zoom and layout changes. */
+/**
+ * A point of the document pinned to a point of the viewport, so the reading position
+ * survives zoom and layout changes.
+ */
 interface ScrollAnchor {
   readonly page: number;
-  /** Offset of the viewport top from the page top, as a fraction of the page height. */
-  readonly ratio: number;
+  /** Position of the anchored document point in the page, as fractions of the page size. */
+  readonly ratioX: number;
+  readonly ratioY: number;
+  /** Where that document point is in the viewport, in CSS pixels. */
+  readonly viewport: ViewportPoint;
 }
 
 /**
@@ -40,6 +47,7 @@ interface ScrollAnchor {
     '[attr.aria-label]': 'messages.documentLabel',
     '[attr.aria-busy]': "store.status() === 'loading'",
     '[attr.data-page-mode]': 'store.pageMode()',
+    '[class.pan]': "store.tool() === 'pan'",
     '[style.--pdfv-page-gap.px]': 'pageGap',
     '(keydown)': 'onKeydown($event)',
   },
@@ -79,6 +87,7 @@ export class DocumentView {
   private intersectionObserver: IntersectionObserver | null = null;
 
   private anchor: ScrollAnchor | null = null;
+  private anchorDocument: unknown = null;
   /** Target of the last programmatic scroll: its scroll event must not move the current page. */
   private expectedScrollTop: number | null = null;
   private scrollFrame = 0;
@@ -113,14 +122,33 @@ export class DocumentView {
         this.host.removeEventListener('scroll', onScroll);
         cancelAnimationFrame(this.scrollFrame);
       });
+
+      const detachGestures = attachGestures(this.host, {
+        active: () => this.store.hasDocument(),
+        panEnabled: () => this.store.tool() === 'pan',
+        zoom: (factor, point) => {
+          // Pin the document point under the pointer, then zoom: the anchor effect restores it.
+          this.anchor = this.readAnchor(point);
+          this.store.zoomBy(factor);
+        },
+      });
+      destroyRef.onDestroy(detachGestures);
     });
 
     // Keep the reading position when the layout changes: zoom, resize, page sizes, page mode.
     afterRenderEffect(() => {
+      const pdf = this.store.document();
       this.store.scale();
       this.store.pageSizes();
       this.store.pageMode();
-      untracked(() => this.restoreAnchor());
+      untracked(() => {
+        if (pdf !== this.anchorDocument) {
+          // A new document never inherits the previous reading position.
+          this.anchorDocument = pdf;
+          this.anchor = null;
+        }
+        this.restoreAnchor();
+      });
     });
 
     // Navigation requested through the store (pager, keyboard, `[(page)]`).
@@ -231,29 +259,41 @@ export class DocumentView {
       position === 'end'
         ? element.offsetTop + element.offsetHeight + PAGE_GAP - this.host.clientHeight
         : element.offsetTop - PAGE_GAP;
-    this.setScrollTop(top);
-    this.anchor = { page, ratio: (this.host.scrollTop - element.offsetTop) / (element.offsetHeight || 1) };
+    this.setScroll(this.host.scrollLeft, top);
+    this.anchor = this.readAnchor();
   }
 
   private restoreAnchor(): void {
     const anchor = this.anchor;
     const element = anchor && this.pageElement(anchor.page);
-    if (anchor && element) {
-      this.setScrollTop(element.offsetTop + anchor.ratio * element.offsetHeight);
+    if (!anchor || !element) {
+      // First layout: start tracking from here.
+      this.anchor = this.readAnchor();
+      return;
     }
+    this.setScroll(
+      element.offsetLeft + anchor.ratioX * element.offsetWidth - anchor.viewport.x,
+      element.offsetTop + anchor.ratioY * element.offsetHeight - anchor.viewport.y,
+    );
   }
 
-  private readAnchor(): ScrollAnchor | null {
-    const scrollTop = this.host.scrollTop;
+  /**
+   * Reads which document point is at a viewport point; by default the top center of the
+   * viewport, so zooming with the toolbar keeps the top of the reading position and the
+   * horizontal center.
+   */
+  private readAnchor(point: ViewportPoint = { x: this.host.clientWidth / 2, y: 0 }): ScrollAnchor | null {
     const pages = this.pageElements();
-    const index = firstPageEndingAfter(pages, scrollTop);
-    const element = pages[index];
-    if (!element) {
+    if (pages.length === 0) {
       return null;
     }
+    const y = this.host.scrollTop + point.y;
+    const element = pages[Math.min(firstPageEndingAfter(pages, y), pages.length - 1)];
     return {
       page: Number(element.dataset['pageNumber']),
-      ratio: (scrollTop - element.offsetTop) / (element.offsetHeight || 1),
+      ratioX: (this.host.scrollLeft + point.x - element.offsetLeft) / (element.offsetWidth || 1),
+      ratioY: (y - element.offsetTop) / (element.offsetHeight || 1),
+      viewport: point,
     };
   }
 
@@ -288,14 +328,18 @@ export class DocumentView {
     return best;
   }
 
-  private setScrollTop(top: number): void {
-    const max = this.host.scrollHeight - this.host.clientHeight;
-    const target = Math.round(Math.min(Math.max(0, top), Math.max(0, max)));
-    if (Math.abs(this.host.scrollTop - target) >= 1) {
-      this.expectedScrollTop = target;
+  private setScroll(left: number, top: number): void {
+    const { scrollWidth, scrollHeight, clientWidth, clientHeight } = this.host;
+    const targetLeft = Math.round(Math.min(Math.max(0, left), Math.max(0, scrollWidth - clientWidth)));
+    const targetTop = Math.round(Math.min(Math.max(0, top), Math.max(0, scrollHeight - clientHeight)));
+    const moveTop = Math.abs(this.host.scrollTop - targetTop) >= 1;
+    if (moveTop || Math.abs(this.host.scrollLeft - targetLeft) >= 1) {
+      if (moveTop) {
+        this.expectedScrollTop = targetTop;
+      }
       // Instant, even under `scroll-behavior: smooth`; also aborts an ongoing smooth scroll
       // (e.g. a keyboard PageDown still animating when the page is turned).
-      this.host.scrollTo({ top: target, behavior: 'instant' });
+      this.host.scrollTo({ left: targetLeft, top: targetTop, behavior: 'instant' });
     }
   }
 

@@ -4,22 +4,7 @@
       <pdfv-pager />
     }
     @case ('zoom') {
-      <div class="group" role="group" [attr.aria-label]="messages.zoomGroup">
-        <button type="button" class="button" pdfvToolbarItem [disabled]="!store.hasDocument()" [attr.aria-label]="messages.zoomOut">
-          <pdfv-icon name="zoom-out" />
-        </button>
-        <select class="zoom-select" pdfvToolbarItem [disabled]="!store.hasDocument()" [attr.aria-label]="messages.zoomLevel">
-          <option value="fit-width">{{ messages.fitWidth }}</option>
-          <option value="fit-page">{{ messages.fitPage }}</option>
-          <option value="actual">{{ messages.actualSize }}</option>
-          @for (preset of zoomPresets; track preset) {
-            <option [value]="preset">{{ preset * 100 }}%</option>
-          }
-        </select>
-        <button type="button" class="button" pdfvToolbarItem [disabled]="!store.hasDocument()" [attr.aria-label]="messages.zoomIn">
-          <pdfv-icon name="zoom-in" />
-        </button>
-      </div>
+      <pdfv-zoom-control />
     }
     @case ('interaction') {
       <div class="group" role="group" [attr.aria-label]="messages.interactionGroup">

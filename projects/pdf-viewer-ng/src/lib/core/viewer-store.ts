@@ -11,7 +11,17 @@ import {
   untracked,
 } from '@angular/core';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
-import { DEFAULT_PAGE_SIZE, resolveScale, Size } from '../utils/zoom';
+import {
+  clampZoom,
+  DEFAULT_PAGE_SIZE,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  PDF_TO_CSS_UNITS,
+  resolveScale,
+  Size,
+  stepZoom,
+  zoomPercent,
+} from '../utils/zoom';
 import { classifyLoadError, PdfLoadErrorKind } from './errors';
 import { PdfEngine } from './pdf-engine';
 import { PDF_VIEWER_CONFIG } from './config';
@@ -24,6 +34,7 @@ export type DocumentStatus = 'idle' | 'loading' | 'ready' | 'error';
 export interface ViewerInputs {
   readonly src: () => PdfSource | null | undefined;
   readonly pageMode: () => PdfPageMode | undefined;
+  readonly zoom: () => PdfZoom | undefined;
 }
 
 /** Which edge of the target page to bring into view. */
@@ -50,7 +61,11 @@ export class ViewerStore {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   /** Reactive getters of the viewer inputs, see `connect()`. */
-  private readonly inputs = signal<ViewerInputs>({ src: () => null, pageMode: () => undefined });
+  private readonly inputs = signal<ViewerInputs>({
+    src: () => null,
+    pageMode: () => undefined,
+    zoom: () => undefined,
+  });
 
   // ---- Source & document ---------------------------------------------------------------
 
@@ -122,7 +137,8 @@ export class ViewerStore {
 
   // ---- Zoom & tools --------------------------------------------------------------------
 
-  readonly zoom = signal<PdfZoom>('fit-width');
+  /** Zoom setting: follows the `zoom` input, and changes with the toolbar, keyboard, wheel and pinch. */
+  readonly zoom = linkedSignal<PdfZoom>(() => this.inputs().zoom() ?? this.config.zoom);
   readonly tool = signal<PdfInteractionTool>('select');
   readonly searchOpen = signal(false);
 
@@ -168,8 +184,24 @@ export class ViewerStore {
     this.pageSizesResource.hasValue() ? this.pageSizesResource.value() : null,
   );
 
+  /**
+   * Page that fit-to-width / fit-to-page adapt to. Continuous mode: the first page, so scrolling
+   * through pages of mixed sizes never changes the zoom. Single mode: the displayed page.
+   */
+  private readonly fitReferenceSize = computed<Size>(() => {
+    if (this.pageMode() === 'single') {
+      return this.pageSizes()?.[this.currentPage() - 1] ?? this.referenceSize();
+    }
+    return this.referenceSize();
+  });
+
   /** Render scale: CSS pixels per PDF point. */
-  readonly scale = computed(() => resolveScale(this.zoom(), this.referenceSize(), this.containerSize()));
+  readonly scale = computed(() => resolveScale(this.zoom(), this.fitReferenceSize(), this.containerSize()));
+
+  /** Zoom actually applied, as a factor of the actual size (1 = 100%), fit modes included. */
+  readonly effectiveZoom = computed(() => this.scale() / PDF_TO_CSS_UNITS);
+  readonly canZoomIn = computed(() => this.hasDocument() && this.effectiveZoom() < MAX_ZOOM - 0.001);
+  readonly canZoomOut = computed(() => this.hasDocument() && this.effectiveZoom() > MIN_ZOOM + 0.001);
 
   // ---- Announcements -------------------------------------------------------------------
 
@@ -240,6 +272,31 @@ export class ViewerStore {
   /** Loads the current source again, e.g. after a network error. */
   reload(): void {
     this.documentResource.reload();
+  }
+
+  /** Sets the zoom, from the toolbar or the keyboard, and announces the resulting level. */
+  setZoom(zoom: PdfZoom): void {
+    this.zoom.set(typeof zoom === 'number' ? clampZoom(zoom) : zoom);
+    const level =
+      zoom === 'fit-width'
+        ? this.messages.fitWidth
+        : zoom === 'fit-page'
+          ? this.messages.fitPage
+          : this.messages.zoomPercent(zoomPercent(this.effectiveZoom()));
+    this.announce(this.messages.zoomChanged(level));
+  }
+
+  zoomIn(): void {
+    this.setZoom(stepZoom(this.effectiveZoom(), 1));
+  }
+
+  zoomOut(): void {
+    this.setZoom(stepZoom(this.effectiveZoom(), -1));
+  }
+
+  /** Continuous zoom (wheel, pinch): relative to the current level, not announced. */
+  zoomBy(factor: number): void {
+    this.zoom.set(clampZoom(this.effectiveZoom() * factor));
   }
 
   setTool(tool: PdfInteractionTool): void {

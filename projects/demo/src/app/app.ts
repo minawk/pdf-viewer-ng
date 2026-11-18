@@ -1,10 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import {
   PdfLoadedEvent,
   PdfLoadErrorEvent,
   PdfPageMode,
   PdfViewer,
   PdfViewerTheme,
+  PdfZoom,
 } from '@minawk/pdf-viewer-ng';
 
 interface Option<T> {
@@ -45,6 +46,12 @@ export class App {
   protected readonly pageMode = signal<PdfPageMode>('continuous');
   /** Two-way bound to the viewer: follows scrolling and pager navigation, and drives the viewer. */
   protected readonly page = signal(1);
+  /** Two-way bound zoom: 'fit-width', 'fit-page' or a factor (1 = 100%). */
+  protected readonly zoom = signal<PdfZoom | undefined>(undefined);
+  protected readonly zoomLabel = computed(() => {
+    const zoom = this.zoom();
+    return typeof zoom === 'number' ? `${Math.round(zoom * 100)}%` : (zoom ?? '');
+  });
   protected readonly lastEvent = signal('');
 
   protected onThemeChange(event: Event): void {

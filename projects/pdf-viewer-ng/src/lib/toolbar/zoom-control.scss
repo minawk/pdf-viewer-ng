@@ -1,0 +1,18 @@
+@use '../../../styles/controls';
+
+:host {
+  display: flex;
+  align-items: center;
+  gap: var(--pdfv-space-1);
+
+  .button {
+    @include controls.icon-button;
+  }
+
+  .zoom-select {
+    @include controls.field;
+
+    min-inline-size: 7.5rem;
+    padding-inline: var(--pdfv-space-2);
+  }
+}

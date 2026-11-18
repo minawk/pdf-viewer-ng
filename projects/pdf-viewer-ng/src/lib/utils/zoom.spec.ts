@@ -1,4 +1,14 @@
-import { canvasPixelRatio, MAX_SCALE, MIN_SCALE, PDF_TO_CSS_UNITS, resolveScale } from './zoom';
+import {
+  canvasPixelRatio,
+  clampZoom,
+  MAX_ZOOM,
+  MIN_ZOOM,
+  PDF_TO_CSS_UNITS,
+  resolveScale,
+  matchingPreset,
+  stepZoom,
+  zoomPercent,
+} from './zoom';
 
 describe('resolveScale', () => {
   const page = { width: 600, height: 800 };
@@ -21,9 +31,38 @@ describe('resolveScale', () => {
     expect(resolveScale('fit-width', page, { width: 0, height: 0 })).toBeCloseTo(PDF_TO_CSS_UNITS);
   });
 
-  it('clamps extreme values', () => {
-    expect(resolveScale(100, page, container)).toBe(MAX_SCALE);
-    expect(resolveScale(0.001, page, container)).toBe(MIN_SCALE);
+  it('clamps numeric and fitted zooms to the bounds', () => {
+    expect(resolveScale(100, page, container)).toBeCloseTo(MAX_ZOOM * PDF_TO_CSS_UNITS);
+    expect(resolveScale(0.001, page, container)).toBeCloseTo(MIN_ZOOM * PDF_TO_CSS_UNITS);
+    expect(resolveScale('fit-width', { width: 10, height: 10 }, container)).toBeCloseTo(MAX_ZOOM * PDF_TO_CSS_UNITS);
+  });
+});
+
+describe('zoom helpers', () => {
+  it('clamps and sanitizes zoom factors', () => {
+    expect(clampZoom(10)).toBe(MAX_ZOOM);
+    expect(clampZoom(0)).toBe(MIN_ZOOM);
+    expect(clampZoom(Number.NaN)).toBe(1);
+  });
+
+  it('steps to the next preset level, from any level', () => {
+    expect(stepZoom(1, 1)).toBe(1.25);
+    expect(stepZoom(1, -1)).toBe(0.75);
+    expect(stepZoom(1.249, 1)).toBe(1.5); // never a barely visible step
+    expect(stepZoom(1.37, 1)).toBe(1.5);
+    expect(stepZoom(1.37, -1)).toBe(1.25);
+    expect(stepZoom(MAX_ZOOM, 1)).toBe(MAX_ZOOM);
+    expect(stepZoom(MIN_ZOOM, -1)).toBe(MIN_ZOOM);
+  });
+
+  it('matches levels close to a preset', () => {
+    expect(matchingPreset(1.99999)).toBe(2);
+    expect(matchingPreset(1.371)).toBeUndefined();
+  });
+
+  it('formats percentages', () => {
+    expect(zoomPercent(1.254)).toBe(125);
+    expect(zoomPercent(0.1)).toBe(10);
   });
 });
 
