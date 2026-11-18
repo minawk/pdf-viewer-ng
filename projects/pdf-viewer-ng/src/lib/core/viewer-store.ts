@@ -11,6 +11,7 @@ import {
   untracked,
 } from '@angular/core';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
+import type { PdfTextContent } from './pdf-types';
 import {
   clampZoom,
   DEFAULT_PAGE_SIZE,
@@ -202,6 +203,36 @@ export class ViewerStore {
   readonly effectiveZoom = computed(() => this.scale() / PDF_TO_CSS_UNITS);
   readonly canZoomIn = computed(() => this.hasDocument() && this.effectiveZoom() < MAX_ZOOM - 0.001);
   readonly canZoomOut = computed(() => this.hasDocument() && this.effectiveZoom() > MIN_ZOOM + 0.001);
+
+  // ---- Text ------------------------------------------------------------------------------
+
+  private textCache = new Map<number, Promise<PdfTextContent>>();
+  private textCacheDocument: PDFDocumentProxy | null = null;
+
+  /**
+   * Text content of a page, fetched once per document: shared by the text layer and search.
+   * Not normalized (ligatures kept), as the text layer must match the rendered glyphs.
+   */
+  getTextContent(pageNumber: number): Promise<PdfTextContent> {
+    const pdf = this.document();
+    if (!pdf) {
+      return Promise.reject(new Error('No document loaded.'));
+    }
+    if (pdf !== this.textCacheDocument) {
+      this.textCache = new Map();
+      this.textCacheDocument = pdf;
+    }
+    let content = this.textCache.get(pageNumber);
+    if (!content) {
+      content = pdf
+        .getPage(pageNumber)
+        .then((page) => page.getTextContent({ includeMarkedContent: true, disableNormalization: true }));
+      // A failure is not cached: the next request tries again.
+      content.catch(() => this.textCache.delete(pageNumber));
+      this.textCache.set(pageNumber, content);
+    }
+    return content;
+  }
 
   // ---- Announcements -------------------------------------------------------------------
 

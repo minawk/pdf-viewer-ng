@@ -6,15 +6,22 @@ import { PdfPageMode, PdfSource, PdfZoom } from './types';
 import { ViewerStore } from './viewer-store';
 
 function fakePdf(numPages: number, landscapePages: number[] = []) {
+  const getTextContent = vi.fn((pageNumber: number) =>
+    Promise.resolve({ items: [{ str: `Text of page ${pageNumber}` }], styles: {}, lang: 'en' }),
+  );
   return {
     numPages,
-    getPage: (pageNumber: number) =>
+    getTextContent,
+    getPage: vi.fn((pageNumber: number) =>
       Promise.resolve({
+        pageNumber,
         getViewport: ({ scale }: { scale: number }) =>
           landscapePages.includes(pageNumber)
             ? { width: 800 * scale, height: 600 * scale }
             : { width: 600 * scale, height: 800 * scale },
+        getTextContent: () => getTextContent(pageNumber),
       }),
+    ),
     loadingTask: { destroy: vi.fn(() => Promise.resolve()) },
   };
 }
@@ -263,6 +270,45 @@ describe('ViewerStore', () => {
       mode = 'single';
       connect(store, () => 'a.pdf', () => mode);
       expect(store.scale()).toBeCloseTo(1); // landscape page 2: 800 pt wide
+    });
+  });
+
+  describe('text content', () => {
+    it('fetches the text of each page once per document', async () => {
+      const { store, settle } = setup();
+      const pdf = fakePdf(3);
+      open.mockResolvedValueOnce(pdf);
+      connect(store, () => 'a.pdf');
+      await settle();
+
+      const [first, again] = await Promise.all([store.getTextContent(2), store.getTextContent(2)]);
+      expect(first).toBe(again);
+      expect(first.items).toEqual([{ str: 'Text of page 2' }]);
+      expect(pdf.getTextContent).toHaveBeenCalledTimes(1);
+
+      const next = fakePdf(3);
+      open.mockResolvedValueOnce(next);
+      store.source.set('b.pdf');
+      await settle();
+      await store.getTextContent(2);
+      expect(next.getTextContent).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not cache failures', async () => {
+      const { store, settle } = setup();
+      const pdf = fakePdf(1);
+      pdf.getTextContent.mockRejectedValueOnce(new Error('worker busy'));
+      open.mockResolvedValueOnce(pdf);
+      connect(store, () => 'a.pdf');
+      await settle();
+
+      await expect(store.getTextContent(1)).rejects.toThrow('worker busy');
+      await expect(store.getTextContent(1)).resolves.toMatchObject({ lang: 'en' });
+    });
+
+    it('rejects without a document', async () => {
+      const { store } = setup();
+      await expect(store.getTextContent(1)).rejects.toThrow();
     });
   });
 

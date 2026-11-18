@@ -1,0 +1,91 @@
+// Not encapsulated (pdf.js creates the text runs): every rule is scoped by `pdfv-text-layer`.
+// Adapted from the `.textLayer` rules of pdfjs-dist/web/pdf_viewer.css.
+pdfv-text-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: clip;
+  line-height: 1;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-align: initial;
+  text-size-adjust: none;
+  // Text runs are transparent: the canvas shows the glyphs, the layer only makes them selectable.
+  forced-color-adjust: none;
+  color-scheme: only light;
+  caret-color: CanvasText;
+  transform-origin: 0 0;
+
+  --min-font-size: 1;
+  --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size));
+  --min-font-size-inv: calc(1 / var(--min-font-size));
+
+  span,
+  br {
+    position: absolute;
+    color: transparent;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+    user-select: text;
+  }
+
+  > :not(.markedContent),
+  .markedContent span:not(.markedContent) {
+    z-index: 1;
+    font-size: calc(var(--text-scale-factor) * var(--font-height));
+    transform: rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv));
+
+    --font-height: 0;
+    --scale-x: 1;
+    --rotate: 0deg;
+  }
+
+  .markedContent {
+    display: contents;
+  }
+
+  span[role='img'] {
+    cursor: default;
+    user-select: none;
+  }
+
+  ::selection {
+    color: transparent;
+    background: var(--pdfv-color-text-selection);
+  }
+
+  br::selection {
+    background: transparent;
+  }
+
+  // Invisible element below the text runs; while selecting it covers the whole page so the
+  // selection does not jump when the pointer crosses blank areas (see TextSelection).
+  .endOfContent {
+    position: absolute;
+    inset: 100% 0 0;
+    z-index: 0;
+    display: block;
+    cursor: default;
+    user-select: none;
+  }
+
+  &.selecting .endOfContent {
+    inset-block-start: 0;
+  }
+
+  @media (forced-colors: active) {
+    ::selection {
+      background: Highlight;
+    }
+  }
+}
+
+// Pan tool: dragging scrolls, it never selects text.
+pdfv-document-view.pan pdfv-text-layer {
+  span,
+  br {
+    cursor: inherit;
+    user-select: none;
+  }
+}

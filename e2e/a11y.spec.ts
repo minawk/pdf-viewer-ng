@@ -4,7 +4,10 @@ import { expect, Page, test } from '@playwright/test';
 const themes = ['light', 'dark', 'high-contrast', 'material', 'ocean'];
 
 async function waitForFirstPage(page: Page) {
-  await expect(page.locator('pdfv-page').first().locator('canvas')).toBeAttached({ timeout: 15_000 });
+  const first = page.locator('pdfv-page').first();
+  await expect(first.locator('canvas')).toBeAttached({ timeout: 15_000 });
+  // Include the text layer in the audit.
+  await expect(first.locator('pdfv-text-layer span').first()).toBeAttached();
 }
 
 function axe(page: Page) {

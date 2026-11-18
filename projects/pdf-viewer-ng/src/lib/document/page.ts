@@ -17,6 +17,7 @@ import { PDF_VIEWER_MESSAGES } from '../core/messages';
 import { ViewerStore } from '../core/viewer-store';
 import { canvasPixelRatio, Size } from '../utils/zoom';
 import { DocumentView } from './document-view';
+import { TextLayer } from './text-layer';
 
 /** Delay before re-rendering a page that already shows a (stretched) canvas, e.g. while zooming or resizing. */
 const RERENDER_DELAY_MS = 120;
@@ -32,6 +33,7 @@ interface PageSize extends Size {
  */
 @Component({
   selector: 'pdfv-page',
+  imports: [TextLayer],
   templateUrl: './page.html',
   styleUrl: './page.scss',
   host: {
@@ -40,6 +42,10 @@ interface PageSize extends Size {
     '[attr.data-page-number]': 'pageNumber()',
     '[style.inline-size.px]': 'cssSize().width',
     '[style.block-size.px]': 'cssSize().height',
+    // Read by the pdf.js text layer to position and size its text runs.
+    '[style.--total-scale-factor]': 'scale()',
+    '[style.--scale-round-x]': "'1px'",
+    '[style.--scale-round-y]': "'1px'",
   },
 })
 export class Page {
@@ -65,7 +71,9 @@ export class Page {
     loader: ({ params }) => params.pdf.getPage(params.pageNumber),
   });
 
-  private readonly page = computed<PDFPageProxy | null>(() =>
+  protected readonly scale = computed(() => this.store.scale());
+
+  protected readonly page = computed<PDFPageProxy | null>(() =>
     this.pageResource.hasValue() ? this.pageResource.value() : null,
   );
 

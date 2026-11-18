@@ -14,6 +14,7 @@ import { ScrollPosition, ViewerStore } from '../core/viewer-store';
 import { PAGE_GAP } from '../utils/zoom';
 import { attachGestures, ViewportPoint } from './gestures';
 import { Page } from './page';
+import { TextSelection } from './text-selection';
 
 /**
  * A point of the document pinned to a point of the viewport, so the reading position
@@ -39,6 +40,7 @@ interface ScrollAnchor {
 @Component({
   selector: 'pdfv-document-view',
   imports: [Page],
+  providers: [TextSelection],
   templateUrl: './document-view.html',
   styleUrl: './document-view.scss',
   host: {
