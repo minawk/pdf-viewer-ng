@@ -1,0 +1,70 @@
+@use '../../../../styles/mixins';
+@use '../../../../styles/controls';
+
+:host {
+  position: relative;
+  display: inline-flex;
+
+  .button {
+    @include controls.icon-button;
+  }
+
+  .menu {
+    position: absolute;
+    inset-block-start: calc(100% + var(--pdfv-space-1));
+    inset-inline-end: 0;
+    z-index: 4;
+    min-inline-size: 13rem;
+    margin: 0;
+    padding: var(--pdfv-space-1);
+    list-style: none;
+    color: var(--pdfv-color-on-surface);
+    background: var(--pdfv-color-surface);
+    border: 1px solid var(--pdfv-color-border);
+    border-radius: var(--pdfv-radius);
+    box-shadow: 0 6px 18px rgb(0 0 0 / 22%);
+
+    @media (forced-colors: active) {
+      border-color: CanvasText;
+    }
+  }
+
+  .item {
+    display: flex;
+    gap: var(--pdfv-space-3);
+    align-items: center;
+    inline-size: 100%;
+    min-block-size: var(--pdfv-control-size);
+    padding-inline: var(--pdfv-space-2);
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    background: transparent;
+    border: 0;
+    border-radius: var(--pdfv-radius-sm);
+    cursor: pointer;
+
+    &:hover:not([aria-disabled='true']),
+    &:focus-visible {
+      background: var(--pdfv-color-state-hover);
+    }
+
+    &:focus-visible {
+      @include mixins.focus-ring(-2px);
+    }
+
+    &[aria-disabled='true'] {
+      color: var(--pdfv-color-disabled);
+      cursor: not-allowed;
+    }
+  }
+
+  .label {
+    flex: 1 1 auto;
+  }
+
+  .check {
+    color: var(--pdfv-color-primary);
+    font-weight: 700;
+  }
+}

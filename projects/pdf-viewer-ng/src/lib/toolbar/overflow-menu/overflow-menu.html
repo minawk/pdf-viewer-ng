@@ -1,0 +1,38 @@
+<button
+  #button
+  type="button"
+  class="button"
+  pdfvToolbarItem
+  aria-haspopup="menu"
+  [attr.aria-label]="messages.moreTools"
+  [attr.aria-expanded]="isOpen()"
+  [attr.aria-controls]="isOpen() ? menuId : null"
+  (click)="toggle()"
+  (keydown)="onButtonKeydown($event)"
+>
+  <pdfv-icon name="more" />
+</button>
+
+@if (isOpen()) {
+  <ul class="menu" role="menu" [id]="menuId" [attr.aria-label]="messages.moreTools" (keydown)="onMenuKeydown($event)">
+    @for (item of items(); track item.id) {
+      <li role="none">
+        <button
+          type="button"
+          class="item"
+          tabindex="-1"
+          [attr.role]="item.role"
+          [attr.aria-checked]="item.role === 'menuitem' ? null : !!item.checked"
+          [attr.aria-disabled]="item.disabled ? 'true' : null"
+          (click)="activate(item, $event)"
+        >
+          <pdfv-icon [name]="item.icon" />
+          <span class="label">{{ item.label }}</span>
+          @if (item.checked) {
+            <span class="check" aria-hidden="true">✓</span>
+          }
+        </button>
+      </li>
+    }
+  </ul>
+}

@@ -1,0 +1,62 @@
+@use '../../../../styles/mixins';
+
+:host {
+  position: relative;
+  display: block;
+  margin-inline: auto;
+  margin-block-end: var(--pdfv-page-gap);
+  background: var(--pdfv-color-page);
+  box-shadow: var(--pdfv-shadow-page);
+  // Pages never paint outside their box: lets the browser skip layout/paint of off-screen pages.
+  contain: strict;
+
+  &:last-child {
+    margin-block-end: 0;
+  }
+
+  @media (forced-colors: active) {
+    outline: 1px solid CanvasText;
+  }
+
+  .canvas-host {
+    position: absolute;
+    inset: 0;
+
+    // Loading indicator shown until the first canvas is swapped in.
+    &:empty::after {
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-start: 50%;
+      inline-size: 1.5rem;
+      block-size: 1.5rem;
+      margin: -0.75rem;
+      content: '';
+      border: 2px solid var(--pdfv-color-border);
+      border-block-start-color: var(--pdfv-color-primary);
+      border-radius: 50%;
+
+      @include mixins.motion-safe {
+        animation: pdfv-spin 0.8s linear infinite;
+      }
+    }
+  }
+
+  .error {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: var(--pdfv-space-3);
+    // Pages are always white-ish paper, whatever the theme.
+    color: #3d4248;
+    text-align: center;
+    background: var(--pdfv-color-page);
+  }
+}
+
+@keyframes pdfv-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

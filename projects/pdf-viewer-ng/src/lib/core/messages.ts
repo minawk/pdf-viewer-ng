@@ -1,11 +1,13 @@
 import { EnvironmentProviders, InjectionToken, makeEnvironmentProviders } from '@angular/core';
 import type { AnnotationColorName } from '../annotations/model';
-import { PdfLoadErrorKind } from './errors';
+import { PdfLoadErrorKind } from './errors/errors';
 
 /** Every user-facing string of the viewer, including accessible names. Override for i18n. */
 export interface PdfViewerMessages {
   readonly viewerLabel: string;
   readonly toolbarLabel: string;
+  /** Menu of the tools that do not fit in a narrow toolbar. */
+  readonly moreTools: string;
   readonly documentLabel: string;
   readonly noDocument: string;
   readonly loading: string;
@@ -91,6 +93,7 @@ export interface PdfViewerMessages {
 export const DEFAULT_PDF_VIEWER_MESSAGES: PdfViewerMessages = {
   viewerLabel: 'PDF viewer',
   toolbarLabel: 'PDF viewer toolbar',
+  moreTools: 'More tools',
   documentLabel: 'PDF document',
   noDocument: 'No document loaded.',
   loading: 'Loading document…',

@@ -1,59 +1,44 @@
-# PdfViewerNg
+# pdf-viewer-ng workspace
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.6.
+Source of [`@minawk/pdf-viewer-ng`](projects/pdf-viewer-ng/README.md), an accessible, signal-based PDF
+viewer for Angular, and its demo application.
 
-## Development server
+## Projects
 
-To start a local development server, run:
+| Path | What |
+| --- | --- |
+| `projects/pdf-viewer-ng` | The library (ng-packagr). Its README is the npm documentation. |
+| `projects/demo` | Demo application: documents, themes, page modes, bindings. Compiles the library from source. |
+| `e2e` | Playwright tests on the demo, accessibility audits (axe) included. |
+| `tools/make-sample-pdfs.mjs` | Generates the demo's sample PDFs (`node tools/make-sample-pdfs.mjs`). |
 
-```bash
-ng serve
+Library layout: one folder per component, and one per file that has unit tests.
+
+```
+src/lib/
+  pdf-viewer/       <pdfv-viewer>: the public component
+  core/             configuration, messages, pdf.js engine, per-viewer state (viewer-store/)
+  toolbar/          toolbar/, pager/, zoom-control/, overflow-menu/, roving-toolbar/
+  document/         document-view/ (scrolling, virtualization), page/, text-layer/, gestures
+  search/           search-bar/, text-search/ (matching), search-store
+  annotations/      annotation-layer/, annotation-store/, geometry/, model
+  features/         file-actions (open, download), print, print-dialog/
+  icon/, utils/     icons; zoom/ and file-name/ helpers
+styles/             tokens, themes, mixins (published as Sass)
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Commands
 
-## Code scaffolding
+| Command | What |
+| --- | --- |
+| `npm start` | Demo on http://localhost:4200, library from source with live reload. |
+| `npm test` | Library unit tests (Vitest). |
+| `npm run e2e` | End-to-end and accessibility tests. Uses Playwright's Chromium, or a local one: `PW_CHROMIUM_PATH=/usr/bin/chromium npm run e2e`. |
+| `npm run build` | Builds the library (`dist/minawk/pdf-viewer-ng`), then the demo. |
+| `npm run publish:lib` | Builds the library and publishes it to npm (public, scoped package). |
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Releasing
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1. Update `version` in `projects/pdf-viewer-ng/package.json` and `projects/pdf-viewer-ng/CHANGELOG.md`.
+2. `npm test && npm run e2e`.
+3. `npm login` (once), then `npm run publish:lib`.

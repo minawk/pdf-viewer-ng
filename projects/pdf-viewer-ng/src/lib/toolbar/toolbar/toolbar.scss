@@ -1,0 +1,49 @@
+@use '../../../../styles/mixins';
+@use '../../../../styles/controls';
+
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pdfv-space-1);
+  padding: var(--pdfv-space-1);
+  // Above the document area, for the "More tools" menu.
+  position: relative;
+  z-index: 3;
+  background: var(--pdfv-color-toolbar);
+  color: var(--pdfv-color-on-toolbar);
+  border-block-end: 1px solid var(--pdfv-color-border);
+  box-shadow: var(--pdfv-shadow-toolbar);
+
+  @include mixins.screen(sm) {
+    gap: var(--pdfv-space-1) var(--pdfv-space-2);
+    padding-inline: var(--pdfv-space-2);
+  }
+
+  @include mixins.screen(md) {
+    flex-wrap: nowrap;
+  }
+
+  .group {
+    display: flex;
+    align-items: center;
+    gap: var(--pdfv-space-1);
+  }
+
+  .spacer {
+    display: none;
+
+    @include mixins.screen(md) {
+      display: block;
+      flex: 1 1 auto;
+    }
+  }
+
+  .button {
+    @include controls.icon-button;
+  }
+
+  .more {
+    margin-inline-start: auto;
+  }
+}

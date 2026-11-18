@@ -1,8 +1,8 @@
 import { DOCUMENT, inject, Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PDF_VIEWER_MESSAGES } from '../core/messages';
-import { ViewerStore } from '../core/viewer-store';
-import { isPdfFile } from '../utils/file-name';
+import { ViewerStore } from '../core/viewer-store/viewer-store';
+import { isPdfFile } from '../utils/file-name/file-name';
 
 export interface PdfDownloadEvent {
   readonly fileName: string;

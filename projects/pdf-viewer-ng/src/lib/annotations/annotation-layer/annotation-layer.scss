@@ -1,0 +1,125 @@
+@use '../../../../styles/mixins';
+@use '../../../../styles/controls';
+
+// Above the text layer (by DOM order), but transparent to the pointer: text stays selectable
+// through it. Only the annotations and their toolbar take pointer events.
+// No z-index: a stacking context would isolate the highlights' multiply blend from the canvas.
+:host {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  // Text tool: the whole page receives the press that writes a note.
+  &.creating {
+    cursor: text;
+    pointer-events: auto;
+  }
+
+  .hint {
+    @include mixins.visually-hidden;
+  }
+
+  .highlight {
+    position: absolute;
+    padding: 0;
+    // A native button appearance isolates its content: the lines could not blend with the page.
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 2px;
+    pointer-events: none;
+
+    &:focus-visible,
+    &.selected {
+      outline: 2px dashed var(--pdfv-color-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  .line {
+    position: absolute;
+    // Like the saved appearance: the text stays readable under the color.
+    mix-blend-mode: multiply;
+    forced-color-adjust: none;
+  }
+
+  .note {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    // Same layout as the appearance pdf.js writes into the file.
+    font-family: Helvetica, Arial, sans-serif;
+    line-height: 1.35;
+    white-space: pre;
+    cursor: move;
+    pointer-events: auto;
+    forced-color-adjust: none;
+
+    &:focus-visible,
+    &.selected {
+      outline: 2px solid var(--pdfv-color-primary);
+      outline-offset: 2px;
+    }
+
+    &.editing {
+      min-inline-size: 2ch;
+      min-block-size: 1.35em;
+      cursor: text;
+      background: rgb(255 255 255 / 85%);
+      outline: 2px solid var(--pdfv-color-primary);
+      outline-offset: 2px;
+    }
+  }
+
+  .annotation-toolbar {
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--pdfv-space-1);
+    margin-block-start: var(--pdfv-space-2);
+    padding: var(--pdfv-space-1);
+    color: var(--pdfv-color-on-toolbar);
+    font-family: var(--pdfv-font-family);
+    background: var(--pdfv-color-toolbar);
+    border: 1px solid var(--pdfv-color-border);
+    border-radius: var(--pdfv-radius);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 18%);
+    pointer-events: auto;
+
+    &.above {
+      margin-block-start: 0;
+      transform: translateY(calc(-100% - var(--pdfv-space-2)));
+    }
+
+    @media (forced-colors: active) {
+      border-color: CanvasText;
+    }
+  }
+
+  .colors {
+    display: flex;
+    gap: 2px;
+    padding-inline-end: var(--pdfv-space-1);
+    border-inline-end: 1px solid var(--pdfv-color-border);
+  }
+
+  .button,
+  .swatch {
+    @include controls.icon-button;
+  }
+
+  .swatch-color {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    border: 1px solid rgb(0 0 0 / 35%);
+    border-radius: 50%;
+    forced-color-adjust: none;
+  }
+
+  .swatch[aria-pressed='true'] .swatch-color {
+    box-shadow:
+      0 0 0 2px var(--pdfv-color-toolbar),
+      0 0 0 4px var(--pdfv-color-primary);
+  }
+}

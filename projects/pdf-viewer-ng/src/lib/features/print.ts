@@ -3,8 +3,8 @@ import type { PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
 import { PDF_VIEWER_CONFIG } from '../core/config';
 import { PDF_VIEWER_MESSAGES } from '../core/messages';
 import { PdfEngine } from '../core/pdf-engine';
-import { ViewerStore } from '../core/viewer-store';
-import { canvasPixelRatio, Size } from '../utils/zoom';
+import { ViewerStore } from '../core/viewer-store/viewer-store';
+import { canvasPixelRatio, Size } from '../utils/zoom/zoom';
 
 export interface PrintProgress {
   readonly done: number;

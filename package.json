@@ -10,7 +10,8 @@
     "build:lib": "ng build pdf-viewer-ng",
     "watch:lib": "ng build pdf-viewer-ng --watch --configuration development",
     "test": "ng test pdf-viewer-ng --watch=false",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "publish:lib": "ng build pdf-viewer-ng && npm publish ./dist/minawk/pdf-viewer-ng"
   },
   "private": true,
   "packageManager": "npm@11.13.0",

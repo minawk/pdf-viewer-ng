@@ -1,7 +1,7 @@
 import { DOCUMENT, inject, Service } from '@angular/core';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { PDF_VIEWER_CONFIG } from './config';
-import { toDocumentParams } from './source';
+import { toDocumentParams } from './source/source';
 import { PdfSource } from './types';
 
 type PdfJs = typeof import('pdfjs-dist');

@@ -1,0 +1,84 @@
+@use '../../../../styles/mixins';
+
+.dialog {
+  inline-size: min(22rem, calc(100vw - 2rem));
+  padding: var(--pdfv-space-3) calc(var(--pdfv-space-3) * 1.5);
+  color: var(--pdfv-color-on-surface);
+  font-family: var(--pdfv-font-family);
+  font-size: var(--pdfv-font-size);
+  background: var(--pdfv-color-surface);
+  border: 1px solid var(--pdfv-color-border);
+  border-radius: var(--pdfv-radius);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 28%);
+
+  &::backdrop {
+    background: rgb(0 0 0 / 40%);
+  }
+
+  @media (forced-colors: active) {
+    border-color: CanvasText;
+  }
+
+  .title {
+    margin: 0 0 var(--pdfv-space-3);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .progress {
+    position: relative;
+    block-size: 0.375rem;
+    overflow: hidden;
+    background: var(--pdfv-color-border);
+    border-radius: 999px;
+
+    @media (forced-colors: active) {
+      border: 1px solid CanvasText;
+    }
+  }
+
+  .progress-value {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: var(--pdfv-color-primary);
+    border-radius: inherit;
+
+    @include mixins.motion-safe {
+      transition: inline-size var(--pdfv-transition-duration);
+    }
+
+    @media (forced-colors: active) {
+      background: Highlight;
+    }
+  }
+
+  .text {
+    margin: var(--pdfv-space-2) 0 var(--pdfv-space-3);
+    color: var(--pdfv-color-on-surface-muted);
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .cancel {
+    min-block-size: var(--pdfv-control-size);
+    padding-inline: var(--pdfv-space-3);
+    color: var(--pdfv-color-on-surface);
+    font: inherit;
+    background: transparent;
+    border: 1px solid var(--pdfv-color-border-strong);
+    border-radius: var(--pdfv-radius-sm);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--pdfv-color-state-hover);
+    }
+
+    &:focus-visible {
+      @include mixins.focus-ring;
+    }
+  }
+}

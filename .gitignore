@@ -46,3 +46,6 @@ Thumbs.db
 # Playwright
 /e2e/results/
 /playwright-report/
+
+# Temporary local scripts (e.g. browser probes)
+*.tmp.*

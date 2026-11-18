@@ -9,6 +9,8 @@
       "input": "styles",
       "glob": "**/*.scss",
       "output": "styles"
-    }
+    },
+    "LICENSE",
+    "CHANGELOG.md"
   ]
 }

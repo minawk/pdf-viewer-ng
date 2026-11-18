@@ -1,7 +1,7 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { PDF_VIEWER_MESSAGES } from '../core/messages';
-import { ViewerStore } from '../core/viewer-store';
-import { buildPageText, findMatches, searchPattern, TextMatch } from './text-search';
+import { ViewerStore } from '../core/viewer-store/viewer-store';
+import { buildPageText, findMatches, searchPattern, TextMatch } from './text-search/text-search';
 
 /** Delay between the last keystroke and the search. */
 const SEARCH_DEBOUNCE_MS = 200;

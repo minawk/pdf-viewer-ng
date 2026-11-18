@@ -1,5 +1,6 @@
 :host {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr;
   block-size: 100dvh;
 
@@ -20,6 +21,7 @@
 
   .controls {
     display: flex;
+    min-inline-size: 0;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem 1rem;
@@ -51,8 +53,12 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    min-inline-size: 0;
+    max-inline-size: 100%;
 
     select {
+      min-inline-size: 0;
+      max-inline-size: 100%;
       min-block-size: 2.25rem;
       padding-inline: 0.5rem;
       font: inherit;
@@ -68,6 +74,7 @@
 
   .main {
     min-block-size: 0;
+    min-inline-size: 0;
     padding: 1rem;
   }
 }
