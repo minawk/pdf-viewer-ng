@@ -2,7 +2,7 @@
 
 All notable changes to `@minawk/pdf-viewer-ng`. Versions follow [semantic versioning](https://semver.org).
 
-## Unreleased
+## 0.4.0 (2026-11-19)
 
 ### Changed
 
