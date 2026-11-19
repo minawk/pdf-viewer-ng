@@ -98,6 +98,7 @@
             class="swatch"
             pdfvToolbarItem
             [attr.aria-label]="messages.colorNames[color.name]"
+            [title]="messages.colorNames[color.name]"
             [attr.aria-pressed]="color.value === annotation.color"
             (click)="setColor(annotation, color.value)"
           >
@@ -111,6 +112,7 @@
           class="button"
           pdfvToolbarItem
           [attr.aria-label]="messages.editTextNote"
+          [title]="messages.editTextNote"
           (click)="edit(annotation.id)"
         >
           <pdfv-icon name="edit" />
@@ -120,6 +122,7 @@
           class="button"
           pdfvToolbarItem
           [attr.aria-label]="messages.decreaseFontSize"
+          [title]="messages.decreaseFontSize"
           (click)="changeFontSize(annotation, -2)"
         >
           <pdfv-icon name="remove" />
@@ -129,6 +132,7 @@
           class="button"
           pdfvToolbarItem
           [attr.aria-label]="messages.increaseFontSize"
+          [title]="messages.increaseFontSize"
           (click)="changeFontSize(annotation, 2)"
         >
           <pdfv-icon name="add" />
@@ -139,6 +143,7 @@
         class="button"
         pdfvToolbarItem
         [attr.aria-label]="messages.deleteAnnotation"
+        [title]="messages.deleteAnnotation"
         (click)="delete(annotation.id)"
       >
         <pdfv-icon name="delete" />

@@ -55,11 +55,13 @@ test('text runs stay aligned with the page when zooming', async ({ page }) => {
       width: run.width / page1.width,
     };
   };
-  await page.getByRole('combobox', { name: 'Zoom level' }).selectOption('1');
+  await page.getByRole('textbox', { name: 'Zoom level' }).fill('100');
+  await page.getByRole('textbox', { name: 'Zoom level' }).press('Enter');
   await expect.poll(async () => (await firstPage(page).boundingBox())!.width).toBeCloseTo(816, 0);
   const atActualSize = await relativeBox();
 
-  await page.getByRole('combobox', { name: 'Zoom level' }).selectOption('2');
+  await page.getByRole('textbox', { name: 'Zoom level' }).fill('200');
+  await page.getByRole('textbox', { name: 'Zoom level' }).press('Enter');
   await expect.poll(async () => (await firstPage(page).boundingBox())!.width).toBeCloseTo(1632, 0);
   await expect.poll(async () => (await relativeBox()).width).toBeCloseTo(atActualSize.width, 2);
   const atDouble = await relativeBox();

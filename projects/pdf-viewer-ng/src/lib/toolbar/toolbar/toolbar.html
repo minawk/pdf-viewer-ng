@@ -15,6 +15,7 @@
             pdfvToolbarItem
             [disabled]="!store.hasDocument()"
             [attr.aria-label]="toggle.label"
+            [title]="toggle.label"
             [attr.aria-pressed]="store.tool() === toggle.tool"
             (click)="store.setTool(toggle.tool)"
           >
@@ -32,6 +33,7 @@
             pdfvToolbarItem
             [disabled]="!store.hasDocument()"
             [attr.aria-label]="toggle.label"
+            [title]="toggle.label"
             [attr.aria-pressed]="store.tool() === toggle.tool"
             (click)="toggleAnnotationTool(toggle.tool, $event)"
           >
@@ -48,6 +50,7 @@
         data-pdfv-search-toggle
         [disabled]="!store.hasDocument()"
         [attr.aria-label]="messages.search"
+        [title]="messages.search"
         [attr.aria-expanded]="search.isOpen()"
         [attr.aria-controls]="search.isOpen() ? search.panelId : null"
         (click)="toggleSearch()"
@@ -61,6 +64,7 @@
         class="button"
         pdfvToolbarItem
         [attr.aria-label]="messages.open"
+        [title]="messages.open"
         (click)="files.pick()"
       >
         <pdfv-icon name="open" />
@@ -73,6 +77,7 @@
         pdfvToolbarItem
         [disabled]="!store.hasDocument()"
         [attr.aria-label]="messages.download"
+        [title]="messages.download"
         (click)="files.download()"
       >
         <pdfv-icon name="download" />
@@ -85,6 +90,7 @@
         pdfvToolbarItem
         [disabled]="!store.hasDocument() || printer.progress() !== null"
         [attr.aria-label]="messages.print"
+        [title]="messages.print"
         (click)="printer.print()"
       >
         <pdfv-icon name="print" />

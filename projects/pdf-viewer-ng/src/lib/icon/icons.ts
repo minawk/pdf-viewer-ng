@@ -32,6 +32,10 @@ export const PDFV_ICONS = {
   delete: 'M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z',
   add: 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
   remove: 'M19 13H5v-2h14v2z',
+  // Whole page in view (Material "fit_screen"), and page width between two bars (drawn here).
+  'fit-page':
+    'M17 4h3c1.1 0 2 .9 2 2v2h-2V6h-3V4zM4 8V6h3V4H4c-1.1 0-2 .9-2 2v2h2zm16 8v2h-3v2h3c1.1 0 2-.9 2-2v-2h-2zM7 18H4v-2H2v2c0 1.1.9 2 2 2h3v-2zM18 8H6v8h12V8z',
+  'fit-width': 'M3 4h2v16H3zM19 4h2v16h-2zM8.5 8 6 12l2.5 4v-3h7v3l2.5-4-2.5-4v3h-7z',
   more: 'M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z',
 } as const;
 

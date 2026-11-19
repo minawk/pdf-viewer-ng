@@ -5,6 +5,7 @@
   pdfvToolbarItem
   aria-haspopup="menu"
   [attr.aria-label]="messages.moreTools"
+  [title]="messages.moreTools"
   [attr.aria-expanded]="isOpen()"
   [attr.aria-controls]="isOpen() ? menuId : null"
   (click)="toggle()"

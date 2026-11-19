@@ -2,7 +2,7 @@
 
 A lightweight, accessible PDF viewer for Angular 22, built entirely on signals.
 
-- **View**: continuous or single page mode, pagination, zoom (presets, fit to width or page, Ctrl + wheel, pinch), pan tool.
+- **View**: continuous or single page mode, pagination, zoom (125% by default, typed level, zoom in and out, fit to page or width, Ctrl + wheel, pinch), pan tool.
 - **Read**: text selection and copy, search with match case and whole words, clickable links (web, email, and links to other pages of the document).
 - **Files**: open (file picker, drag and drop), download, print.
 - **Edit**: highlights and free text notes, saved into the downloaded PDF as standard annotations, and printed.
@@ -107,11 +107,11 @@ What `ng add` does, if you prefer to do it yourself:
 
 ### Two-way bindings
 
-| Model             | Type                                  | Description                                                                                                    |
-| ----------------- | ------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `[(page)]`        | `number`                              | Current page, 1-based. Follows scrolling and navigation. Set it with `src` to open a document at a given page. |
-| `[(zoom)]`        | `'fit-width' \| 'fit-page' \| number` | Zoom; numbers are factors of the actual size (`1` = 100%, from `0.1` to `4`).                                  |
-| `[(annotations)]` | `PdfAnnotation[]`                     | Highlights and text notes. A replacing document starts without annotations unless you provide new ones.        |
+| Model             | Type                                            | Description                                                                                                                                                                                          |
+| ----------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[(page)]`        | `number`                                        | Current page, 1-based. Follows scrolling and navigation. Set it with `src` to open a document at a given page.                                                                                       |
+| `[(zoom)]`        | `'auto' \| 'fit-width' \| 'fit-page' \| number` | Zoom. `'auto'` (default): 125%, or less to fit the page width on narrow screens, like Chrome. Numbers are factors of the actual size (`1` = 100%, from `0.1` to `4`); `1.25` forces 125% everywhere. |
+| `[(annotations)]` | `PdfAnnotation[]`                               | Highlights and text notes. A replacing document starts without annotations unless you provide new ones.                                                                                              |
 
 ### Outputs
 
@@ -130,13 +130,13 @@ For custom toolbars: `openFile()`, `download()`, `print()`.
 
 `providePdfViewer(config)`, every option is optional:
 
-| Option                               | Default                                              | Description                                             |
-| ------------------------------------ | ---------------------------------------------------- | ------------------------------------------------------- |
-| `workerSrc`                          | `'assets/pdfjs/pdf.worker.min.mjs'`                  | URL of the pdf.js worker, or `'cdn'`.                   |
-| `assetsUrl`                          | `null` (`ng add` sets `'assets/pdfjs/'`)             | Base URL of the optional pdf.js folders, or `'cdn'`.    |
-| `theme`, `tools`, `pageMode`, `zoom` | `'light'`, every tool, `'continuous'`, `'fit-width'` | Defaults of the inputs.                                 |
-| `maxPixelRatio`                      | `2`                                                  | Canvas resolution cap on high-density screens (memory). |
-| `printResolution`                    | `150`                                                | Print resolution, in dots per inch.                     |
+| Option                               | Default                                         | Description                                             |
+| ------------------------------------ | ----------------------------------------------- | ------------------------------------------------------- |
+| `workerSrc`                          | `'assets/pdfjs/pdf.worker.min.mjs'`             | URL of the pdf.js worker, or `'cdn'`.                   |
+| `assetsUrl`                          | `null` (`ng add` sets `'assets/pdfjs/'`)        | Base URL of the optional pdf.js folders, or `'cdn'`.    |
+| `theme`, `tools`, `pageMode`, `zoom` | `'light'`, every tool, `'continuous'`, `'auto'` | Defaults of the inputs.                                 |
+| `maxPixelRatio`                      | `2`                                             | Canvas resolution cap on high-density screens (memory). |
+| `printResolution`                    | `150`                                           | Print resolution, in dots per inch.                     |
 
 ## Annotations
 
@@ -227,6 +227,7 @@ when the user asks for it.
 | Anywhere in the viewer     | Ctrl/⌘ + F                         | Search                       |
 |                            | F3 or Ctrl/⌘ + G (Shift: previous) | Next search result           |
 |                            | Ctrl/⌘ + `+` `-` `0`               | Zoom in, out, reset          |
+| Zoom field                 | type a level, Enter; ↑ ↓; Escape   | Apply, step, cancel          |
 | Search field               | Enter, Shift + Enter, Escape       | Next, previous result, close |
 | Document                   | Home, End                          | First, last page             |
 | Document, single page mode | ← →, Page Up/Down                  | Previous, next page          |

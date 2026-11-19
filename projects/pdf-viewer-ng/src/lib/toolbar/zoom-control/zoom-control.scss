@@ -9,10 +9,10 @@
     @include controls.icon-button;
   }
 
-  .zoom-select {
+  .zoom-input {
     @include controls.field;
 
-    min-inline-size: 7.5rem;
-    padding-inline: var(--pdfv-space-2);
+    inline-size: 4.5em;
+    text-align: center;
   }
 }

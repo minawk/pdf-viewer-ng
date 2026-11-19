@@ -4,30 +4,48 @@
   pdfvToolbarItem
   [disabled]="!store.canZoomOut()"
   [attr.aria-label]="messages.zoomOut"
+  [title]="messages.zoomOut"
   (click)="store.zoomOut()"
 >
   <pdfv-icon name="zoom-out" />
 </button>
-<select
-  class="zoom-select"
+<input
+  #input
+  class="zoom-input"
+  type="text"
+  inputmode="decimal"
+  autocomplete="off"
+  enterkeyhint="done"
   pdfvToolbarItem
   [disabled]="!store.hasDocument()"
   [attr.aria-label]="messages.zoomLevel"
-  (change)="onSelect($event)"
->
-  @for (option of options(); track option.value) {
-    <option [value]="option.value" [selected]="option.value === selected()">
-      {{ option.label }}
-    </option>
-  }
-</select>
+  [value]="store.hasDocument() ? level() : ''"
+  (focus)="input.select()"
+  (change)="commit(input)"
+  (keydown.enter)="commit(input); input.select()"
+  (keydown.escape)="revert(input)"
+  (keydown.arrowup)="step(input, $event, 1)"
+  (keydown.arrowdown)="step(input, $event, -1)"
+/>
 <button
   type="button"
   class="button"
   pdfvToolbarItem
   [disabled]="!store.canZoomIn()"
   [attr.aria-label]="messages.zoomIn"
+  [title]="messages.zoomIn"
   (click)="store.zoomIn()"
 >
   <pdfv-icon name="zoom-in" />
+</button>
+<button
+  type="button"
+  class="button"
+  pdfvToolbarItem
+  [disabled]="!store.hasDocument()"
+  [attr.aria-label]="fitLabel()"
+  [title]="fitLabel()"
+  (click)="toggleFit()"
+>
+  <pdfv-icon [name]="fitsPage() ? 'fit-width' : 'fit-page'" />
 </button>

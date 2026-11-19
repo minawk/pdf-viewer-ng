@@ -35,7 +35,7 @@ export const DEFAULT_PDF_VIEWER_CONFIG: PdfViewerConfig = {
   theme: 'light',
   tools: DEFAULT_TOOLS,
   pageMode: 'continuous',
-  zoom: 'fit-width',
+  zoom: 'auto',
   maxPixelRatio: 2,
   printResolution: 150,
 };

@@ -3,6 +3,7 @@ import {
   clampZoom,
   MAX_ZOOM,
   MIN_ZOOM,
+  parseZoomPercent,
   PDF_TO_CSS_UNITS,
   resolveScale,
   matchingPreset,
@@ -25,6 +26,14 @@ describe('resolveScale', () => {
 
   it('fits the whole page in the container', () => {
     expect(resolveScale('fit-page', page, container, 16)).toBeCloseTo(1);
+  });
+
+  it('auto fits the width, but never above 125%', () => {
+    expect(resolveScale('auto', page, container, 16)).toBeCloseTo(1.25 * PDF_TO_CSS_UNITS);
+    expect(resolveScale('auto', page, { width: 632, height: 832 }, 16)).toBeCloseTo(1);
+    expect(resolveScale('auto', page, { width: 0, height: 0 })).toBeCloseTo(
+      1.25 * PDF_TO_CSS_UNITS,
+    );
   });
 
   it('uses the actual size before the container is measured', () => {
@@ -60,6 +69,16 @@ describe('zoom helpers', () => {
   it('matches levels close to a preset', () => {
     expect(matchingPreset(1.99999)).toBe(2);
     expect(matchingPreset(1.371)).toBeUndefined();
+  });
+
+  it('reads typed percentages', () => {
+    expect(parseZoomPercent('150')).toBe(1.5);
+    expect(parseZoomPercent(' 150 % ')).toBe(1.5);
+    expect(parseZoomPercent('87,5%')).toBe(0.875);
+    expect(parseZoomPercent('abc')).toBeNull();
+    expect(parseZoomPercent('0')).toBeNull();
+    expect(parseZoomPercent('-50')).toBeNull();
+    expect(parseZoomPercent('')).toBeNull();
   });
 
   it('formats percentages', () => {

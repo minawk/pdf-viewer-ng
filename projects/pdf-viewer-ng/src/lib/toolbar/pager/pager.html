@@ -4,6 +4,7 @@
   pdfvToolbarItem
   [disabled]="!store.canGoPrevious()"
   [attr.aria-label]="messages.firstPage"
+  [title]="messages.firstPage"
   (click)="store.firstPage()"
 >
   <pdfv-icon name="first-page" />
@@ -14,6 +15,7 @@
   pdfvToolbarItem
   [disabled]="!store.canGoPrevious()"
   [attr.aria-label]="messages.previousPage"
+  [title]="messages.previousPage"
   (click)="store.previousPage()"
 >
   <pdfv-icon name="chevron-left" />
@@ -44,6 +46,7 @@
   pdfvToolbarItem
   [disabled]="!store.canGoNext()"
   [attr.aria-label]="messages.nextPage"
+  [title]="messages.nextPage"
   (click)="store.nextPage()"
 >
   <pdfv-icon name="chevron-right" />
@@ -54,6 +57,7 @@
   pdfvToolbarItem
   [disabled]="!store.canGoNext()"
   [attr.aria-label]="messages.lastPage"
+  [title]="messages.lastPage"
   (click)="store.lastPage()"
 >
   <pdfv-icon name="last-page" />

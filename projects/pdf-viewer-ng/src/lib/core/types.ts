@@ -30,10 +30,12 @@ export type PdfInteractionTool = 'select' | 'pan' | 'highlight' | 'text';
 export type PdfPageMode = 'continuous' | 'single';
 
 /**
- * Zoom level: fit the page width or the whole page to the viewer, or an explicit factor
- * of the actual size (1 = 100%, between 0.1 and 4).
+ * Zoom level:
+ * - `auto`: 125%, or less to fit the page width on narrow screens (as in pdf.js and Chrome);
+ * - `fit-width` / `fit-page`: fit the page width / the whole page to the viewer;
+ * - a number: factor of the actual size (1 = 100%, between 0.1 and 4).
  */
-export type PdfZoom = 'fit-width' | 'fit-page' | number;
+export type PdfZoom = 'auto' | 'fit-width' | 'fit-page' | number;
 
 export const DEFAULT_TOOLS: readonly PdfViewerTool[] = [
   'pager',

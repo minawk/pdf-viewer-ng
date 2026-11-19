@@ -78,7 +78,8 @@ test.describe('highlights', () => {
       return { x: (mark.x - text.x) / page1.width, y: (mark.y - text.y) / page1.height };
     };
     const before = await offset();
-    await page.getByRole('combobox', { name: 'Zoom level' }).selectOption('2');
+    await page.getByRole('textbox', { name: 'Zoom level' }).fill('200');
+    await page.getByRole('textbox', { name: 'Zoom level' }).press('Enter');
     await expect
       .poll(async () => (await firstPage(page).boundingBox())!.width)
       .toBeCloseTo(1632, 0);

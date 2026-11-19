@@ -120,7 +120,13 @@ describe('ViewerStore', () => {
     await settle();
 
     store.containerSize.set({ width: 1232, height: 900 });
-    expect(store.scale()).toBeCloseTo(2); // fit-width: (1232 - 2 * 16) / 600
+    // Default auto: fit to width would be 2 css px/pt (150%), capped at 125%.
+    expect(store.scale()).toBeCloseTo(1.25 * PDF_TO_CSS_UNITS);
+    store.zoom.set('fit-width');
+    expect(store.scale()).toBeCloseTo(2); // (1232 - 2 * 16) / 600
+    store.containerSize.set({ width: 632, height: 900 });
+    store.zoom.set('auto');
+    expect(store.scale()).toBeCloseTo(1); // narrow: auto fits the width, (632 - 2 * 16) / 600
     store.zoom.set(1.5);
     expect(store.scale()).toBeCloseTo(1.5 * PDF_TO_CSS_UNITS);
   });
@@ -226,7 +232,7 @@ describe('ViewerStore', () => {
         () => zoom,
       );
       await settle();
-      expect(store.zoom()).toBe('fit-width');
+      expect(store.zoom()).toBe('auto');
       zoom = 1.5;
       connect(
         store,
@@ -242,7 +248,8 @@ describe('ViewerStore', () => {
       const { store, settle } = await ready();
       connect(store, () => 'a.pdf');
       await settle();
-      store.containerSize.set({ width: 1232, height: 900 }); // fit-width: 2 css px/pt = 150%
+      store.containerSize.set({ width: 1232, height: 900 });
+      store.setZoom('fit-width'); // 2 css px/pt = 150%
       expect(store.effectiveZoom()).toBeCloseTo(1.5);
 
       store.zoomIn();

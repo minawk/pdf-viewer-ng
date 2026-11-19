@@ -23,6 +23,7 @@
     type="button"
     class="button"
     [attr.aria-label]="messages.matchCase"
+    [title]="messages.matchCase"
     [attr.aria-pressed]="search.matchCase()"
     (click)="search.matchCase.set(!search.matchCase())"
   >
@@ -32,6 +33,7 @@
     type="button"
     class="button"
     [attr.aria-label]="messages.wholeWord"
+    [title]="messages.wholeWord"
     [attr.aria-pressed]="search.wholeWord()"
     (click)="search.wholeWord.set(!search.wholeWord())"
   >
@@ -41,6 +43,7 @@
     type="button"
     class="button"
     [attr.aria-label]="messages.previousResult"
+    [title]="messages.previousResult"
     [attr.aria-disabled]="search.total() === 0"
     (click)="search.previous()"
   >
@@ -50,12 +53,19 @@
     type="button"
     class="button"
     [attr.aria-label]="messages.nextResult"
+    [title]="messages.nextResult"
     [attr.aria-disabled]="search.total() === 0"
     (click)="search.next()"
   >
     <pdfv-icon name="chevron-down" />
   </button>
-  <button type="button" class="button" [attr.aria-label]="messages.closeSearch" (click)="close()">
+  <button
+    type="button"
+    class="button"
+    [attr.aria-label]="messages.closeSearch"
+    [title]="messages.closeSearch"
+    (click)="close()"
+  >
     <pdfv-icon name="close" />
   </button>
 </div>

@@ -2,6 +2,22 @@
 
 All notable changes to `@minawk/pdf-viewer-ng`. Versions follow [semantic versioning](https://semver.org).
 
+## Unreleased
+
+### Changed
+
+- Default zoom: `'auto'`, 125%, or less to fit the page width on narrow screens (like Chrome and
+  pdf.js), instead of fit to width. `zoom: 1.25` forces 125% everywhere; `zoom: 'fit-width'` restores
+  the previous behavior.
+- The zoom menu is replaced by a zoom level field, like Chrome: it shows the applied level, accepts a
+  typed percentage ("150", "150%"), steps with the up and down arrow keys, and Escape cancels.
+- A fit button next to the zoom buttons switches between fit to page and fit to width.
+
+### Added
+
+- `'auto'` zoom mode (`PdfZoom`).
+- Tooltips: every icon button shows its name on hover (`title`).
+
 ## 0.3.0 (2026-11-18)
 
 ### Added

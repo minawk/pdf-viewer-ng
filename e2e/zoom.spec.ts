@@ -1,10 +1,14 @@
 import { expect, Page, test } from '@playwright/test';
 
-const zoomSelect = (page: Page) => page.getByRole('combobox', { name: 'Zoom level' });
+const zoomInput = (page: Page) => page.getByRole('textbox', { name: 'Zoom level' });
 const documentRegion = (page: Page) => page.getByRole('region', { name: 'PDF document' });
 const status = (page: Page) => page.locator('pdfv-viewer [role="status"]');
-const selectedLabel = (page: Page) =>
-  zoomSelect(page).evaluate((el: HTMLSelectElement) => el.selectedOptions[0]?.text);
+
+/** Types a zoom level, as a percentage, in the zoom field. */
+async function setZoom(page: Page, percent: string) {
+  await zoomInput(page).fill(percent);
+  await zoomInput(page).press('Enter');
+}
 const pageWidth = (page: Page, n = 1) =>
   page
     .locator(`pdfv-page[data-page-number="${n}"]`)
@@ -36,9 +40,23 @@ async function open(page: Page) {
 // 612 pt letter page at 100% = 816 CSS px.
 const ACTUAL_WIDTH = 816;
 
+test('the default zoom is 125%', async ({ page }) => {
+  await open(page);
+  await expect(zoomInput(page)).toHaveValue('125%');
+  // Page sizes are rounded down to whole pixels.
+  await expect.poll(() => pageWidth(page)).toBeCloseTo(ACTUAL_WIDTH * 1.25, -1);
+});
+
+test('on narrow viewers, the default zoom fits the page width instead', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 760 });
+  await open(page);
+  const view = await documentRegion(page).evaluate((el) => el.clientWidth);
+  await expect.poll(() => pageWidth(page)).toBeLessThanOrEqual(view);
+  await expect(zoomInput(page)).toHaveValue(/^\d+%$/);
+});
+
 test('zoom buttons step through visible levels and announce them', async ({ page }) => {
   await open(page);
-  expect(await selectedLabel(page)).toBe('Fit to width');
 
   await page.getByRole('button', { name: 'Zoom in' }).click();
   await expect(status(page)).toHaveText(/^Zoom: \d+%$/);
@@ -49,29 +67,73 @@ test('zoom buttons step through visible levels and announce them', async ({ page
   await expect(page.locator('output')).toContainText(/zoom \d+%/);
 });
 
-test('zoom menu applies presets and fit modes', async ({ page }) => {
+test('a typed zoom level is applied, clamped, or reverted when invalid', async ({ page }) => {
   await open(page);
-  await zoomSelect(page).selectOption('1');
+  await setZoom(page, '100');
   await expect.poll(() => pageWidth(page)).toBeCloseTo(ACTUAL_WIDTH, 0);
   await expect(status(page)).toHaveText('Zoom: 100%');
+  await expect(zoomInput(page)).toHaveValue('100%');
 
-  await zoomSelect(page).selectOption('fit-page');
+  await setZoom(page, '900 %');
+  await expect(zoomInput(page)).toHaveValue('400%');
+
+  await setZoom(page, 'abc');
+  await expect(zoomInput(page)).toHaveValue('400%');
+
+  await zoomInput(page).fill('150');
+  await zoomInput(page).press('Escape');
+  await expect(zoomInput(page)).toHaveValue('400%');
+});
+
+test('arrow keys in the zoom field step through the levels', async ({ page }) => {
+  await open(page);
+  await setZoom(page, '100');
+  await zoomInput(page).press('ArrowUp');
+  await expect(zoomInput(page)).toHaveValue('125%');
+  await zoomInput(page).press('ArrowDown');
+  await zoomInput(page).press('ArrowDown');
+  await expect(zoomInput(page)).toHaveValue('75%');
+});
+
+test('the fit button switches between fit to page and fit to width', async ({ page }) => {
+  await open(page);
+  await page.getByRole('button', { name: 'Fit to page' }).click();
+  await expect(status(page)).toHaveText('Zoom: Fit to page');
   const viewHeight = await documentRegion(page).evaluate((el) => el.clientHeight);
   const pageHeight = await page
     .locator('pdfv-page[data-page-number="1"]')
     .evaluate((el) => el.getBoundingClientRect().height);
   expect(pageHeight).toBeLessThanOrEqual(viewHeight);
-  await expect(status(page)).toHaveText('Zoom: Fit to page');
+
+  // The same button now offers the other fit, like in Chrome.
+  const fitWidth = page.getByRole('button', { name: 'Fit to width' });
+  await expect(fitWidth).toHaveAttribute('title', 'Fit to width');
+  await fitWidth.click();
+  await expect(status(page)).toHaveText('Zoom: Fit to width');
+  const viewWidth = await documentRegion(page).evaluate((el) => el.clientWidth);
+  await expect.poll(() => pageWidth(page)).toBeCloseTo(viewWidth - 32, -1);
+  await expect(page.getByRole('button', { name: 'Fit to page' })).toBeVisible();
+});
+
+test('icon buttons show their name on hover', async ({ page }) => {
+  await open(page);
+  const buttons = page.getByRole('toolbar', { name: 'PDF viewer toolbar' }).getByRole('button');
+  const count = await buttons.count();
+  expect(count).toBeGreaterThan(10);
+  for (let index = 0; index < count; index++) {
+    const button = buttons.nth(index);
+    expect(await button.getAttribute('title')).toBe(await button.getAttribute('aria-label'));
+  }
 });
 
 test('zoom in is disabled at the maximum, zoom out at the minimum', async ({ page }) => {
   await open(page);
-  await zoomSelect(page).selectOption('4');
+  await setZoom(page, '400');
   await expect(page.getByRole('button', { name: 'Zoom in' })).toHaveAttribute(
     'aria-disabled',
     'true',
   );
-  await zoomSelect(page).selectOption('0.1');
+  await setZoom(page, '10');
   await expect(page.getByRole('button', { name: 'Zoom out' })).toHaveAttribute(
     'aria-disabled',
     'true',
@@ -87,7 +149,7 @@ async function ctrlWheel(page: Page, deltaY: number) {
 test('Ctrl + wheel keeps the point under the pointer in place', async ({ page }) => {
   await open(page);
   // Wider than the viewport, so both axes can be preserved.
-  await zoomSelect(page).selectOption('2');
+  await setZoom(page, '200');
   await documentRegion(page).evaluate((el) =>
     el.scrollTo({ left: 200, top: 600, behavior: 'instant' }),
   );
@@ -103,13 +165,14 @@ test('Ctrl + wheel keeps the point under the pointer in place', async ({ page })
   expect(after.page).toBe(before.page);
   expect(after.x).toBeCloseTo(before.x, 2);
   expect(after.y).toBeCloseTo(before.y, 2);
-  // A level outside the presets gets its own option.
-  expect(await selectedLabel(page)).toMatch(/^\d+%$/);
+  // The field shows the new level.
+  await expect(zoomInput(page)).not.toHaveValue('200%');
+  await expect(zoomInput(page)).toHaveValue(/^\d+%$/);
 });
 
 test('Ctrl + wheel keeps the vertical position while the page fits the width', async ({ page }) => {
   await open(page);
-  await zoomSelect(page).selectOption('1');
+  await setZoom(page, '100');
   const box = (await documentRegion(page).boundingBox())!;
   const [x, y] = [box.x + 300, box.y + 250];
   await page.mouse.move(x, y);
@@ -128,14 +191,15 @@ test('keyboard shortcuts zoom instead of the browser', async ({ page }) => {
   await page.keyboard.press('Control+=');
   await expect(status(page)).toHaveText(/^Zoom: \d+%$/);
   await page.keyboard.press('Control+0');
-  await expect(status(page)).toHaveText('Zoom: Fit to width');
+  // Back to the default zoom.
+  await expect(zoomInput(page)).toHaveValue('125%');
   // The browser zoom is untouched.
   expect(await page.evaluate(() => window.visualViewport?.scale ?? 1)).toBe(1);
 });
 
 test('two-finger pinch zooms on touch screens', async ({ page }) => {
   await open(page);
-  await zoomSelect(page).selectOption('1');
+  await setZoom(page, '100');
   await documentRegion(page).evaluate(async (view) => {
     const rect = view.getBoundingClientRect();
     const [cx, cy] = [rect.left + 300, rect.top + 300];
@@ -156,13 +220,13 @@ test('two-finger pinch zooms on touch screens', async ({ page }) => {
     }
     send('touchend', 0);
   });
-  await expect.poll(() => selectedLabel(page)).toBe('200%');
+  await expect(zoomInput(page)).toHaveValue('200%');
 });
 
 test('fit to page follows the displayed page in single page mode', async ({ page }) => {
   await open(page);
   await page.getByLabel('Page mode').selectOption('single');
-  await zoomSelect(page).selectOption('fit-page');
+  await page.getByRole('button', { name: 'Fit to page' }).click();
   await page.getByRole('textbox', { name: 'Page number' }).fill('5');
   await page.getByRole('textbox', { name: 'Page number' }).press('Enter');
   const view = await documentRegion(page).evaluate((el) => ({
@@ -181,7 +245,7 @@ test('fit to page follows the displayed page in single page mode', async ({ page
 
 test('the pan tool drags the document without selecting text', async ({ page }) => {
   await open(page);
-  await zoomSelect(page).selectOption('3');
+  await setZoom(page, '300');
   await page.getByRole('button', { name: 'Pan' }).click();
   await expect(page.getByRole('button', { name: 'Pan' })).toHaveAttribute('aria-pressed', 'true');
   await expect(documentRegion(page)).toHaveCSS('cursor', 'grab');
@@ -195,5 +259,13 @@ test('the pan tool drags the document without selecting text', async ({ page }) 
   const end = await documentRegion(page).evaluate((el) => [el.scrollLeft, el.scrollTop]);
   expect(end[0] - start[0]).toBe(200);
   expect(end[1] - start[1]).toBe(150);
-  expect(await page.evaluate(() => String(getSelection()))).toBe('');
+  // No text of the document is selected (the zoom field keeps its own selection).
+  const documentSelection = await page.evaluate(() => {
+    const selection = getSelection();
+    const view = document.querySelector('pdfv-document-view')!;
+    return selection && selection.rangeCount > 0 && !selection.isCollapsed
+      ? view.contains(selection.getRangeAt(0).commonAncestorContainer)
+      : false;
+  });
+  expect(documentSelection).toBe(false);
 });

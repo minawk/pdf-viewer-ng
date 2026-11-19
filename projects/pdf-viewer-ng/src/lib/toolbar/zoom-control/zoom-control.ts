@@ -1,17 +1,15 @@
 import { Component, computed, inject } from '@angular/core';
 import { PDF_VIEWER_MESSAGES } from '../../core/messages';
-import { PdfZoom } from '../../core/types';
 import { ViewerStore } from '../../core/viewer-store/viewer-store';
 import { Icon } from '../../icon/icon';
-import { matchingPreset, ZOOM_PRESETS, zoomPercent } from '../../utils/zoom/zoom';
+import { parseZoomPercent, zoomPercent } from '../../utils/zoom/zoom';
 import { ToolbarItem } from '../roving-toolbar/roving-toolbar';
 
-interface ZoomOption {
-  readonly value: string;
-  readonly label: string;
-}
-
-/** Zoom out / zoom level menu / zoom in. */
+/**
+ * Zoom out / zoom level field / zoom in / fit toggle, like the Chrome PDF viewer.
+ * The field shows the zoom actually applied ("125%"), accepts a typed percentage, and
+ * steps with the up and down arrow keys.
+ */
 @Component({
   selector: 'pdfv-zoom-control',
   imports: [Icon, ToolbarItem],
@@ -26,32 +24,44 @@ export class ZoomControl {
   protected readonly store = inject(ViewerStore);
   protected readonly messages = inject(PDF_VIEWER_MESSAGES);
 
-  /** Value of the selected option: the fit mode, the matching preset, or the custom level. */
-  protected readonly selected = computed(() => {
-    const zoom = this.store.zoom();
-    return typeof zoom === 'number' ? String(matchingPreset(zoom) ?? zoom) : zoom;
-  });
+  /** Applied zoom, fit modes included, as shown in the field. */
+  protected readonly level = computed(() =>
+    this.messages.zoomPercent(zoomPercent(this.store.effectiveZoom())),
+  );
 
-  protected readonly options = computed<readonly ZoomOption[]>(() => {
-    const zoom = this.store.zoom();
-    // A level reached with the wheel or a pinch (e.g. 137%) gets its own option.
-    const levels =
-      typeof zoom === 'number' && matchingPreset(zoom) === undefined
-        ? [...ZOOM_PRESETS, zoom].sort((a, b) => a - b)
-        : ZOOM_PRESETS;
-    return [
-      { value: 'fit-width', label: this.messages.fitWidth },
-      { value: 'fit-page', label: this.messages.fitPage },
-      ...levels.map((level) => ({
-        value: String(level),
-        label: this.messages.zoomPercent(zoomPercent(level)),
-      })),
-    ];
-  });
+  /** The fit button switches between fit to page and fit to width, as in Chrome. */
+  protected readonly fitsPage = computed(() => this.store.zoom() === 'fit-page');
+  protected readonly fitLabel = computed(() =>
+    this.fitsPage() ? this.messages.fitWidth : this.messages.fitPage,
+  );
 
-  protected onSelect(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
-    const zoom: PdfZoom = value === 'fit-width' || value === 'fit-page' ? value : Number(value);
-    this.store.setZoom(zoom);
+  protected toggleFit(): void {
+    this.store.setZoom(this.fitsPage() ? 'fit-width' : 'fit-page');
+  }
+
+  /** Applies the typed level, or restores the current one if it is not a number. */
+  protected commit(input: HTMLInputElement): void {
+    const zoom = parseZoomPercent(input.value);
+    if (zoom !== null) {
+      this.store.setZoom(zoom);
+    }
+    input.value = this.level();
+  }
+
+  protected revert(input: HTMLInputElement): void {
+    input.value = this.level();
+    input.select();
+  }
+
+  /** Up and down arrows step through the zoom levels, like the + and - buttons. */
+  protected step(input: HTMLInputElement, event: Event, direction: 1 | -1): void {
+    event.preventDefault();
+    if (direction > 0) {
+      this.store.zoomIn();
+    } else {
+      this.store.zoomOut();
+    }
+    input.value = this.level();
+    input.select();
   }
 }

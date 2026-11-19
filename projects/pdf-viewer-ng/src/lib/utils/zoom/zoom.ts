@@ -10,7 +10,9 @@ export const PDF_TO_CSS_UNITS = 96 / 72;
 /** Zoom bounds, as factors of the actual size (1 = 100%). */
 export const MIN_ZOOM = 0.1;
 export const MAX_ZOOM = 4;
-/** Levels offered by the zoom menu and used by the zoom in/out buttons. */
+/** Largest zoom of the `auto` mode: fit to width, but never larger than this (as in pdf.js). */
+export const AUTO_MAX_ZOOM = 1.25;
+/** Levels used by the zoom in/out buttons. */
 export const ZOOM_PRESETS: readonly number[] = [0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
 /** Space around and between pages, in CSS pixels. */
 export const PAGE_GAP = 16;
@@ -27,13 +29,21 @@ export function resolveScale(zoom: PdfZoom, page: Size, container: Size, gap = P
     return clampZoom(zoom) * PDF_TO_CSS_UNITS;
   }
   if (container.width <= 0 || page.width <= 0 || page.height <= 0) {
-    return PDF_TO_CSS_UNITS;
+    return (zoom === 'auto' ? AUTO_MAX_ZOOM : 1) * PDF_TO_CSS_UNITS;
   }
   const widthScale = (container.width - 2 * gap) / page.width;
-  const scale =
-    zoom === 'fit-width'
-      ? widthScale
-      : Math.min(widthScale, (container.height - 2 * gap) / page.height);
+  let scale: number;
+  switch (zoom) {
+    case 'fit-width':
+      scale = widthScale;
+      break;
+    case 'fit-page':
+      scale = Math.min(widthScale, (container.height - 2 * gap) / page.height);
+      break;
+    default:
+      // auto: 125% on wide screens, fit to width on narrow ones (no horizontal scrolling).
+      scale = Math.min(widthScale, AUTO_MAX_ZOOM * PDF_TO_CSS_UNITS);
+  }
   return clampZoom(scale / PDF_TO_CSS_UNITS) * PDF_TO_CSS_UNITS;
 }
 
@@ -60,6 +70,19 @@ export function stepZoom(current: number, direction: 1 | -1): number {
 /** The preset level within 1% of `zoom`, if any. */
 export function matchingPreset(zoom: number): number | undefined {
   return ZOOM_PRESETS.find((level) => Math.abs(level - zoom) <= level * 0.01);
+}
+
+/**
+ * A zoom typed as a percentage ("150", "150%", " 150 % ", "87.5") to a factor (1.5),
+ * or `null` when it is not a positive number. Out-of-range values are clamped by the store.
+ */
+export function parseZoomPercent(text: string): number | null {
+  const match = /^\s*(\d+(?:[.,]\d+)?)\s*%?\s*$/.exec(text);
+  if (!match) {
+    return null;
+  }
+  const percent = Number(match[1].replace(',', '.'));
+  return percent > 0 ? percent / 100 : null;
 }
 
 /** Zoom factor as a rounded percentage, e.g. 1.254 -> 125. */
