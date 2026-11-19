@@ -1,7 +1,7 @@
 @for (tool of inlineTools(); track $index) {
   @switch (tool) {
     @case ('pager') {
-      <pdfv-pager />
+      <pdfv-pager [compact]="compact()" />
     }
     @case ('zoom') {
       <pdfv-zoom-control />

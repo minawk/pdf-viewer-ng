@@ -186,7 +186,7 @@ Or define a named theme from a built-in base, and select it with `theme="ocean"`
 ```
 
 Tokens, without the `--pdfv-` prefix: `font-family`, `font-size`, `line-height`, `radius`, `radius-sm`,
-`space-1` to `space-3`, `control-size`, `icon-size`, `focus-width`, `transition-duration`,
+`space-1` to `space-3`, `control-size`, `field-height`, `icon-size`, `focus-width`, `transition-duration`,
 `color-surface`, `color-on-surface`, `color-on-surface-muted`, `color-toolbar`, `color-on-toolbar`,
 `color-border`, `color-border-strong`, `color-canvas`, `color-page`, `color-primary`, `color-on-primary`,
 `color-state-hover`, `color-state-pressed`, `color-selected`, `color-on-selected`, `color-focus`,

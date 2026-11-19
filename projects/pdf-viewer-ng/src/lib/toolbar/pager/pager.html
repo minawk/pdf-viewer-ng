@@ -1,14 +1,17 @@
-<button
-  type="button"
-  class="button"
-  pdfvToolbarItem
-  [disabled]="!store.canGoPrevious()"
-  [attr.aria-label]="messages.firstPage"
-  [title]="messages.firstPage"
-  (click)="store.firstPage()"
->
-  <pdfv-icon name="first-page" />
-</button>
+<!-- Compact toolbar: first and last page are in the "More tools" menu. -->
+@if (!compact()) {
+  <button
+    type="button"
+    class="button"
+    pdfvToolbarItem
+    [disabled]="!store.canGoPrevious()"
+    [attr.aria-label]="messages.firstPage"
+    [title]="messages.firstPage"
+    (click)="store.firstPage()"
+  >
+    <pdfv-icon name="first-page" />
+  </button>
+}
 <button
   type="button"
   class="button"
@@ -51,14 +54,16 @@
 >
   <pdfv-icon name="chevron-right" />
 </button>
-<button
-  type="button"
-  class="button"
-  pdfvToolbarItem
-  [disabled]="!store.canGoNext()"
-  [attr.aria-label]="messages.lastPage"
-  [title]="messages.lastPage"
-  (click)="store.lastPage()"
->
-  <pdfv-icon name="last-page" />
-</button>
+@if (!compact()) {
+  <button
+    type="button"
+    class="button"
+    pdfvToolbarItem
+    [disabled]="!store.canGoNext()"
+    [attr.aria-label]="messages.lastPage"
+    [title]="messages.lastPage"
+    (click)="store.lastPage()"
+  >
+    <pdfv-icon name="last-page" />
+  </button>
+}

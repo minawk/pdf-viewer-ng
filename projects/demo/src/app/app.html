@@ -2,18 +2,19 @@
   <div class="intro">
     <div class="brand">
       <h1 class="title">pdf-viewer-ng</h1>
-      <p class="tagline">
-        Accessible, signal-based PDF viewer for Angular. Install:
-        <code class="install">ng add &#64;minawk/pdf-viewer-ng</code>
-      </p>
+      <p class="tagline">Accessible, signal-based PDF viewer for Angular</p>
     </div>
     <nav class="links" aria-label="Project">
       <a href="https://github.com/minawk/pdf-viewer-ng">GitHub</a>
       <a href="https://github.com/minawk/pdf-viewer-ng/tree/main/projects/pdf-viewer-ng#readme"
-        >Documentation</a
+        >Docs</a
       >
       <a href="https://www.npmjs.com/package/@minawk/pdf-viewer-ng">npm</a>
     </nav>
+    <p class="install">
+      <span class="install-label">Install</span>
+      <code class="install-command">ng add &#64;minawk/pdf-viewer-ng</code>
+    </p>
   </div>
   <div class="controls" role="group" aria-label="Demo settings">
     <div class="field">
@@ -41,7 +42,7 @@
       </select>
     </div>
     <button type="button" class="action" (click)="page.set(5)">Go to page 5</button>
-    <output class="event" aria-label="Viewer state"
+    <output class="state" aria-label="Viewer state"
       >page {{ page() }} · zoom {{ zoomLabel() }} · annotations {{ annotations()?.length ?? 0 }} ·
       {{ lastEvent() }}</output
     >

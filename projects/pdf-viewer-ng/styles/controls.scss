@@ -4,13 +4,14 @@
 $disabled: ':disabled, [aria-disabled="true"]';
 $enabled: ':not(:disabled):not([aria-disabled="true"])';
 
-/// Square icon button of the toolbar.
+/// Square icon button of the toolbar. Its size is `--pdfv-control-size`, unless a container
+/// sets `--pdfv-button-size` (the compact toolbar does).
 @mixin icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  inline-size: var(--pdfv-control-size);
-  block-size: var(--pdfv-control-size);
+  inline-size: var(--pdfv-button-size, var(--pdfv-control-size));
+  block-size: var(--pdfv-button-size, var(--pdfv-control-size));
   padding: 0;
   color: inherit;
   font: inherit;
@@ -57,17 +58,24 @@ $enabled: ':not(:disabled):not([aria-disabled="true"])';
   }
 }
 
-/// Text field or select of the toolbar.
+/// Text field of the toolbar (page number, zoom level).
 @mixin field {
-  block-size: calc(var(--pdfv-control-size) - var(--pdfv-space-1));
+  box-sizing: border-box;
+  block-size: var(--pdfv-field-height);
+  padding-block: 0;
   color: var(--pdfv-color-on-surface);
   font: inherit;
   background: var(--pdfv-color-surface);
   border: 1px solid var(--pdfv-color-border-strong);
   border-radius: var(--pdfv-radius-sm);
 
+  // Thin focus style: the border takes the focus color, with a soft halo. The transparent outline
+  // shows only in forced colors mode (Windows high contrast), where shadows are not drawn.
   &:focus-visible {
-    @include mixins.focus-ring(1px);
+    outline: 2px solid transparent;
+    outline-offset: 1px;
+    border-color: var(--pdfv-color-focus);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--pdfv-color-focus) 30%, transparent);
   }
 
   &:disabled {

@@ -26,7 +26,10 @@ interface ScrollAnchor {
   /** Position of the anchored document point in the page, as fractions of the page size. */
   readonly ratioX: number;
   readonly ratioY: number;
-  /** Where that document point is in the viewport, in CSS pixels. */
+  /**
+   * Where that document point is in the viewport, as fractions of the viewport size: it stays
+   * right when the viewport is resized (window resize, phone rotation).
+   */
   readonly viewport: ViewportPoint;
 }
 
@@ -323,8 +326,12 @@ export class DocumentView {
       return;
     }
     this.setScroll(
-      element.offsetLeft + anchor.ratioX * element.offsetWidth - anchor.viewport.x,
-      element.offsetTop + anchor.ratioY * element.offsetHeight - anchor.viewport.y,
+      element.offsetLeft +
+        anchor.ratioX * element.offsetWidth -
+        anchor.viewport.x * this.host.clientWidth,
+      element.offsetTop +
+        anchor.ratioY * element.offsetHeight -
+        anchor.viewport.y * this.host.clientHeight,
     );
   }
 
@@ -346,7 +353,10 @@ export class DocumentView {
       page: Number(element.dataset['pageNumber']),
       ratioX: (this.host.scrollLeft + point.x - element.offsetLeft) / (element.offsetWidth || 1),
       ratioY: (y - element.offsetTop) / (element.offsetHeight || 1),
-      viewport: point,
+      viewport: {
+        x: point.x / (this.host.clientWidth || 1),
+        y: point.y / (this.host.clientHeight || 1),
+      },
     };
   }
 

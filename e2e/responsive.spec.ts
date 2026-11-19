@@ -24,7 +24,13 @@ test('narrow viewers move secondary tools into the "More tools" menu', async ({ 
   await expect(menu(page)).toBeVisible();
   await expect(menu(page).getByRole('menuitemradio')).toHaveText([/^Select text/, 'Pan']);
   await expect(menu(page).getByRole('menuitemcheckbox')).toHaveText(['Highlight', 'Add text']);
-  await expect(menu(page).getByRole('menuitem')).toHaveText(['Open file', 'Download', 'Print']);
+  await expect(menu(page).getByRole('menuitem')).toHaveText([
+    'First page',
+    'Last page',
+    'Open file',
+    'Download',
+    'Print',
+  ]);
   await expect(menu(page).getByRole('menuitemradio', { name: 'Select text' })).toHaveAttribute(
     'aria-checked',
     'true',
@@ -35,11 +41,14 @@ test('the menu works with the keyboard', async ({ page }) => {
   await openAt(page, 390);
   await more(page).focus();
   await page.keyboard.press('ArrowDown');
-  await expect(menu(page).getByRole('menuitemradio', { name: 'Select text' })).toBeFocused();
+  await expect(menu(page).getByRole('menuitem', { name: 'First page' })).toBeFocused();
   await page.keyboard.press('ArrowUp');
   await expect(menu(page).getByRole('menuitem', { name: 'Print' })).toBeFocused();
   await page.keyboard.press('Home');
-  await page.keyboard.press('ArrowDown');
+  // First page, Last page, Select text, Pan.
+  for (let step = 0; step < 3; step++) {
+    await page.keyboard.press('ArrowDown');
+  }
   await expect(menu(page).getByRole('menuitemradio', { name: 'Pan' })).toBeFocused();
 
   await page.keyboard.press('Enter');
@@ -99,4 +108,33 @@ test('the compact toolbar and its menu have no axe violations', async ({ page })
       .analyze();
     expect(results.violations, theme).toEqual([]);
   }
+});
+
+test('the compact toolbar fits on one row on a phone, with shorter fields', async ({ page }) => {
+  await openAt(page, 486);
+  await expect(more(page)).toBeVisible();
+  // First and last page are in the menu.
+  await expect(page.getByRole('button', { name: 'First page' })).toHaveCount(0);
+  const toolbar = page.getByRole('toolbar', { name: 'PDF viewer toolbar' });
+  const box = (await toolbar.boundingBox())!;
+  expect(box.height).toBeLessThan(48);
+  const field = (await page.getByRole('textbox', { name: 'Zoom level' }).boundingBox())!;
+  expect(field.height).toBe(28);
+  const button = (await page.getByRole('button', { name: 'Zoom in' }).boundingBox())!;
+  expect(button.height).toBeGreaterThanOrEqual(24); // WCAG 2.2 target size (AA)
+});
+
+test('the reading position follows a resize (phone rotation)', async ({ page }) => {
+  await openAt(page, 360);
+  await page.setViewportSize({ width: 800, height: 700 });
+  const view = page.locator('pdfv-document-view');
+  await expect
+    .poll(() =>
+      view.evaluate((el) => {
+        const first = el.querySelector('pdfv-page')!.getBoundingClientRect();
+        return Math.round(first.left - el.getBoundingClientRect().left);
+      }),
+    )
+    .toBe(16);
+  expect(await view.evaluate((el) => el.scrollLeft)).toBe(0);
 });

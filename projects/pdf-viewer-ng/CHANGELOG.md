@@ -12,11 +12,21 @@ All notable changes to `@minawk/pdf-viewer-ng`. Versions follow [semantic versio
 - The zoom menu is replaced by a zoom level field, like Chrome: it shows the applied level, accepts a
   typed percentage ("150", "150%"), steps with the up and down arrow keys, and Escape cancels.
 - A fit button next to the zoom buttons switches between fit to page and fit to width.
+- Shorter toolbar fields: 28px (new `--pdfv-field-height` token) instead of 36px.
+- Thinner focus style on the toolbar fields: the border takes the focus color, with a soft halo.
+- Compact toolbar (viewers narrower than 768px, was 640px): 32px buttons, and first / last page move
+  into the "More tools" menu, so the toolbar fits on one row on most phones.
 
 ### Added
 
 - `'auto'` zoom mode (`PdfZoom`).
 - Tooltips: every icon button shows its name on hover (`title`).
+- `--pdfv-field-height` theme token.
+
+### Fixed
+
+- After a resize (or a phone rotation), the page could be shifted sideways: the reading position is
+  now kept relative to the new size of the document area.
 
 ## 0.3.0 (2026-11-18)
 

@@ -1,0 +1,15 @@
+@use 'sass:map';
+
+// Mobile-first breakpoints of the demo page (window width).
+$breakpoints: (
+  'sm': 480px,
+  'md': 768px,
+  'lg': 1024px,
+);
+
+/// Styles applying from the `$bp` window width and up.
+@mixin screen($bp) {
+  @media (min-width: #{map.get($breakpoints, $bp)}) {
+    @content;
+  }
+}

@@ -14,7 +14,7 @@ import { RovingToolbar, ToolbarItem } from '../roving-toolbar/roving-toolbar';
 import { ZoomControl } from '../zoom-control/zoom-control';
 
 /** Below this viewer width, secondary tools move into the "More tools" menu. */
-export const COMPACT_TOOLBAR_WIDTH = 640;
+export const COMPACT_TOOLBAR_WIDTH = 768; // the `md` breakpoint of styles/mixins.scss
 
 /** Tools moved into the "More tools" menu in a compact toolbar. */
 const SECONDARY_TOOLS: ReadonlySet<PdfViewerTool> = new Set([
@@ -69,6 +69,25 @@ export class Toolbar {
     const tool = this.store.tool();
     return this.tools().flatMap((name): OverflowMenuItem[] => {
       switch (name) {
+        case 'pager':
+          return [
+            {
+              id: 'first-page',
+              label: this.messages.firstPage,
+              icon: 'first-page',
+              role: 'menuitem',
+              disabled: !this.store.canGoPrevious(),
+              action: () => this.store.firstPage(),
+            },
+            {
+              id: 'last-page',
+              label: this.messages.lastPage,
+              icon: 'last-page',
+              role: 'menuitem',
+              disabled: !this.store.canGoNext(),
+              action: () => this.store.lastPage(),
+            },
+          ];
         case 'interaction':
           return this.interactionTools.map((toggle) => ({
             id: toggle.tool,

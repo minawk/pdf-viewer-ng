@@ -39,6 +39,14 @@
     }
   }
 
+  // Mobile first: smaller buttons in a narrow viewer (still twice the 24px WCAG 2.2 minimum
+  // target size), the theme's control size from the `md` breakpoint, where every tool is inline.
+  --pdfv-button-size: 2rem;
+
+  @include mixins.screen(md) {
+    --pdfv-button-size: initial;
+  }
+
   .button {
     @include controls.icon-button;
   }
